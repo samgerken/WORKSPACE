@@ -3,832 +3,891 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Workspace Core Dashboard - Quantum Physics v4</title>
+    <title>Workspace Dashboard</title>
     <style>
         :root {
-            --bg-base: #0b0c10;
-            --bg-surface: rgba(22, 26, 34, 0.65);
-            --bg-terminal: #050608;
-            --border-subtle: rgba(255, 255, 255, 0.05);
-            --border-active: rgba(255, 255, 255, 0.25);
+            /* 5% Higher Contrast Dark Mode */
+            --bg-base: #050506;
+            --bg-surface: rgba(255, 255, 255, 0.03);
+            --bg-terminal: #000000;
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --border-active: rgba(255, 255, 255, 0.3);
             --text-primary: #ffffff;
-            --text-secondary: #f4f4f7;
-            --text-muted: #848694;
-            --text-dark: #3b3d4a;
+            --text-secondary: #f4f4f5;
+            --text-muted: #a1a1aa;
+            --text-dark: #52525b;
             --accent-alert: #f87171;
             
-            --panel-header-line: #4b5061;
-            --panel-title-color: #9fa2b2;
-            --chat-user-bg: #292d3e;
-            --chat-gemini-bg: rgba(255, 255, 255, 0.025);
-            --chat-gemini-border: rgba(255, 255, 255, 0.04);
+            --panel-header-line: #71717a;
+            --panel-title-color: #d4d4d8;
+            --chat-user-bg: #27272a;
+            --chat-gemini-bg: rgba(255, 255, 255, 0.04);
+            --chat-gemini-border: rgba(255, 255, 255, 0.06);
+            --code-bg: #18181b;
+            --pre-bg: #09090b;
             
-            --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            --progress-track: #151821;
-            
-            --panel-shadow: 0 20px 45px -12px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.03);
-            --blur-strength: 16px;
+            --font-stack: Calibri, Candara, "Segoe UI", Optima, Arial, sans-serif;
+            --progress-track: #18181b;
+            /* Enhanced dark mode depth shadow */
+            --panel-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.45);
         }
 
         [data-theme="light"] {
-            --bg-base: #f0f2f5;
-            --bg-surface: rgba(255, 255, 255, 0.85);
+            --bg-base: #f4f4f5;
+            --bg-surface: #ffffff;
             --bg-terminal: #fafafa;
-            --border-subtle: rgba(0, 0, 0, 0.06);
-            --border-active: rgba(0, 0, 0, 0.35);
-            --text-primary: #18191f;
-            --text-secondary: #2d2e38;
-            --text-muted: #7c7e8c;
-            --text-dark: #bfc1cc;
-            --accent-alert: #e03131;
+            --border-subtle: rgba(0, 0, 0, 0.08);
+            --border-active: rgba(0, 0, 0, 0.6);
+            --text-primary: #09090b;
+            --text-secondary: #27272a;
+            --text-muted: #71717a;
+            --text-dark: #a1a1aa;
+            --accent-alert: #dc2626;
             
-            --panel-header-line: #9497a6;
-            --panel-title-color: #5c5e69;
-            --chat-user-bg: #e1e4ed;
-            --chat-gemini-bg: #f5f6fa;
-            --chat-gemini-border: rgba(0, 0, 0, 0.03);
-            --progress-track: #e1e4ed;
-            --panel-shadow: 0 12px 35px -10px rgba(10, 15, 30, 0.06), 0 0 0 1px rgba(0, 0, 0, 0.01);
-            --blur-strength: 24px;
+            --panel-header-line: #a1a1aa;
+            --panel-title-color: #4b5563;
+            --chat-user-bg: #e4e4e7;
+            --chat-gemini-bg: #f4f4f5;
+            --chat-gemini-border: rgba(0, 0, 0, 0.05);
+            --code-bg: #e4e4e7;
+            --pre-bg: #fafafa;
+            --progress-track: #e4e4e7;
+            --panel-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { 
-            background-color: var(--bg-base); 
-            color: var(--text-secondary); 
-            font-family: var(--font-stack); 
-            padding: 40px 24px; 
-            line-height: 1.5; 
-            letter-spacing: -0.015em; 
-            transition: background-color 0.4s cubic-bezier(0.25, 1, 0.5, 1); 
-            overflow-x: hidden; 
-        }
-        
-        .container { max-width: 1600px; margin: 0 auto; }
+        body { background-color: var(--bg-base); color: var(--text-secondary); font-family: var(--font-stack); padding: 40px 20px; line-height: 1.5; letter-spacing: -0.01em; transition: background-color 0.2s ease, color 0.2s ease; overflow-x: hidden; }
+        .container { max-width: 1250px; margin: 0 auto; }
 
-        /* SPLASH INTRO ACCELERATOR */
-        #splash-screen-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at center, #11141d 0%, #06070a 100%);
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            transition: opacity 0.5s cubic-bezier(0.25, 1, 0.5, 1), visibility 0.5s;
-        }
-        .splash-brand { font-weight: 200; font-size: 1.8rem; letter-spacing: 0.18em; text-transform: uppercase; color: #ffffff; }
-        .splash-loader-bar { width: 140px; height: 1px; background: rgba(255,255,255,0.08); margin-top: 24px; position: relative; overflow: hidden; }
-        .splash-loader-progress { width: 40%; height: 100%; background: linear-gradient(90deg, transparent, #ffffff, transparent); position: absolute; left: -50%; animation: infiniteLoader 1.2s infinite ease-in-out; }
-        @keyframes infiniteLoader { 0% { left: -50%; } 100% { left: 110%; } }
-
-        header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 32px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 20px; }
-        h1 { color: var(--text-primary); font-size: 1.6rem; font-weight: 500; letter-spacing: -0.02em; }
-        .subtitle { color: var(--text-muted); font-size: 0.85rem; margin-top: 4px; }
+        header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 20px; }
+        h1 { color: var(--text-primary); font-size: 1.7rem; font-weight: 700; }
+        .subtitle { color: var(--text-muted); font-size: 0.9rem; margin-top: 2px; }
 
         .header-controls { display: flex; gap: 10px; }
-        .control-ui-btn { background: var(--bg-surface); backdrop-filter: blur(var(--blur-strength)); color: var(--text-secondary); border: 1px solid var(--border-subtle); padding: 9px 16px; font-family: inherit; font-size: 0.8rem; font-weight: 500; border-radius: 8px; cursor: pointer; transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1); }
-        .control-ui-btn:hover { border-color: var(--border-active); color: var(--text-primary); background: rgba(255,255,255,0.03); }
+        .theme-toggle-btn, .menu-trigger-btn { background: var(--bg-terminal); color: var(--text-secondary); border: 1px solid var(--border-subtle); padding: 6px 14px; font-family: inherit; font-size: 0.85rem; border-radius: 4px; cursor: pointer; transition: all 0.15s ease; }
+        .theme-toggle-btn:hover, .menu-trigger-btn:hover { border-color: var(--border-active); color: var(--text-primary); }
 
-        /* THE DYNAMIC INTERTIAL GRID CANVAS */
-        .dashboard-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); 
-            gap: 24px; 
-            align-items: start;
-            position: relative;
-        }
-
-        /* GEOMETRIC BLUEPRINT SIZES */
-        .grid-item.sz-wide { grid-column: span 2; }
-        .grid-item.sz-tall { grid-row: span 2; }
-        .grid-item.sz-wide.sz-tall { grid-column: span 2; grid-row: span 2; }
-
-        /* UNIFORM藍圖 Blueprints Override Block */
-        .dashboard-grid.standardized-geometry {
-            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)) !important;
-        }
-        .dashboard-grid.standardized-geometry .grid-item {
-            grid-column: span 1 !important;
-            grid-row: span 1 !important;
-        }
-        .dashboard-grid.standardized-geometry .panel {
-            height: 380px !important;
-        }
-        .dashboard-grid.standardized-geometry .panel.collapsed-state {
-            height: 54px !important;
-        }
-
-        /* PHYSICS SYSTEM POINTER INTERACTION MECHANICAL TILES */
-        .grid-item { 
-            position: relative; 
-            transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease;
-        }
+        /* SLIDING SIDEBAR DRAWER MENU */
+        .sidebar-drawer { position: fixed; top: 0; left: -320px; width: 300px; height: 100%; background: #09090b; border-right: 1px solid var(--border-subtle); box-shadow: 10px 0 30px rgba(0,0,0,0.5); z-index: 1000; transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1); padding: 30px 24px; display: flex; flex-direction: column; gap: 20px; }
+        .sidebar-drawer.open { left: 0; }
+        .drawer-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-subtle); padding-bottom: 14px; }
+        .drawer-header h3 { color: var(--text-primary); font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .close-drawer-btn { background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer; }
+        .close-drawer-btn:hover { color: var(--text-primary); }
         
-        /* STRICT POINTER DRAG OVERRIDES */
-        .grid-item.pointer-dragging {
-            position: fixed !important;
-            z-index: 9999 !important;
-            pointer-events: none !important;
-            transform: scale(1.04) rotateZ(1.5deg) !important;
-            box-shadow: 0 45px 90px rgba(0,0,0,0.95), 0 0 0 1px rgba(255,255,255,0.1);
-            transition: none !important;
-        }
-        .grid-item.pointer-dragging .panel {
-            background: rgba(28, 33, 46, 0.9) !important;
-            border-color: var(--border-active) !important;
-        }
-        .grid-item.physics-displaced {
-            transform: translateY(8px) scale(0.99);
-            opacity: 0.85;
-        }
+        .tile-toggle-container { overflow-y: auto; flex: 1; padding-right: 4px; }
+        .tile-toggle-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+        .tile-toggle-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle); border-radius: 6px; font-size: 0.9rem; }
+        .tile-toggle-item input { accent-color: var(--text-primary); cursor: pointer; width: 16px; height: 16px; }
 
-        .hidden-tile { display: none !important; }
-
-        .panel { 
-            background: var(--bg-surface); 
-            backdrop-filter: blur(var(--blur-strength)); 
-            border: 1px solid var(--border-subtle); 
-            border-radius: 14px; 
-            padding: 20px; 
-            display: flex; 
-            flex-direction: column; 
-            box-shadow: var(--panel-shadow); 
-            transition: border-color 0.25s, height 0.3s cubic-bezier(0.1, 0.9, 0.2, 1); 
-            overflow: hidden;
-            width: 100%;
-            height: 100%;
-            min-height: 240px;
-        }
-        .panel:hover { 
-            border-color: rgba(255, 255, 255, 0.08); 
-        }
+        /* DRAGGABLE GRID STYLES */
+        .dashboard-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 24px; }
+        .col-3 { grid-column: span 3; }
+        .col-2 { grid-column: span 2; }
         
-        /* DRAG BAR UTILITIES */
-        h2 { 
-            color: var(--panel-title-color); 
-            font-size: 0.7rem; 
-            font-weight: 600; 
-            text-transform: uppercase; 
-            letter-spacing: 0.08em; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            border-bottom: 1px solid var(--border-subtle); 
-            padding-bottom: 10px; 
-            margin-bottom: 14px;
-            user-select: none;
-        }
-        .tile-grab-surface { cursor: grab; flex-grow: 1; padding: 2px 0; touch-action: none; }
-        .tile-grab-surface:active { cursor: grabbing; }
+        .grid-item { transition: transform 0.2s ease, opacity 0.2s ease; position: relative; }
+        .grid-item.dragging { opacity: 0.3; transform: scale(0.97); }
+        .grid-item.drag-over { border-radius: 12px; outline: 2px dashed var(--border-active); outline-offset: 4px; }
+        .grid-item.hidden-tile { display: none !important; }
+
+        section.panel, div.panel { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; height: 100%; min-height: 220px; box-shadow: var(--panel-shadow); transition: box-shadow 0.2s ease; }
         
-        .tile-action-controls { display: flex; gap: 8px; align-items: center; }
-        .tile-control-trigger { background: none; border: none; color: var(--text-dark); cursor: pointer; font-size: 0.8rem; padding: 2px 6px; border-radius: 4px; transition: all 0.15s; }
-        .tile-control-trigger:hover { color: var(--text-primary); background: rgba(255,255,255,0.05); }
-        .tile-control-trigger.remove-trigger:hover { color: var(--accent-alert); }
-
-        /* COLLAPSED MODIFIERS */
-        .panel.collapsed-state { height: 54px !important; min-height: 54px !important; }
-        .panel.collapsed-state > *:not(h2) { display: none !important; }
-        .panel.collapsed-state h2 { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-
-        /* THE BLACK "+" CANVAS ADD CAROUSEL */
-        .add-tile-blueprint {
-            background: #050608;
-            border: 2px dashed rgba(255,255,255,0.03);
-            border-radius: 14px;
-            height: 240px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            position: relative;
-            transition: background 0.3s, border-color 0.3s, transform 0.2s;
-        }
-        .add-tile-blueprint:hover {
-            background: #090a0f;
-            border-color: rgba(255,255,255,0.12);
-            transform: scale(0.99);
-        }
-        .plus-icon-glyph {
-            font-size: 2.2rem;
-            font-weight: 100;
-            color: var(--text-dark);
-            transition: color 0.2s, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .add-tile-blueprint:hover .plus-icon-glyph {
-            color: var(--text-primary);
-            transform: rotate(90deg);
-        }
-
-        /* CONTEXT SPAWN LAYER */
-        .spawn-context-menu {
-            position: absolute;
-            bottom: calc(100% + 8px);
-            left: 50%;
-            transform: translateX(-50%) scale(0.95);
-            background: rgba(10, 12, 18, 0.98);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--border-active);
-            border-radius: 10px;
-            padding: 8px;
-            width: 260px;
-            max-height: 380px;
-            overflow-y: auto;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.7);
-            opacity: 0;
-            visibility: hidden;
-            z-index: 99999;
-            transition: opacity 0.2s, transform 0.2s, visibility 0.2s;
-        }
-        .spawn-context-menu.active {
-            opacity: 1;
-            visibility: visible;
-            transform: translateX(-50%) scale(1);
-        }
-        .spawn-menu-title { font-size: 0.65rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em; padding: 4px 8px 6px; border-bottom: 1px solid var(--border-subtle); margin-bottom: 4px; }
-        .spawn-opt-btn { width: 100%; text-align: left; background: none; border: none; padding: 8px; font-size: 0.82rem; color: var(--text-secondary); cursor: pointer; border-radius: 6px; transition: background 0.15s, color 0.15s; }
-        .spawn-opt-btn:hover { background: rgba(255,255,255,0.04); color: var(--text-primary); }
-
-        /* WIDGET DESIGN LAYOUT SYSTEMS */
-        .control-row { display: flex; gap: 8px; margin-bottom: 12px; }
-        .task-input { flex: 1; background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 10px 12px; color: var(--text-primary); font-family: inherit; font-size: 0.85rem; outline: none; }
+        h2 { color: var(--panel-title-color); font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; border-left: 2px solid var(--panel-header-line); padding-left: 10px; display: flex; justify-content: space-between; align-items: center; }
         
-        .deploy-btn { background: var(--bg-terminal); color: var(--text-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0 14px; font-size: 0.8rem; font-weight: 500; cursor: pointer; transition: all 0.15s; }
-        .deploy-btn:hover { border-color: var(--border-active); color: var(--text-primary); }
+        .drag-handle { cursor: grab; font-size: 0.75rem; color: var(--text-muted); padding: 3px 8px; background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 4px; font-family: monospace; user-select: none; }
+        .drag-handle:active { cursor: grabbing; border-color: var(--text-primary); color: var(--text-primary); }
 
-        .checklist-container { list-style: none; display: flex; flex-direction: column; overflow-y: auto; flex: 1; }
-        .checklist-item { padding: 8px; border-bottom: 1px solid var(--border-subtle); font-size: 0.85rem; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
-        .checklist-item:hover { background: rgba(255, 255, 255, 0.015); }
-        .resolved { color: var(--text-dark) !important; text-decoration: line-through; }
-
-        .ai-chat-log { background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 6px; flex: 1; min-height: 140px; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
-        .chat-bubble { font-size: 0.82rem; max-width: 85%; padding: 8px 12px; border-radius: 10px; }
-        .bubble-user { color: var(--text-primary); align-self: flex-end; background: var(--chat-user-bg); }
-        .bubble-gemini { color: var(--text-secondary); align-self: flex-start; background: var(--chat-gemini-bg); border: 1px solid var(--chat-gemini-border); }
-
-        .weather-display { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-        .temp-primary { font-size: 2.1rem; font-weight: 200; color: var(--text-primary); font-family: monospace; }
-        .weather-meta { font-size: 0.75rem; color: var(--text-muted); }
-        .forecast-container { display: flex; flex-direction: column; gap: 4px; background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 8px; }
-        .forecast-row { display: grid; grid-template-columns: 3fr 5fr 2fr; font-size: 0.75rem; }
-
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); row-gap: 2px; text-align: center; }
-        .calendar-cell { font-size: 0.75rem; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-family: monospace; }
-        .calendar-cell.today { background: var(--text-primary); color: var(--bg-base); font-weight: 600; border-radius: 50%; }
-
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
-        .stat-card { background: var(--bg-terminal); border: 1px solid var(--border-subtle); padding: 10px; border-radius: 6px; }
-        .stat-label { font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; }
-        .stat-value { font-size: 1rem; color: var(--text-primary); font-family: monospace; }
-        .progress-track { background: var(--progress-track); height: 4px; border-radius: 2px; overflow: hidden; margin-top: 6px; }
-        .progress-fill { background: var(--text-primary); height: 100%; }
-
-        .material-selector { background: var(--bg-terminal); border: 1px solid var(--border-subtle); color: var(--text-primary); width: 100%; padding: 8px; border-radius: 6px; margin-bottom: 10px; font-family: inherit; font-size: 0.8rem; outline: none; }
-        .spec-table { width: 100%; font-family: monospace; font-size: 0.75rem; }
-        .spec-table td { padding: 6px 4px; border-bottom: 1px solid var(--border-subtle); }
-        .spec-table td:last-child { text-align: right; color: var(--text-primary); }
-
-        .calc-screen { width: 100%; background: var(--bg-terminal); color: var(--text-primary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 10px; font-family: monospace; font-size: 1.2rem; text-align: right; margin-bottom: 8px; min-height: 44px; }
-        .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
-        .calc-btn { background: var(--bg-terminal); color: var(--text-secondary); border: 1px solid var(--border-subtle); padding: 10px 2px; font-family: monospace; font-size: 0.85rem; border-radius: 4px; cursor: pointer; }
+        .control-row { display: flex; gap: 12px; margin-bottom: 20px; }
+        .task-input { flex: 1; background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 12px 16px; color: var(--text-primary); font-family: inherit; font-size: 0.95rem; outline: none; min-width: 0; }
+        .task-input:focus { border-color: var(--border-active); }
         
-        .scratch-pad { width: 100%; flex: 1; min-height: 110px; background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 10px; color: var(--text-secondary); font-family: monospace; font-size: 0.8rem; resize: none; outline: none; }
-        .timer-display { font-family: monospace; font-size: 1.8rem; text-align: center; color: var(--text-primary); margin: 6px 0 12px 0; background: var(--bg-terminal); border: 1px solid var(--border-subtle); padding: 8px; border-radius: 6px; }
+        .deploy-btn { background: var(--bg-terminal); color: var(--text-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0 20px; font-weight: 600; font-family: inherit; font-size: 0.9rem; cursor: pointer; white-space: nowrap; transition: all 0.15s ease; }
+        .deploy-btn:hover:not(:disabled) { border-color: var(--border-active); color: var(--text-primary); background: rgba(255,255,255,0.02); }
+        .deploy-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
-        .code-snippet-box { background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 10px; font-family: monospace; font-size: 0.75rem; color: #a6accd; overflow-x: auto; white-space: pre; max-height: 140px; margin-bottom: 8px; }
+        .checklist-container { list-style: none; }
+        .checklist-item { padding: 12px 10px; border-bottom: 1px solid var(--border-subtle); font-size: 0.95rem; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
+        .task-left-block { display: flex; align-items: center; min-width: 0; }
+        .status-box { font-family: monospace; font-weight: bold; color: var(--text-muted); margin-right: 14px; min-width: 28px; flex-shrink: 0; }
+        .task-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .clear-single-btn { background: none; border: none; color: var(--text-dark); font-size: 0.8rem; cursor: pointer; margin-left: 12px; flex-shrink: 0; }
+        .clear-single-btn:hover { color: var(--accent-alert) !important; }
+        .resolved { color: var(--text-dark) !important; }
+        .resolved .task-text { text-decoration: line-through; }
+
+        .metrics-footer { display: flex; justify-content: space-between; margin-top: auto; padding-top: 16px; font-size: 0.85rem; color: var(--text-muted); border-top: 1px dashed var(--border-subtle); }
+        .purge-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; text-decoration: underline; }
+
+        .ai-chat-log { background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 8px; height: 320px; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 16px; margin-bottom: 14px; }
+        .chat-bubble { font-size: 0.9rem; line-height: 1.5; max-width: 85%; word-break: break-word; }
+        .bubble-user { color: var(--text-primary); align-self: flex-end; background: var(--chat-user-bg); padding: 10px 14px; border-radius: 12px 12px 2px 12px; }
+        .bubble-gemini { color: var(--text-secondary); align-self: flex-start; background: var(--chat-gemini-bg); border: 1px solid var(--chat-gemini-border); padding: 12px 16px; border-radius: 12px 12px 12px 2px; }
+
+        .weather-display { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: center; margin-bottom: 16px; }
+        .temp-primary { font-size: 2.4rem; font-weight: 700; color: var(--text-primary); }
+        .weather-meta { font-size: 0.85rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 4px; }
+        .weather-meta span { color: var(--text-secondary); font-weight: 600; }
+        .forecast-container { display: flex; flex-direction: column; gap: 6px; background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 12px; }
+        .forecast-row { display: grid; grid-template-columns: 2.5fr 3.5fr 2fr; font-size: 0.85rem; padding: 4px 0; border-bottom: 1px solid var(--border-subtle); }
+        .forecast-row:last-child { border-bottom: none; }
+
+        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); row-gap: 6px; text-align: center; }
+        .calendar-day-label { color: var(--text-muted); font-weight: 600; font-size: 0.75rem; padding-bottom: 8px; }
+        .calendar-cell { color: var(--text-secondary); font-size: 0.85rem; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 4px; }
+        .calendar-cell.muted { color: var(--text-dark); }
+        .calendar-cell.today { border: 1px solid var(--text-primary); color: var(--text-primary); font-weight: 700; }
+
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+        .stat-card { background: var(--bg-terminal); border: 1px solid var(--border-subtle); padding: 12px; border-radius: 6px; }
+        .stat-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; }
+        .stat-value { font-size: 1.15rem; font-weight: 700; color: var(--text-primary); font-family: monospace; }
+        .progress-track { background: var(--progress-track); height: 8px; border-radius: 4px; overflow: hidden; border: 1px solid var(--border-subtle); margin-top: 6px; }
+        .progress-fill { background: var(--text-primary); height: 100%; transition: width 0.3s ease; }
+
+        .material-selector { background: var(--bg-terminal); border: 1px solid var(--border-subtle); color: var(--text-primary); width: 100%; padding: 10px; border-radius: 6px; margin-bottom: 12px; outline: none; }
+        .spec-table { width: 100%; font-family: monospace; font-size: 0.8rem; border-collapse: collapse; }
+        .spec-table td { padding: 6px 8px; border-bottom: 1px solid var(--border-subtle); }
+        .spec-table td:last-child { text-align: right; color: var(--text-primary); font-weight: 600; }
+
+        .logistics-list { list-style: none; font-size: 0.85rem; display: flex; flex-direction: column; gap: 8px; }
+        .logistics-item { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+        .logistics-cb { accent-color: var(--text-primary); cursor: pointer; }
+
+        /* FIXED CALCULATOR SCREEN LAYOUT */
+        .calc-screen { width: 100%; background: var(--bg-terminal); color: var(--text-primary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 14px; font-family: monospace; font-size: 1.2rem; text-align: right; outline: none; margin-bottom: 12px; min-height: 50px; overflow-x: auto; white-space: nowrap; word-break: break-all; display: block; }
+        .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+        .calc-btn { background: var(--bg-terminal); color: var(--text-secondary); border: 1px solid var(--border-subtle); padding: 12px; font-family: monospace; font-size: 0.95rem; font-weight: 600; border-radius: 6px; cursor: pointer; transition: all 0.15s ease; }
+        .calc-btn:hover { border-color: var(--border-active); color: var(--text-primary); }
+        .calc-btn.op { color: var(--text-muted); }
+        .calc-btn.action { background: none; border-color: var(--border-active); color: var(--text-primary); }
+
+        /* NEW NEW TILES DESIGN */
+        .converter-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+        .scratch-pad { width: 100%; height: 130px; background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 12px; color: var(--text-primary); font-family: inherit; font-size: 0.9rem; resize: none; outline: none; margin-top: 12px; }
+        .scratch-pad:focus { border-color: var(--border-active); }
+        .timer-display { font-family: monospace; font-size: 2.2rem; font-weight: 700; text-align: center; color: var(--text-primary); margin: 12px 0; background: var(--bg-terminal); border: 1px solid var(--border-subtle); padding: 8px; border-radius: 6px; }
+
+        @media (max-width: 900px) {
+            body { padding: 20px 14px; }
+            header { flex-direction: column; align-items: flex-start; gap: 14px; }
+            .dashboard-grid { grid-template-columns: 1fr; gap: 16px; }
+            .col-3, .col-2 { grid-column: span 1; }
+            .ai-chat-log { height: 260px; }
+        }
     </style>
 </head>
 <body>
 
-    <div id="splash-screen-overlay">
-        <div class="splash-brand">Workspace core</div>
-        <div class="splash-loader-bar"><div class="splash-loader-progress"></div></div>
+    <div class="sidebar-drawer" id="workspace-drawer-node">
+        <div class="drawer-header">
+            <h3>Workspace Tiles</h3>
+            <button class="close-drawer-btn" onclick="toggleWorkspaceDrawer(false)">×</button>
+        </div>
+        <div class="tile-toggle-container">
+            <ul class="tile-toggle-list">
+                <li class="tile-toggle-item"><label>Daily Checklist</label><input type="checkbox" data-tile="tile-checklist" checked onchange="synchronizeTileVisibility(this)"></li>
+                <li class="tile-toggle-item"><label>Gemini Copilot</label><input type="checkbox" data-tile="tile-ai-engine" checked onchange="synchronizeTileVisibility(this)"></li>
+                <li class="tile-toggle-item"><label>Local Weather</label><input type="checkbox" data-tile="tile-weather" checked onchange="synchronizeTileVisibility(this)"></li>
+                <li class="tile-toggle-item"><label>Material Matrix</label><input type="checkbox" data-tile="tile-materials" checked onchange="synchronizeTileVisibility(this)"></li>
+                <li class="tile-toggle-item"><label>Logistics Calendar</label><input type="checkbox" data-tile="tile-calendar" checked onchange="synchronizeTileVisibility(this)"></li>
+                <li class="tile-toggle-item"><label>Cycling Telemetry</label><input type="checkbox" data-tile="tile-cycling" checked onchange="synchronizeTileVisibility(this)"></li>
+                <li class="tile-toggle-item"><label>Calculator Terminal</label><input type="checkbox" data-tile="tile-calculator" checked onchange="synchronizeTileVisibility(this)"></li>
+                <li class="tile-toggle-item"><label>Transit Logistics</label><input type="checkbox" data-tile="tile-transit" checked onchange="synchronizeTileVisibility(this)"></li>
+                <li class="tile-toggle-item"><label>Mass Converter</label><input type="checkbox" data-tile="tile-converter" checked onchange="synchronizeTileVisibility(this)"></li>
+                <li class="tile-toggle-item"><label>Scratch Pad</label><input type="checkbox" data-tile="tile-scratch" checked onchange="synchronizeTileVisibility(this)"></li>
+                <li class="tile-toggle-item"><label>System Stopwatch</label><input type="checkbox" data-tile="tile-stopwatch" checked onchange="synchronizeTileVisibility(this)"></li>
+            </ul>
+        </div>
     </div>
 
     <div class="container">
         <header>
             <div>
                 <h1>Workspace Dashboard</h1>
-                <p class="subtitle">Real-time tracking matrix & physics engine configuration</p>
+                <p class="subtitle">Unified logistics & development environment</p>
             </div>
             <div class="header-controls">
-                <button class="control-ui-btn" onclick="toggleStrictGeometry()">Sizing Mode: Dynamic Grid</button>
-                <button class="control-ui-btn" onclick="toggleDashboardTheme()">Theme</button>
+                <button class="menu-trigger-btn" onclick="toggleWorkspaceDrawer(true)">☰ Manage Workspace</button>
+                <button class="theme-toggle-btn" onclick="toggleDashboardTheme()">Theme: <span id="theme-status-lbl">Dark</span></button>
             </div>
         </header>
 
         <div class="dashboard-grid" id="main-dashboard-grid-node">
             
-            <div class="grid-item" id="tile-checklist">
+            <div class="grid-item col-3" id="tile-checklist">
                 <div class="panel">
-                    <h2>
-                        <span class="tile-grab-surface">⋮ Daily Tasks</span>
-                        <div class="tile-action-controls">
-                            <button class="tile-control-trigger" onclick="cycleTileSizeGeometry('tile-checklist')">⤢</button>
-                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-checklist')">—</button>
-                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-checklist')">×</button>
-                        </div>
-                    </h2>
-                    <div class="control-row">
-                        <input type="text" id="task-input-node" class="task-input" placeholder="Append active trace flag...">
+                    <h2>Daily Checklist <span class="drag-handle">⋮⋮ DRAG</span></h2>
+                    <div class="control-row" style="margin-top: 14px;">
+                        <input type="text" id="task-input-node" class="task-input" placeholder="Add tracking log entry...">
                         <button class="deploy-btn" onclick="window.commitNewTask()">Add</button>
                     </div>
                     <ul class="checklist-container" id="checklist-render-node"></ul>
-                </div>
-            </div>
-
-            <div class="grid-item sz-wide" id="tile-ai-engine">
-                <div class="panel">
-                    <h2>
-                        <span class="tile-grab-surface">⋮ Gemini Copilot</span>
-                        <div class="tile-action-controls">
-                            <button class="tile-control-trigger" onclick="cycleTileSizeGeometry('tile-ai-engine')">⤢</button>
-                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-ai-engine')">—</button>
-                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-ai-engine')">×</button>
-                        </div>
-                    </h2>
-                    <div class="ai-chat-log" id="ai-chat-viewport"></div>
-                    <div class="control-row" style="margin-bottom:0;">
-                        <input type="text" id="ai-query-input" class="task-input" placeholder="Query pipeline configuration model...">
-                        <button class="deploy-btn" onclick="dispatchAiQuery()">Send</button>
+                    <div class="metrics-footer">
+                        <div>Active: <span id="active-count">0</span> | Resolved: <span id="complete-count">0</span></div>
+                        <button class="purge-btn" onclick="window.purgeCompletedTasks()">Purge Resolved</button>
                     </div>
                 </div>
             </div>
 
-            <div class="grid-item" id="tile-weather">
+            <div class="grid-item col-3" id="tile-ai-engine">
                 <div class="panel">
-                    <h2>
-                        <span class="tile-grab-surface">⋮ Local Weather</span>
-                        <div class="tile-action-controls">
-                            <button class="tile-control-trigger" onclick="cycleTileSizeGeometry('tile-weather')">⤢</button>
-                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-weather')">—</button>
-                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-weather')">×</button>
+                    <h2>Gemini Copilot <span class="drag-handle">⋮⋮ DRAG</span></h2>
+                    <div class="ai-chat-log" id="ai-chat-viewport" style="margin-top: 14px;"></div>
+                    <div class="control-row" style="margin-bottom: 0;">
+                        <input type="text" id="ai-query-input" class="task-input" placeholder="Query Gemini environment engine...">
+                        <button class="deploy-btn" id="ai-submit-btn" onclick="dispatchAiQuery()">Query</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-item col-2" id="tile-weather">
+                <div class="panel">
+                    <h2>Local Weather <span class="drag-handle">⋮⋮ DRAG</span></h2>
+                    <div class="weather-display" style="margin-top: 14px;">
+                        <div>
+                            <div class="temp-primary" id="weather-temp">--°F</div>
+                            <div style="font-size: 0.9rem; color: var(--text-muted); margin-top: 2px;" id="weather-cond">Loading...</div>
                         </div>
-                    </h2>
-                    <div class="weather-display">
-                        <div class="temp-primary" id="weather-temp">72°F</div>
                         <div class="weather-meta">
-                            <div style="font-weight:600;color:var(--text-primary)">Old Town, ME</div>
-                            <div id="weather-cond" style="font-size:0.7rem;color:var(--text-muted)">Clear sky</div>
+                            <div>Location: <span>Old Town, ME</span></div>
+                            <div>Wind: <span id="weather-wind">-- mph</span></div>
+                            <div>Humidity: <span id="weather-humidity">--%</span></div>
                         </div>
                     </div>
                     <div class="forecast-container" id="weather-forecast">
-                        <div class="forecast-row"><span>Mon</span><span>● Clear Skies</span><span>72°</span></div>
-                        <div class="forecast-row"><span>Tue</span><span>▲ Overcast</span><span>64°</span></div>
+                        <div class="forecast-row"><span>--</span><span>Syncing details...</span><span style="text-align:right;">-- / --</span></div>
                     </div>
                 </div>
             </div>
 
-            <div class="grid-item" id="tile-property-hunt">
+            <div class="grid-item col-2" id="tile-materials">
                 <div class="panel">
-                    <h2>
-                        <span class="tile-grab-surface">⋮ Real Estate Scout</span>
-                        <div class="tile-action-controls">
-                            <button class="tile-control-trigger" onclick="cycleTileSizeGeometry('tile-property-hunt')">⤢</button>
-                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-property-hunt')">—</button>
-                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-property-hunt')">×</button>
-                        </div>
-                    </h2>
-                    <div class="forecast-container" style="background:transparent;padding:0;border:none;gap:6px;">
-                        <div class="forecast-row" style="grid-template-columns: 5fr 3fr; border-bottom:1px solid var(--border-subtle); padding-bottom:4px;">
-                            <span>📍 Old Town Matrix Spec</span><span style="color:var(--text-primary);text-align:right;">Pending</span>
-                        </div>
-                        <div class="forecast-row" style="grid-template-columns: 5fr 3fr; border-bottom:1px solid var(--border-subtle); padding-bottom:4px;">
-                            <span>📍 Bangor Core Plots</span><span style="color:var(--text-muted);text-align:right;">Audited</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="grid-item" id="tile-veg-macros">
-                <div class="panel">
-                    <h2>
-                        <span class="tile-grab-surface">⋮ Vegetarian Macro Lab</span>
-                        <div class="tile-action-controls">
-                            <button class="tile-control-trigger" onclick="cycleTileSizeGeometry('tile-veg-macros')">⤢</button>
-                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-veg-macros')">—</button>
-                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-veg-macros')">×</button>
-                        </div>
-                    </h2>
-                    <table class="spec-table">
-                        <tr><td>Organic Soy Curls (Dehydrated)</td><td>72g Protein Base</td></tr>
-                        <tr><td>Gardein Plant-Ground Mix</td><td>120g Serving Block</td></tr>
-                        <tr><td>Daily Clean Target Index</td><td style="color:#4ade80;">100% Plant-Based</td></tr>
-                    </table>
-                </div>
-            </div>
-
-            <div class="grid-item" id="tile-mass-recipe">
-                <div class="panel">
-                    <h2>
-                        <span class="tile-grab-surface">⋮ Gram-Mass Scalar</span>
-                        <div class="tile-action-controls">
-                            <button class="tile-control-trigger" onclick="cycleTileSizeGeometry('tile-mass-recipe')">⤢</button>
-                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-mass-recipe')">—</button>
-                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-mass-recipe')">×</button>
-                        </div>
-                    </h2>
-                    <div style="font-size: 0.8rem; margin-bottom:8px;">Base: <span style="color:var(--text-primary);">700g Bread Flour</span> Matrix</div>
-                    <table class="spec-table">
-                        <tr><td>Water mass (68% hydration)</td><td>476 g</td></tr>
-                        <tr><td>Fine Sea Salt (2%)</td><td>14 g</td></tr>
-                    </table>
-                </div>
-            </div>
-
-            <div class="grid-item" id="tile-beeline-velo">
-                <div class="panel">
-                    <h2>
-                        <span class="tile-grab-surface">⋮ Beeline Velo Hub</span>
-                        <div class="tile-action-controls">
-                            <button class="tile-control-trigger" onclick="cycleTileSizeGeometry('tile-beeline-velo')">⤢</button>
-                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-beeline-velo')">—</button>
-                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-beeline-velo')">×</button>
-                        </div>
-                    </h2>
-                    <div class="forecast-container" style="background:transparent;padding:0;border:none;">
-                        <div class="forecast-row" style="grid-template-columns: 6fr 4fr;">
-                            <span>Hardware Mount</span><span style="color:#4ade80;text-align:right;">Locked</span>
-                        </div>
-                        <div class="forecast-row" style="grid-template-columns: 6fr 4fr; margin-top:4px;">
-                            <span>Telemetry Sync</span><span style="color:var(--text-muted);text-align:right;">Parity Ok</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="grid-item" id="tile-subaru-log">
-                <div class="panel">
-                    <h2>
-                        <span class="tile-grab-surface">⋮ Outback Maintenance</span>
-                        <div class="tile-action-controls">
-                            <button class="tile-control-trigger" onclick="cycleTileSizeGeometry('tile-subaru-log')">⤢</button>
-                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-subaru-log')">—</button>
-                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-subaru-log')">×</button>
-                        </div>
-                    </h2>
-                    <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:6px;">Chassis: 2014 Outback 2.5i</div>
-                    <table class="spec-table">
-                        <tr><td>Engine Oil Spec</td><td>5W-30 Synthetic Mix</td></tr>
-                        <tr><td>Sump Fluid Capacity</td><td>5.1 US Quarts</td></tr>
-                    </table>
-                </div>
-            </div>
-
-            <div class="grid-item" id="tile-print-debugger">
-                <div class="panel">
-                    <h2>
-                        <span class="tile-grab-surface">⋮ Additive Defect Debugger</span>
-                        <div class="tile-action-controls">
-                            <button class="tile-control-trigger" onclick="cycleTileSizeGeometry('tile-print-debugger')">⤢</button>
-                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-print-debugger')">—</button>
-                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-print-debugger')">×</button>
-                        </div>
-                    </h2>
-                    <select class="material-selector" style="margin-bottom:6px;">
-                        <option>First Layer Lift / Warping</option>
-                        <option>PETG Stringing/Volumetric Blobs</option>
+                    <h2>Material Matrix Lookup <span class="drag-handle">⋮⋮ DRAG</span></h2>
+                    <select id="material-selector-node" class="material-selector" style="margin-top: 14px;" onchange="updateMaterialSpecs()">
+                        <option value="petg">PETG (Carbon Fiber Reinforced)</option>
+                        <option value="pla">PLA+ High-Performance</option>
+                        <option value="alu">6061-T6 Aluminum Alloy</option>
                     </select>
-                    <div class="stat-card" style="font-size:0.75rem; padding:8px;">
-                        Remedy: Scrub plate with IPA. Drop Z-height by 0.02mm.
-                    </div>
-                </div>
-            </div>
-
-            <div class="grid-item" id="tile-git-terminal">
-                <div class="panel">
-                    <h2>
-                        <span class="tile-grab-surface">⋮ Git Automation Hook</span>
-                        <div class="tile-action-controls">
-                            <button class="tile-control-trigger" onclick="cycleTileSizeGeometry('tile-git-terminal')">⤢</button>
-                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-git-terminal')">—</button>
-                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-git-terminal')">×</button>
-                        </div>
-                    </h2>
-                    <div class="code-snippet-box" style="max-height:60px; margin-bottom:6px;">git add index.html&#10;git commit -m "update build"&#10;git push origin main</div>
-                    <button class="deploy-btn" style="width:100%; padding:6px;" onclick="navigator.clipboard.writeText('git add index.html && git commit -m \'update layout build\' && git push origin main')">Copy Clean Push String</button>
-                </div>
-            </div>
-
-            <div class="grid-item" id="tile-rail-tracker">
-                <div class="panel">
-                    <h2>
-                        <span class="tile-grab-surface">⋮ Eastern Rail Logistics</span>
-                        <div class="tile-action-controls">
-                            <button class="tile-control-trigger" onclick="cycleTileSizeGeometry('tile-rail-tracker')">⤢</button>
-                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-rail-tracker')">—</button>
-                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-rail-tracker')">×</button>
-                        </div>
-                    </h2>
                     <table class="spec-table">
-                        <tr><td>Boston Transit Line</td><td style="color:#f87171;">Delayed 4m</td></tr>
-                        <tr><td>Cambridge Connector</td><td>Nominal</td></tr>
+                        <tr><td>Density</td><td id="mat-density">1.27 g/cm³</td></tr>
+                        <tr><td>Tensile Strength</td><td id="mat-tensile">48.5 MPa</td></tr>
+                        <tr><td>Flexural Modulus</td><td id="mat-modulus">3.8 GPa</td></tr>
                     </table>
                 </div>
             </div>
 
-            <div class="grid-item" id="tile-mexico-dining">
+            <div class="grid-item col-2" id="tile-calendar">
                 <div class="panel">
-                    <h2>
-                        <span class="tile-grab-surface">⋮ Playa del Carmen Archive</span>
-                        <div class="tile-action-controls">
-                            <button class="tile-control-trigger" onclick="cycleTileSizeGeometry('tile-mexico-dining')">⤢</button>
-                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-mexico-dining')">—</button>
-                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-mexico-dining')">×</button>
+                    <div class="calendar-header">
+                        <h2 id="calendar-header-title" style="width:100%;">May 2026 <span class="drag-handle" style="float:right;">⋮⋮ DRAG</span></h2>
+                    </div>
+                    <div class="calendar-grid" id="calendar-matrix-grid"></div>
+                </div>
+            </div>
+
+            <div class="grid-item col-2" id="tile-cycling">
+                <div class="panel">
+                    <h2>Cycling Telemetry <span class="drag-handle">⋮⋮ DRAG</span></h2>
+                    <div class="stats-grid" style="margin-top: 14px;">
+                        <div class="stat-card">
+                            <div class="stat-label">Block Mileage</div>
+                            <div class="stat-value">76.0 mi</div>
                         </div>
-                    </h2>
-                    <div class="stat-card" style="font-size:0.75rem; padding:8px;">
-                        🌴 Menu Ledger: Verified local plant-based infrastructure variations and protein alternatives.
+                        <div class="stat-card">
+                            <div class="stat-label">Avg Speed</div>
+                            <div class="stat-value">15.8 mph</div>
+                        </div>
+                    </div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted);">
+                        Target Century Milestone: <strong>76%</strong>
+                        <div class="progress-track"><div class="progress-fill" style="width: 76%;"></div></div>
                     </div>
                 </div>
             </div>
 
-            <div class="grid-item" id="tile-spanish-audio">
+            <div class="grid-item col-2" id="tile-calculator">
                 <div class="panel">
-                    <h2>
-                        <span class="tile-grab-surface">⋮ Spain Discography (2010s)</span>
-                        <div class="tile-action-controls">
-                            <button class="tile-control-trigger" onclick="cycleTileSizeGeometry('tile-spanish-audio')">⤢</button>
-                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-spanish-audio')">—</button>
-                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-spanish-audio')">×</button>
+                    <h2>Calculator Terminal <span class="drag-handle">⋮⋮ DRAG</span></h2>
+                    <div style="margin-top: 14px; display: flex; flex-direction: column;">
+                        <div id="calc-display-node" class="calc-screen">0</div>
+                        <div class="calc-grid">
+                            <button class="calc-btn action" onclick="clearCalculatorDisplay()">C</button>
+                            <button class="calc-btn op" onclick="appendCalculatorValue('/')">/</button>
+                            <button class="calc-btn op" onclick="appendCalculatorValue('*')">*</button>
+                            <button class="calc-btn op" onclick="appendCalculatorValue('-')">-</button>
+                            
+                            <button class="calc-btn" onclick="appendCalculatorValue('7')">7</button>
+                            <button class="calc-btn" onclick="appendCalculatorValue('8')">8</button>
+                            <button class="calc-btn" onclick="appendCalculatorValue('9')">9</button>
+                            <button class="calc-btn op" onclick="appendCalculatorValue('+')">+</button>
+                            
+                            <button class="calc-btn" onclick="appendCalculatorValue('4')">4</button>
+                            <button class="calc-btn" onclick="appendCalculatorValue('5')">5</button>
+                            <button class="calc-btn" onclick="appendCalculatorValue('6')">6</button>
+                            <button class="calc-btn action" style="grid-row: span 2; height: 100%;" onclick="evaluateCalculatorResult()">=</button>
+                            
+                            <button class="calc-btn" onclick="appendCalculatorValue('1')">1</button>
+                            <button class="calc-btn" onclick="appendCalculatorValue('2')">2</button>
+                            <button class="calc-btn" onclick="appendCalculatorValue('3')">3</button>
+                            
+                            <button class="calc-btn" style="grid-column: span 2;" onclick="appendCalculatorValue('0')">0</button>
+                            <button class="calc-btn" onclick="appendCalculatorValue('.')">.</button>
                         </div>
-                    </h2>
-                    <div class="stat-card" style="font-size:0.75rem; padding:8px;">
-                        🎵 Audio Matrix Tracker: Indexing 2010s regional sound waves & tracking charts.
                     </div>
                 </div>
             </div>
 
-            <div class="add-tile-blueprint" id="generic-creation-trigger-card">
-                <span class="plus-icon-glyph">+</span>
-                <div class="spawn-context-menu" id="creation-matrix-dropdown">
-                    <div class="spawn-menu-title">Initialize Latent Module</div>
-                    <button class="spawn-opt-btn" onclick="restoreNamedTileInstance('tile-checklist')">Tasks</button>
-                    <button class="spawn-opt-btn" onclick="restoreNamedTileInstance('tile-ai-engine')">Gemini Copilot</button>
-                    <button class="spawn-opt-btn" onclick="restoreNamedTileInstance('tile-weather')">Local Weather</button>
-                    <button class="spawn-opt-btn" onclick="restoreNamedTileInstance('tile-property-hunt')">Real Estate Scout</button>
-                    <button class="spawn-opt-btn" onclick="restoreNamedTileInstance('tile-veg-macros')">Vegetarian Macro Lab</button>
-                    <button class="spawn-opt-btn" onclick="restoreNamedTileInstance('tile-mass-recipe')">Gram-Mass Scalar</button>
-                    <button class="spawn-opt-btn" onclick="restoreNamedTileInstance('tile-beeline-velo')">Beeline Velo Hub</button>
-                    <button class="spawn-opt-btn" onclick="restoreNamedTileInstance('tile-subaru-log')">Outback Maintenance</button>
-                    <button class="spawn-opt-btn" onclick="restoreNamedTileInstance('tile-print-debugger')">Additive Defect Debugger</button>
-                    <button class="spawn-opt-btn" onclick="restoreNamedTileInstance('tile-git-terminal')">Git Hook</button>
-                    <button class="spawn-opt-btn" onclick="restoreNamedTileInstance('tile-rail-tracker')">Eastern Rail Logistics</button>
-                    <button class="spawn-opt-btn" onclick="restoreNamedTileInstance('tile-mexico-dining')">Playa del Carmen Archive</button>
-                    <button class="spawn-opt-btn" onclick="restoreNamedTileInstance('tile-spanish-audio')">Spain Discography</button>
+            <div class="grid-item col-2" id="tile-transit">
+                <div class="panel">
+                    <h2>Transit & Travel Logistics <span class="drag-handle">⋮⋮ DRAG</span></h2>
+                    <ul class="logistics-list" style="margin-top: 14px;">
+                        <li class="logistics-item"><input type="checkbox" id="log-c1" class="logistics-cb" checked><label for="log-c1">Beeline navigation kit loaded</label></li>
+                        <li class="logistics-item"><input type="checkbox" id="log-c2" class="logistics-cb"><label for="log-c2">CAD geometry file export backup</label></li>
+                        <li class="logistics-item"><input type="checkbox" id="log-c3" class="logistics-cb" checked><label for="log-c3">Route itineraries synchronized</label></li>
+                        <li class="logistics-item"><input type="checkbox" id="log-c4" class="logistics-cb"><label for="log-c4">Pultrusion materials list verified</label></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="grid-item col-2" id="tile-converter">
+                <div class="panel">
+                    <h2>Mass & Spec Converter <span class="drag-handle">⋮⋮ DRAG</span></h2>
+                    <div style="margin-top: 14px;">
+                        <div class="converter-row">
+                            <input type="number" id="conv-input-grams" class="task-input" placeholder="Grams (g)" oninput="convertMassUnits('g')">
+                            <input type="number" id="conv-input-oz" class="task-input" placeholder="Ounces (oz)" oninput="convertMassUnits('oz')">
+                        </div>
+                        <div class="converter-row">
+                            <input type="number" id="conv-input-mm" class="task-input" placeholder="Metric (mm)" oninput="convertDimensionUnits('mm')">
+                            <input type="number" id="conv-input-in" class="task-input" placeholder="Inches (in)" oninput="convertDimensionUnits('in')">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-item col-2" id="tile-scratch">
+                <div class="panel">
+                    <h2>Notes Scratch Pad <span class="drag-handle">⋮⋮ DRAG</span></h2>
+                    <textarea id="scratch-pad-node" class="scratch-pad" placeholder="Drop temporal code variables, log streams or workspace references..." oninput="persistScratchText(this.value)"></textarea>
+                </div>
+            </div>
+
+            <div class="grid-item col-2" id="tile-stopwatch">
+                <div class="panel">
+                    <h2>System Split Timer <span class="drag-handle">⋮⋮ DRAG</span></h2>
+                    <div class="timer-display" id="stopwatch-display-lbl">00:00.0</div>
+                    <div class="control-row" style="margin-bottom:0;">
+                        <button class="deploy-btn" style="flex:1;" id="stopwatch-toggle" onclick="toggleStopwatchSystem()">Start</button>
+                        <button class="deploy-btn" onclick="resetStopwatchSystem()">Reset</button>
+                    </div>
                 </div>
             </div>
 
         </div>
     </div>
 
-    <script>
-        // CORE POINTER INERTIAL DRAG UTILITIES
-        const grid = document.getElementById('main-dashboard-grid-node');
-        let activeDragElement = null;
-        let originalParentIndex = null;
-        let dragGhostReference = null;
-        
-        let pointerOffsetVector = { x: 0, y: 0 };
-        let pointerCurrentPosition = { x: 0, y: 0 };
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        // INITIALIZE TASK COMPONENT STATE
-        let tasksArrayStore = [
-            { id: 1, text: "Sync Velo navigation array parameters", done: false },
-            { id: 2, text: "Audit SolidWorks VBA macro output lines", done: true },
-            { id: 3, text: "Review pultrusion composition profiles for UMaine", done: false }
-        ];
+        const GEMINI_API_KEY = "YOUR_GEMINI_API_KEY_HERE"; 
 
-        window.addEventListener('DOMContentLoaded', () => {
-            renderChecklistDOM();
-            setTimeout(() => {
-                const splash = document.getElementById('splash-screen-overlay');
-                splash.style.opacity = '0';
-                setTimeout(() => splash.style.visibility = 'hidden', 500);
-            }, 600);
-        });
-
-        // POINTER DOWN REGISTER EVENT HANDLER
-        grid.addEventListener('pointerdown', (e) => {
-            const surfaceGrab = e.target.closest('.tile-grab-surface');
-            if (!surfaceGrab) return;
-            
-            const targetTileNode = surfaceGrab.closest('.grid-item');
-            if (!targetTileNode || grid.classList.contains('standardized-geometry')) return;
-
-            e.preventDefault();
-            activeDragElement = targetTileNode;
-            
-            const clientRect = activeDragElement.getBoundingClientRect();
-            pointerOffsetVector.x = e.clientX - clientRect.left;
-            pointerOffsetVector.y = e.clientY - clientRect.top;
-
-            // Generate structural spacer element to prevent layouts folding inward
-            dragGhostReference = document.createElement('div');
-            dragGhostReference.className = activeDragElement.className;
-            dragGhostReference.style.width = clientRect.width + 'px';
-            dragGhostReference.style.height = clientRect.height + 'px';
-            dragGhostReference.style.visibility = 'hidden';
-            dragGhostReference.id = 'drag-ghost-spacer';
-            
-            activeDragElement.parentNode.insertBefore(dragGhostReference, activeDragElement);
-
-            activeDragElement.style.width = clientRect.width + 'px';
-            activeDragElement.style.height = clientRect.height + 'px';
-            
-            activeDragElement.classList.add('pointer-dragging');
-            updateDragPositionCoordinates(e.clientX, e.clientY);
-            activeDragElement.setPointerCapture(e.pointerId);
-        });
-
-        grid.addEventListener('pointermove', (e) => {
-            if (!activeDragElement) return;
-            updateDragPositionCoordinates(e.clientX, e.clientY);
-            calculateDynamicReflowIntersections();
-        });
-
-        const terminalDragReleaseSequence = (e) => {
-            if (!activeDragElement) return;
-            
-            activeDragElement.releasePointerCapture(e.pointerId);
-            activeDragElement.classList.remove('pointer-dragging');
-            
-            activeDragElement.style.position = '';
-            activeDragElement.style.top = '';
-            activeDragElement.style.left = '';
-            activeDragElement.style.width = '';
-            activeDragElement.style.height = '';
-            
-            if (dragGhostReference && dragGhostReference.parentNode) {
-                dragGhostReference.parentNode.insertBefore(activeDragElement, dragGhostReference);
-                dragGhostReference.remove();
-            }
-            
-            document.querySelectorAll('.grid-item').forEach(el => el.classList.remove('physics-displaced'));
-            
-            activeDragElement = null;
-            dragGhostReference = null;
+        // CRITICAL FIX: Explicitly routing databaseURL to clear fallback warning state
+        const firebaseConfig = {
+            apiKey: "AIzaSyACQZ-5RfnQg7gT1_V2PuxG4nA6uRm28uM",
+            authDomain: "my-workspace-dashboard.firebaseapp.com",
+            databaseURL: "https://my-workspace-dashboard-default-rtdb.firebaseio.com/", 
+            projectId: "my-workspace-dashboard",
+            storageBucket: "my-workspace-dashboard.firebasestorage.app",
+            messagingSenderId: "584369640657",
+            appId: "1:584369640657:web:160320fd21b1b4993ce1f0"
         };
 
-        grid.addEventListener('pointerup', terminalDragReleaseSequence);
-        grid.addEventListener('pointercancel', terminalDragReleaseSequence);
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const dataSyncRef = ref(db, 'dashboard/tasks');
 
-        function updateDragPositionCoordinates(clientX, clientY) {
-            if (!activeDragElement) return;
-            activeDragElement.style.left = (clientX - pointerOffsetVector.x) + 'px';
-            activeDragElement.style.top = (clientY - pointerOffsetVector.y) + 'px';
-        }
+        let datasetState = [];
 
-        function calculateDynamicReflowIntersections() {
-            const dragRect = activeDragElement.getBoundingClientRect();
-            const elements = Array.from(grid.querySelectorAll('.grid-item:not(.pointer-dragging)'));
-            
-            let optimalTargetNode = null;
-            let minimumProximityDistance = Infinity;
+        const materialDatabase = {
+            petg: { density: "1.27 g/cm³", tensile: "48.5 MPa", modulus: "3.8 GPa" },
+            pla: { density: "1.24 g/cm³", tensile: "65.0 MPa", modulus: "4.1 GPa" },
+            alu: { density: "2.70 g/cm³", tensile: "310 MPa", modulus: "68.9 GPa" }
+        };
 
-            elements.forEach(cell => {
-                const cellRect = cell.getBoundingClientRect();
-                const deltaX = (dragRect.left + dragRect.width/2) - (cellRect.left + cellRect.width/2);
-                const deltaY = (dragRect.top + dragRect.height/2) - (cellRect.top + cellRect.height/2);
-                const calculatedDistance = Math.hypot(deltaX, deltaY);
-                
-                if (calculatedDistance < minimumProximityDistance) {
-                    minimumProximityDistance = calculatedDistance;
-                    optimalTargetNode = cell;
-                }
+        const weatherCodeMap = {
+            0: "Clear Skies", 1: "Mainly Clear", 2: "Partly Cloudy", 3: "Overcast",
+            45: "Foggy", 48: "Depositing Rime Fog", 51: "Light Drizzle", 53: "Moderate Drizzle",
+            55: "Dense Drizzle", 61: "Slight Rain", 63: "Moderate Rain", 65: "Heavy Rain",
+            71: "Slight Snowfall", 73: "Moderate Snowfall", 75: "Heavy Snowfall",
+            77: "Snow Grains", 80: "Slight Showers", 81: "Moderate Showers", 82: "Violent Showers",
+            85: "Slight Snow Showers", 86: "Heavy Snow Showers", 95: "Thunderstorm"
+        };
+
+        // --- EXPANDING SIDEBAR DRAWER LOGIC ---
+        window.toggleWorkspaceDrawer = function(openState) {
+            const drawer = document.getElementById('workspace-drawer-node');
+            if (openState) drawer.classList.add('open');
+            else drawer.classList.remove('open');
+        };
+
+        window.synchronizeTileVisibility = function(checkbox) {
+            const targetId = checkbox.getAttribute('data-tile');
+            const tileNode = document.getElementById(targetId);
+            if (!tileNode) return;
+
+            if (checkbox.checked) {
+                tileNode.classList.remove('hidden-tile');
+            } else {
+                tileNode.classList.add('hidden-tile');
+            }
+            saveTilePreferences();
+        };
+
+        function saveTilePreferences() {
+            const preferences = {};
+            document.querySelectorAll('.tile-toggle-list input').forEach(input => {
+                preferences[input.getAttribute('data-tile')] = input.checked;
             });
-
-            if (optimalTargetNode && minimumProximityDistance < 180) {
-                elements.forEach(el => el.classList.remove('physics-displaced'));
-                optimalTargetNode.classList.add('physics-displaced');
-                
-                const positionComparisonBit = optimalTargetNode.getBoundingClientRect().top + optimalTargetNode.getBoundingClientRect().height / 2;
-                if ((dragRect.top + dragRect.height / 2) > positionComparisonBit) {
-                    dragGhostReference.parentNode.insertBefore(dragGhostReference, optimalTargetNode.nextSibling);
-                } else {
-                    dragGhostReference.parentNode.insertBefore(dragGhostReference, optimalTargetNode);
-                }
-            }
+            localStorage.setItem('dashboard_tile_visibility_map', JSON.stringify(preferences));
         }
 
-        // ADD TILES DISPATCH MANAGEMENT
-        const creationCard = document.getElementById('generic-creation-trigger-card');
-        const dropdownMenu = document.getElementById('creation-matrix-dropdown');
+        function restoreTilePreferences() {
+            const stored = localStorage.getItem('dashboard_tile_visibility_map');
+            try {
+                const map = stored ? JSON.parse(stored) : {};
+                document.querySelectorAll('.tile-toggle-list input').forEach(input => {
+                    const id = input.getAttribute('data-tile');
+                    if (map[id] !== undefined) {
+                        input.checked = map[id];
+                        const tileNode = document.getElementById(id);
+                        if (tileNode) {
+                            if (map[id]) tileNode.classList.remove('hidden-tile');
+                            else tileNode.classList.add('hidden-tile');
+                        }
+                    }
+                });
+            } catch (e) { console.error(e); }
+        }
 
-        creationCard.addEventListener('click', (e) => {
-            e.stopPropagation();
-            dropdownMenu.classList.toggle('active');
-        });
-
-        document.addEventListener('click', () => dropdownMenu.classList.remove('active'));
-
-        window.restoreNamedTileInstance = function(id) {
-            const targetTileNode = document.getElementById(id);
-            if (targetTileNode) {
-                targetTileNode.classList.remove('hidden-tile');
-                grid.insertBefore(targetTileNode, creationCard);
-            }
-        };
-
-        window.removeTileFromCanvas = function(id) {
-            const targetTileNode = document.getElementById(id);
-            if (targetTileNode) targetTileNode.classList.add('hidden-tile');
-        };
-
-        window.toggleTileCollapse = function(id) {
-            const targetTileNode = document.getElementById(id);
-            if (targetTileNode) {
-                targetTileNode.querySelector('.panel').classList.toggle('collapsed-state');
-            }
-        };
-
-        window.cycleTileSizeGeometry = function(id) {
-            const targetTileNode = document.getElementById(id);
-            if (!targetTileNode || grid.classList.contains('standardized-geometry')) return;
-
-            if (!targetTileNode.classList.contains('sz-wide') && !targetTileNode.classList.contains('sz-tall')) {
-                targetTileNode.classList.add('sz-wide');
-            } else if (targetTileNode.classList.contains('sz-wide') && !targetTileNode.classList.contains('sz-tall')) {
-                targetTileNode.classList.remove('sz-wide');
-                targetTileNode.classList.add('sz-tall');
-            } else if (!targetTileNode.classList.contains('sz-wide') && targetTileNode.classList.contains('sz-tall')) {
-                targetTileNode.classList.add('sz-wide');
+        // --- MASS CONVERTER CODES ---
+        window.convertMassUnits = function(origin) {
+            const gNode = document.getElementById('conv-input-grams');
+            const ozNode = document.getElementById('conv-input-oz');
+            if (origin === 'g') {
+                const gVal = parseFloat(gNode.value);
+                ozNode.value = !isNaN(gVal) ? (gVal * 0.035274).toFixed(3) : '';
             } else {
-                targetTileNode.classList.remove('sz-wide', 'sz-tall');
+                const ozVal = parseFloat(ozNode.value);
+                gNode.value = !isNaN(ozVal) ? (ozVal * 28.3495).toFixed(1) : '';
             }
         };
 
-        window.toggleStrictGeometry = function() {
-            const buttonControl = document.querySelector('.control-ui-btn');
-            grid.classList.toggle('standardized-geometry');
-            if (grid.classList.contains('standardized-geometry')) {
-                buttonControl.textContent = "Sizing Mode: Uniform Grid";
+        window.convertDimensionUnits = function(origin) {
+            const mmNode = document.getElementById('conv-input-mm');
+            const inNode = document.getElementById('conv-input-in');
+            if (origin === 'mm') {
+                const mmVal = parseFloat(mmNode.value);
+                inNode.value = !isNaN(mmVal) ? (mmVal / 25.4).toFixed(4) : '';
             } else {
-                buttonControl.textContent = "Sizing Mode: Dynamic Grid";
+                const inVal = parseFloat(inNode.value);
+                mmNode.value = !isNaN(inVal) ? (inVal * 25.4).toFixed(2) : '';
             }
+        };
+
+        // --- SCRATCH PAD LOCALSTORAGE STORAGE ---
+        window.persistScratchText = function(text) {
+            localStorage.setItem('workspace_scratchpad_data', text);
+        };
+
+        function restoreScratchText() {
+            const storedText = localStorage.getItem('workspace_scratchpad_data') || '';
+            document.getElementById('scratch-pad-node').value = storedText;
+        }
+
+        // --- STOPWATCH ENGINE ---
+        let stopwatchId = null;
+        let stopwatchStartTime = 0;
+        let stopwatchElapsed = 0;
+
+        window.toggleStopwatchSystem = function() {
+            const btn = document.getElementById('stopwatch-toggle');
+            if (stopwatchId) {
+                clearInterval(stopwatchId);
+                stopwatchId = null;
+                btn.textContent = "Start";
+            } else {
+                stopwatchStartTime = Date.now() - stopwatchElapsed;
+                stopwatchId = setInterval(refreshStopwatchUi, 100);
+                btn.textContent = "Stop";
+            }
+        };
+
+        window.resetStopwatchSystem = function() {
+            clearInterval(stopwatchId);
+            stopwatchId = null;
+            stopwatchElapsed = 0;
+            document.getElementById('stopwatch-display-lbl').textContent = "00:00.0";
+            document.getElementById('stopwatch-toggle').textContent = "Start";
+        };
+
+        function refreshStopwatchUi() {
+            stopwatchElapsed = Date.now() - stopwatchStartTime;
+            const totalSecs = Math.floor(stopwatchElapsed / 1000);
+            const mins = Math.floor(totalSecs / 60);
+            const secs = totalSecs % 60;
+            const tenths = Math.floor((stopwatchElapsed % 1000) / 100);
+            
+            document.getElementById('stopwatch-display-lbl').textContent = 
+                `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}.${tenths}`;
+        }
+
+        // --- TASKS ENGINE ---
+        window.commitNewTask = function() {
+            const inputNode = document.getElementById('task-input-node');
+            if (!inputNode) return;
+            const val = inputNode.value.trim();
+            if (!val) return;
+            if (!Array.isArray(datasetState)) datasetState = [];
+            datasetState.push({ text: val, completed: false });
+            set(ref(db, 'dashboard/tasks'), datasetState).then(() => {
+                inputNode.value = '';
+                inputNode.focus();
+            });
+        };
+
+        window.toggleTaskCompleted = function(index) {
+            if (!Array.isArray(datasetState) || !datasetState[index]) return;
+            datasetState[index].completed = !datasetState[index].completed;
+            set(ref(db, 'dashboard/tasks'), datasetState);
+        };
+
+        window.deleteTargetTask = function(index) {
+            if (!Array.isArray(datasetState)) return;
+            datasetState.splice(index, 1);
+            set(ref(db, 'dashboard/tasks'), datasetState);
+        };
+
+        window.purgeCompletedTasks = function() {
+            if (!Array.isArray(datasetState)) return;
+            datasetState = datasetState.filter(t => !t.completed);
+            set(ref(db, 'dashboard/tasks'), datasetState);
         };
 
         window.toggleDashboardTheme = function() {
-            const runtimeTheme = document.documentElement.getAttribute('data-theme');
-            document.documentElement.setAttribute('data-theme', runtimeTheme === 'light' ? 'dark' : 'light');
+            const current = document.documentElement.getAttribute('data-theme');
+            const target = current === 'light' ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', target);
+            localStorage.setItem('workspace_theme', target);
+            document.getElementById('theme-status-lbl').textContent = target.toUpperCase();
         };
 
-        // CHECKLIST IMPLEMENTATION
-        function renderChecklistDOM() {
-            const listContainer = document.getElementById('checklist-render-node');
-            if (!listContainer) return;
-            listContainer.innerHTML = '';
-            tasksArrayStore.forEach(task => {
-                const li = document.createElement('li');
-                li.className = `checklist-item ${task.done ? 'resolved' : ''}`;
-                li.innerHTML = `<span>${task.text}</span><button class="tile-control-trigger remove-trigger" style="padding:2px 4px;">×</button>`;
-                li.querySelector('span').onclick = () => {
-                    task.done = !task.done;
-                    renderChecklistDOM();
-                };
-                li.querySelector('.remove-trigger').onclick = (e) => {
-                    e.stopPropagation();
-                    tasksArrayStore = tasksArrayStore.filter(t => t.id !== task.id);
-                    renderChecklistDOM();
-                };
-                listContainer.appendChild(li);
-            });
-        }
+        window.updateMaterialSpecs = function() {
+            const key = document.getElementById('material-selector-node').value;
+            const mat = materialDatabase[key];
+            if (!mat) return;
+            document.getElementById('mat-density').textContent = mat.density;
+            document.getElementById('mat-tensile').textContent = mat.tensile;
+            document.getElementById('mat-modulus').textContent = mat.modulus;
+        };
 
-        window.commitNewTask = function() {
-            const field = document.getElementById('task-input-node');
-            if (field && field.value.trim() !== '') {
-                tasksArrayStore.push({ id: Date.now(), text: field.value.trim(), done: false });
-                field.value = '';
-                renderChecklistDOM();
+        let calcExpressionStr = "";
+        window.appendCalculatorValue = function(val) {
+            const display = document.getElementById('calc-display-node');
+            if (calcExpressionStr === "0" && !isNaN(val)) {
+                calcExpressionStr = val;
+            } else {
+                calcExpressionStr += val;
+            }
+            display.textContent = calcExpressionStr;
+        };
+
+        window.clearCalculatorDisplay = function() {
+            calcExpressionStr = "";
+            document.getElementById('calc-display-node').textContent = "0";
+        };
+
+        window.evaluateCalculatorResult = function() {
+            const display = document.getElementById('calc-display-node');
+            if (!calcExpressionStr) return;
+            try {
+                const sanitizedResult = Function(`"use strict"; return (${calcExpressionStr})`)();
+                calcExpressionStr = String(sanitizedResult);
+                display.textContent = calcExpressionStr;
+            } catch (err) {
+                display.textContent = "Error";
+                calcExpressionStr = "";
             }
         };
 
-        // COPILOT CHAT SIMULATOR HOOKS
-        window.dispatchAiQuery = function() {
-            const rawField = document.getElementById('ai-query-input');
-            const chatLogViewport = document.getElementById('ai-chat-viewport');
-            if (!rawField || !chatLogViewport || rawField.value.trim() === '') return;
+        window.addEventListener('DOMContentLoaded', () => {
+            initDashboardTheme();
+            initDirectGeminiFetchChannel();
+            fetchLiveWeatherPipeline();
+            renderStaticCalendar();
+            initDragAndDropSystem();
+            restoreScratchText();
+            
+            onValue(dataSyncRef, (snapshot) => {
+                const data = snapshot.val();
+                datasetState = data ? (Array.isArray(data) ? data : Object.values(data)) : [];
+                synchronizeChecklist();
+            });
+        });
 
-            const userQueryText = rawField.value.trim();
-            rawField.value = '';
+        // --- DRAG AND DROP HANDLERS ---
+        function initDragAndDropSystem() {
+            const gridContainer = document.getElementById('main-dashboard-grid-node');
+            const items = gridContainer.querySelectorAll('.grid-item');
+            let draggedItem = null;
+
+            items.forEach(item => {
+                const handle = item.querySelector('.drag-handle');
+                item.setAttribute('draggable', 'false');
+
+                handle.addEventListener('mouseenter', () => item.setAttribute('draggable', 'true'));
+                handle.addEventListener('mouseleave', () => { if (!draggedItem) item.setAttribute('draggable', 'false'); });
+
+                item.addEventListener('dragstart', (e) => {
+                    draggedItem = item;
+                    setTimeout(() => item.classList.add('dragging'), 0);
+                    e.dataTransfer.effectAllowed = 'move';
+                });
+
+                item.addEventListener('dragend', () => {
+                    item.classList.remove('dragging');
+                    items.forEach(i => i.classList.remove('drag-over'));
+                    draggedItem = null;
+                    item.setAttribute('draggable', 'false');
+                    saveLayoutOrder();
+                });
+
+                item.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+                    if (item !== draggedItem) {
+                        item.classList.add('drag-over');
+                    }
+                });
+
+                item.addEventListener('dragleave', () => {
+                    item.classList.remove('drag-over');
+                });
+
+                item.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    item.classList.remove('drag-over');
+                    
+                    if (item !== draggedItem) {
+                        const childrenArray = Array.from(gridContainer.children);
+                        const draggedIdx = childrenArray.indexOf(draggedItem);
+                        const targetIdx = childrenArray.indexOf(item);
+
+                        if (draggedIdx < targetIdx) {
+                            gridContainer.insertBefore(draggedItem, item.nextSibling);
+                        } else {
+                            gridContainer.insertBefore(draggedItem, item);
+                        }
+                    }
+                });
+            });
+
+            restoreLayoutOrder();
+            restoreTilePreferences();
+        }
+
+        function saveLayoutOrder() {
+            const gridContainer = document.getElementById('main-dashboard-grid-node');
+            const orderIDs = Array.from(gridContainer.children).map(child => child.id);
+            localStorage.setItem('dashboard_tile_layout_sequence', JSON.stringify(orderIDs));
+        }
+
+        function restoreLayoutOrder() {
+            const storedSequence = localStorage.getItem('dashboard_tile_layout_sequence');
+            if (!storedSequence) return;
+            try {
+                const orderIDs = JSON.parse(storedSequence);
+                const gridContainer = document.getElementById('main-dashboard-grid-node');
+                orderIDs.forEach(id => {
+                    const tileNode = document.getElementById(id);
+                    if (tileNode) gridContainer.appendChild(tileNode);
+                });
+            } catch (err) { console.error(err); }
+        }
+
+        // --- WEATHER ENGINE ---
+        async function fetchLiveWeatherPipeline() {
+            const lat = 44.9356;
+            const lon = -68.6464;
+            const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=auto`;
+
+            try {
+                const res = await fetch(apiUrl);
+                if (!res.ok) throw new Error("Network fault");
+                const data = await res.json();
+
+                const current = data.current;
+                document.getElementById('weather-temp').textContent = `${Math.round(current.temperature_2m)}°F`;
+                document.getElementById('weather-cond').textContent = weatherCodeMap[current.weather_code] || "Overcast";
+                document.getElementById('weather-wind').textContent = `${Math.round(current.wind_speed_10m)} mph`;
+                document.getElementById('weather-humidity').textContent = `${current.relative_humidity_2m}%`;
+
+                const daily = data.daily;
+                const forecastContainer = document.getElementById('weather-forecast');
+                forecastContainer.innerHTML = '';
+
+                for (let i = 0; i < 2; i++) {
+                    const rawDate = new Date(daily.time[i] + 'T00:00:00');
+                    const options = { weekday: 'short', month: '2-digit', day: '2-digit' };
+                    const formattedDate = rawDate.toLocaleDateString('en-US', options);
+                    
+                    const conditionString = weatherCodeMap[daily.weather_code[i]] || "Variable";
+                    const maxT = Math.round(daily.temperature_2m_max[i]);
+                    const minT = Math.round(daily.temperature_2m_min[i]);
+
+                    const row = document.createElement('div');
+                    row.className = 'forecast-row';
+                    row.innerHTML = `<span>${formattedDate}</span><span>${conditionString}</span><span style="text-align:right;">${maxT}° / ${minT}°</span>`;
+                    forecastContainer.appendChild(row);
+                }
+            } catch (err) {
+                document.getElementById('weather-cond').textContent = "Offline";
+            }
+        }
+
+        function initDashboardTheme() {
+            const preserved = localStorage.getItem('workspace_theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', preserved);
+            document.getElementById('theme-status-lbl').textContent = preserved.toUpperCase();
+        }
+
+        function renderStaticCalendar() {
+            const gridNode = document.getElementById('calendar-matrix-grid');
+            if (!gridNode) return;
+            gridNode.innerHTML = '';
+            ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].forEach(l => {
+                const cell = document.createElement('div');
+                cell.className = 'calendar-day-label';
+                cell.textContent = l;
+                gridNode.appendChild(cell);
+            });
+            for (let p = 0; p < 5; p++) {
+                const cell = document.createElement('div');
+                cell.className = 'calendar-cell muted';
+                cell.textContent = 26 + p;
+                gridNode.appendChild(cell);
+            }
+            for (let d = 1; d <= 31; d++) {
+                const cell = document.createElement('div');
+                cell.className = 'calendar-cell' + (d === 18 ? ' today' : '');
+                cell.textContent = d;
+                gridNode.appendChild(cell);
+            }
+        }
+
+        // --- DIRECT COPILOT API CHANNEL ---
+        function initDirectGeminiFetchChannel() {
+            const logViewport = document.getElementById('ai-chat-viewport');
+            if (GEMINI_API_KEY === "YOUR_GEMINI_API_KEY_HERE") {
+                logViewport.innerHTML = '<div class="chat-bubble bubble-gemini" style="color:var(--accent-alert);"><strong>[Config Required]</strong> Paste your API key on line 251 to activate the Copilot.</div>';
+                return;
+            }
+            logViewport.innerHTML = '<div class="chat-bubble bubble-gemini"><strong>[Gemini Engine Online]</strong> Direct connection ready.</div>';
+        }
+
+        window.dispatchAiQuery = async function() {
+            const queryInput = document.getElementById('ai-query-input');
+            const logViewport = document.getElementById('ai-chat-viewport');
+            const submitBtn = document.getElementById('ai-submit-btn');
+            const rawText = queryInput.value.trim();
+            
+            if (!rawText) return;
+            if (GEMINI_API_KEY === "YOUR_GEMINI_API_KEY_HERE") {
+                alert("Please add your Gemini API Key on line 251 first.");
+                return;
+            }
+
+            queryInput.disabled = true;
+            submitBtn.disabled = true;
 
             const userBubble = document.createElement('div');
             userBubble.className = 'chat-bubble bubble-user';
-            userBubble.textContent = userQueryText;
-            chatLogViewport.appendChild(userBubble);
-            chatLogViewport.scrollTop = chatLogViewport.scrollHeight;
+            userBubble.textContent = rawText;
+            logViewport.appendChild(userBubble);
+            queryInput.value = '';
 
-            setTimeout(() => {
-                const geminiBubble = document.createElement('div');
-                geminiBubble.className = 'chat-bubble bubble-gemini';
-                geminiBubble.textContent = "Telemetry matrix update complete. Running mathematical calculations over real-time coordinate frames successfully.";
-                chatLogViewport.appendChild(geminiBubble);
-                chatLogViewport.scrollTop = chatLogViewport.scrollHeight;
-            }, 750);
+            const loadingBubble = document.createElement('div');
+            loadingBubble.className = 'chat-bubble bubble-gemini';
+            loadingBubble.innerHTML = '<em>Awaiting Gemini response...</em>';
+            logViewport.appendChild(loadingBubble);
+            logViewport.scrollTop = logViewport.scrollHeight;
+
+            try {
+                const directApiEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+                
+                const response = await fetch(directApiEndpoint, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: rawText }] }],
+                        systemInstruction: { parts: [{ text: "You are an exceptionally concise workspace copilot assistant." }] }
+                    })
+                });
+
+                if (!response.ok) {
+                    const textErr = await response.text();
+                    throw new Error(`API Status Code: ${response.status} - ${textErr}`);
+                }
+
+                const data = await response.json();
+                const textReply = data.candidates?.[0]?.content?.parts?.[0]?.text || "No text payload returned.";
+                loadingBubble.textContent = textReply;
+            } catch (err) {
+                loadingBubble.innerHTML = `<span style="color:var(--accent-alert);">Connection Failure: ${err.message}</span>`;
+            }
+            
+            queryInput.disabled = false;
+            submitBtn.disabled = false;
+            logViewport.scrollTop = logViewport.scrollHeight;
         };
+
+        function synchronizeChecklist() {
+            const container = document.getElementById('checklist-render-node');
+            if (!container) return;
+            container.innerHTML = '';
+            let remCount = 0, compCount = 0;
+
+            if (datasetState.length === 0) {
+                container.innerHTML = '<div style="color:var(--text-dark); padding:10px;">Queue empty.</div>';
+            } else {
+                datasetState.forEach((task, index) => {
+                    task.completed ? compCount++ : remCount++;
+                    const li = document.createElement('li');
+                    li.className = 'checklist-item' + (task.completed ? ' resolved' : '');
+                    li.innerHTML = `
+                        <div class="task-left-block">
+                            <span class="status-box">${task.completed ? '[X]' : '[ ]'}</span>
+                            <span class="task-text">${task.text}</span>
+                        </div>
+                        <button class="clear-single-btn">Delete</button>
+                    `;
+                    
+                    li.addEventListener('click', (e) => {
+                        if (e.target.classList.contains('clear-single-btn')) return;
+                        window.toggleTaskCompleted(index);
+                    });
+
+                    li.querySelector('.clear-single-btn').addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        window.deleteTargetTask(index);
+                    });
+                    container.appendChild(li);
+                });
+            }
+            document.getElementById('active-count').textContent = remCount;
+            document.getElementById('complete-count').textContent = compCount;
+        }
     </script>
 </body>
 </html>
