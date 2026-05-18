@@ -3,15 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Workspace Dashboard</title>
+    <title>Workspace Core Dashboard</title>
     <style>
         :root {
-            /* Premium Neutral Architectural Theme Archetype */
             --bg-base: #0b0c10;
-            --bg-surface: rgba(22, 26, 34, 0.55);
+            --bg-surface: rgba(22, 26, 34, 0.65);
             --bg-terminal: #050608;
-            --border-subtle: rgba(255, 255, 255, 0.04);
-            --border-active: rgba(255, 255, 255, 0.22);
+            --border-subtle: rgba(255, 255, 255, 0.05);
+            --border-active: rgba(255, 255, 255, 0.25);
             --text-primary: #ffffff;
             --text-secondary: #f4f4f7;
             --text-muted: #848694;
@@ -23,22 +22,19 @@
             --chat-user-bg: #292d3e;
             --chat-gemini-bg: rgba(255, 255, 255, 0.025);
             --chat-gemini-border: rgba(255, 255, 255, 0.04);
-            --code-bg: #1c1e26;
-            --pre-bg: #050608;
             
             --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             --progress-track: #151821;
             
-            /* High Depth Architectural Lighting */
             --panel-shadow: 0 20px 45px -12px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.03);
-            --blur-strength: 14px;
+            --blur-strength: 16px;
         }
 
         [data-theme="light"] {
             --bg-base: #f0f2f5;
-            --bg-surface: rgba(255, 255, 255, 0.82);
+            --bg-surface: rgba(255, 255, 255, 0.85);
             --bg-terminal: #fafafa;
-            --border-subtle: rgba(0, 0, 0, 0.05);
+            --border-subtle: rgba(0, 0, 0, 0.06);
             --border-active: rgba(0, 0, 0, 0.35);
             --text-primary: #18191f;
             --text-secondary: #2d2e38;
@@ -51,11 +47,9 @@
             --chat-user-bg: #e1e4ed;
             --chat-gemini-bg: #f5f6fa;
             --chat-gemini-border: rgba(0, 0, 0, 0.03);
-            --code-bg: #e1e4ed;
-            --pre-bg: #fafafa;
             --progress-track: #e1e4ed;
             --panel-shadow: 0 12px 35px -10px rgba(10, 15, 30, 0.06), 0 0 0 1px rgba(0, 0, 0, 0.01);
-            --blur-strength: 22px;
+            --blur-strength: 24px;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -63,16 +57,16 @@
             background-color: var(--bg-base); 
             color: var(--text-secondary); 
             font-family: var(--font-stack); 
-            padding: 40px 20px; 
+            padding: 40px 24px; 
             line-height: 1.5; 
             letter-spacing: -0.015em; 
-            transition: background-color 0.5s cubic-bezier(0.25, 1, 0.5, 1), color 0.5s ease; 
+            transition: background-color 0.4s cubic-bezier(0.25, 1, 0.5, 1); 
             overflow-x: hidden; 
         }
         
-        .container { max-width: 1350px; margin: 0 auto; }
+        .container { max-width: 1600px; margin: 0 auto; }
 
-        /* AMBIENT GLOW WORKSPACE SPLASH LAYER */
+        /* SPLASH INTRO ACCELERATOR */
         #splash-screen-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -82,365 +76,410 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            transition: opacity 0.7s cubic-bezier(0.25, 1, 0.5, 1), visibility 0.7s;
+            transition: opacity 0.5s cubic-bezier(0.25, 1, 0.5, 1), visibility 0.5s;
         }
-        .splash-brand { font-weight: 200; font-size: 1.9rem; letter-spacing: 0.18em; text-transform: uppercase; color: #ffffff; opacity: 0; transform: translateY(12px); animation: splashFadeInUp 1s forwards 0.2s; }
-        .splash-status { font-size: 0.78rem; font-family: monospace; color: #505464; margin-top: 16px; letter-spacing: 0.08em; opacity: 0; animation: splashFadeInUp 0.9s forwards 0.5s; }
-        .splash-loader-bar { width: 150px; height: 1px; background: rgba(255,255,255,0.08); margin-top: 28px; position: relative; overflow: hidden; border-radius: 2px; }
-        .splash-loader-progress { width: 35%; height: 100%; background: linear-gradient(90deg, transparent, #ffffff, transparent); position: absolute; left: -50%; animation: infiniteLoader 1.4s infinite ease-in-out; }
-        
-        @keyframes splashFadeInUp { to { opacity: 1; transform: translateY(0); } }
+        .splash-brand { font-weight: 200; font-size: 1.8rem; letter-spacing: 0.18em; text-transform: uppercase; color: #ffffff; }
+        .splash-loader-bar { width: 140px; height: 1px; background: rgba(255,255,255,0.08); margin-top: 24px; position: relative; overflow: hidden; }
+        .splash-loader-progress { width: 40%; height: 100%; background: linear-gradient(90deg, transparent, #ffffff, transparent); position: absolute; left: -50%; animation: infiniteLoader 1.2s infinite ease-in-out; }
         @keyframes infiniteLoader { 0% { left: -50%; } 100% { left: 110%; } }
 
-        header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 36px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 24px; }
-        h1 { color: var(--text-primary); font-size: 1.65rem; font-weight: 500; letter-spacing: -0.025em; }
-        .subtitle { color: var(--text-muted); font-size: 0.88rem; margin-top: 4px; font-weight: 400; }
+        header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 32px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 20px; }
+        h1 { color: var(--text-primary); font-size: 1.6rem; font-weight: 500; letter-spacing: -0.02em; }
+        .subtitle { color: var(--text-muted); font-size: 0.85rem; margin-top: 4px; }
 
-        .header-controls { display: flex; gap: 12px; }
-        .theme-toggle-btn, .menu-trigger-btn { background: var(--bg-surface); backdrop-filter: blur(var(--blur-strength)); color: var(--text-secondary); border: 1px solid var(--border-subtle); padding: 9px 18px; font-family: inherit; font-size: 0.82rem; font-weight: 500; border-radius: 8px; cursor: pointer; transition: all 0.25s cubic-bezier(0.25, 1, 0.5, 1); }
-        .theme-toggle-btn:hover, .menu-trigger-btn:hover { border-color: var(--border-active); color: var(--text-primary); background: rgba(255,255,255,0.04); }
+        .header-controls { display: flex; gap: 10px; }
+        .control-ui-btn { background: var(--bg-surface); backdrop-filter: blur(var(--blur-strength)); color: var(--text-secondary); border: 1px solid var(--border-subtle); padding: 9px 16px; font-family: inherit; font-size: 0.8rem; font-weight: 500; border-radius: 8px; cursor: pointer; transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1); }
+        .control-ui-btn:hover { border-color: var(--border-active); color: var(--text-primary); background: rgba(255,255,255,0.03); }
 
-        /* SLIDING SIDEBAR ENGINE MODULE DRAWER */
-        .sidebar-drawer { position: fixed; top: 0; left: -340px; width: 340px; height: 100%; background: rgba(8, 10, 15, 0.96); backdrop-filter: blur(25px); border-right: 1px solid var(--border-subtle); box-shadow: 25px 0 60px rgba(0,0,0,0.65); z-index: 1000; transition: left 0.4s cubic-bezier(0.25, 1, 0.5, 1); padding: 40px 32px; display: flex; flex-direction: column; gap: 24px; }
-        .sidebar-drawer.open { left: 0; }
-        .drawer-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-subtle); padding-bottom: 16px; }
-        .drawer-header h3 { color: var(--text-primary); font-size: 0.88rem; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600; }
-        .close-drawer-btn { background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; line-height: 1; }
-        .close-drawer-btn:hover { color: var(--text-primary); }
-        
-        .tile-toggle-container { overflow-y: auto; flex: 1; padding-right: 4px; }
-        .tile-toggle-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
-        .tile-toggle-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: rgba(255,255,255,0.015); border: 1px solid var(--border-subtle); border-radius: 8px; font-size: 0.88rem; transition: background 0.2s; }
-        .tile-toggle-item:hover { background: rgba(255,255,255,0.03); }
-        .tile-toggle-item input { accent-color: var(--text-primary); cursor: pointer; width: 16px; height: 16px; }
+        /* THE COMPACT AUTONOMOUS PHYSICS GRID ENGINE */
+        .dashboard-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); 
+            gap: 20px; 
+            align-items: start;
+            transition: all 0.4s ease;
+        }
 
-        /* DRAGGABLE LAYOUT CONTROL SHEETS */
-        .dashboard-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 24px; }
-        .col-3 { grid-column: span 3; }
-        .col-2 { grid-column: span 2; }
-        
-        .grid-item { transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.25s ease; position: relative; }
-        .grid-item.dragging { opacity: 0.15; transform: scale(0.97); }
-        .grid-item.drag-over { border-radius: 16px; outline: 1px dotted var(--border-active); outline-offset: 6px; }
-        .grid-item.hidden-tile { display: none !important; }
+        /* STRUCTURAL BLUEPRINT STANDARD SIZING OVERRIDE BLOCK */
+        .dashboard-grid.standardized-geometry {
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+        }
+        .dashboard-grid.standardized-geometry .panel {
+            height: 380px !important;
+        }
+        .dashboard-grid.standardized-geometry .panel.collapsed-state {
+            height: 54px !important;
+        }
 
-        section.panel, div.panel { background: var(--bg-surface); backdrop-filter: blur(var(--blur-strength)); border: 1px solid var(--border-subtle); border-radius: 16px; padding: 24px; display: flex; flex-direction: column; height: 100%; min-height: 235px; box-shadow: var(--panel-shadow); transition: box-shadow 0.3s, border-color 0.3s, transform 0.3s cubic-bezier(0.25, 1, 0.5, 1); }
-        section.panel:hover, div.panel:hover { border-color: rgba(255, 255, 255, 0.09); transform: translateY(-2px); box-shadow: 0 25px 50px -10px rgba(0,0,0,0.9), 0 0 0 1px rgba(255,255,255,0.06); }
-        
-        h2 { color: var(--panel-title-color); font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.09em; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-subtle); padding-bottom: 12px; margin-bottom: 16px; }
-        
-        .drag-handle { cursor: grab; font-size: 0.65rem; color: var(--text-muted); padding: 4px 8px; background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 5px; font-family: monospace; user-select: none; }
-        .drag-handle:active { cursor: grabbing; border-color: var(--text-primary); color: var(--text-primary); }
+        /* SYSTEM TILES MECHANICS */
+        .grid-item { 
+            position: relative; 
+            transition: transform 0.35s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.2s ease, grid-row-end 0.3s ease; 
+        }
+        .grid-item.dragging { 
+            opacity: 0.3; 
+            transform: scale(0.96) rotateZ(-0.5deg); 
+            box-shadow: 0 30px 60px rgba(0,0,0,0.9);
+        }
+        .grid-item.drag-over { 
+            outline: 2px dashed var(--border-active); 
+            outline-offset: 4px; 
+            border-radius: 14px; 
+        }
+        .hidden-tile { display: none !important; }
 
-        .control-row { display: flex; gap: 10px; margin-bottom: 16px; }
-        .task-input { flex: 1; background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 11px 15px; color: var(--text-primary); font-family: inherit; font-size: 0.9rem; outline: none; transition: border-color 0.2s, background 0.2s; }
-        .task-input:focus { border-color: var(--border-active); background: rgba(0,0,0,0.8); }
+        .panel { 
+            background: var(--bg-surface); 
+            backdrop-filter: blur(var(--blur-strength)); 
+            border: 1px solid var(--border-subtle); 
+            border-radius: 14px; 
+            padding: 20px; 
+            display: flex; 
+            flex-direction: column; 
+            box-shadow: var(--panel-shadow); 
+            transition: transform 0.25s cubic-bezier(0.215, 0.61, 0.355, 1), box-shadow 0.25s, border-color 0.25s, height 0.3s cubic-bezier(0.165, 0.84, 0.44, 1); 
+            overflow: hidden;
+            width: 100%;
+        }
+        .panel:hover { 
+            border-color: rgba(255, 255, 255, 0.08); 
+            transform: translateY(-4px); 
+            box-shadow: 0 28px 55px -10px rgba(0,0,0,0.95), 0 0 0 1px rgba(255,255,255,0.05); 
+        }
         
-        .deploy-btn { background: var(--bg-terminal); color: var(--text-secondary); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 0 18px; font-weight: 500; font-family: inherit; font-size: 0.85rem; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
-        .deploy-btn:hover:not(:disabled) { border-color: var(--border-active); color: var(--text-primary); background: rgba(255,255,255,0.02); }
+        /* HEADER DRAG BAR UTILITIES */
+        h2 { 
+            color: var(--panel-title-color); 
+            font-size: 0.7rem; 
+            font-weight: 600; 
+            text-transform: uppercase; 
+            letter-spacing: 0.08em; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-bottom: 1px solid var(--border-subtle); 
+            padding-bottom: 10px; 
+            margin-bottom: 14px;
+            user-select: none;
+        }
+        .tile-grab-surface { cursor: grab; flex-grow: 1; padding: 2px 0; }
+        .tile-grab-surface:active { cursor: grabbing; }
+        
+        .tile-action-controls { display: flex; gap: 6px; align-items: center; }
+        .tile-control-trigger { background: none; border: none; color: var(--text-dark); cursor: pointer; font-size: 0.8rem; padding: 2px 6px; border-radius: 4px; transition: all 0.15s; }
+        .tile-control-trigger:hover { color: var(--text-primary); background: rgba(255,255,255,0.05); }
+        .tile-control-trigger.remove-trigger:hover { color: var(--accent-alert); }
+
+        /* COLLAPSED LOGIC MODIFIERS */
+        .panel.collapsed-state { height: 54px !important; min-height: 54px !important; }
+        .panel.collapsed-state > *:not(h2) { display: none !important; }
+        .panel.collapsed-state h2 { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+        /* THE BLACK PLUS EMBED CANVAS CARD */
+        .add-tile-blueprint {
+            background: #050608;
+            border: 2px dashed rgba(255,255,255,0.03);
+            border-radius: 14px;
+            height: 220px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            transition: background 0.3s, border-color 0.3s, transform 0.2s;
+        }
+        .add-tile-blueprint:hover {
+            background: #090a0f;
+            border-color: rgba(255,255,255,0.12);
+            transform: scale(0.99);
+        }
+        .plus-icon-glyph {
+            font-size: 2.2rem;
+            font-weight: 100;
+            color: var(--text-dark);
+            transition: color 0.2s, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .add-tile-blueprint:hover .plus-icon-glyph {
+            color: var(--text-primary);
+            transform: rotate(90deg);
+        }
+
+        /* CONTEXT SPAWN MENU LAYER */
+        .spawn-context-menu {
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%) scale(0.95);
+            background: rgba(10, 12, 18, 0.96);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-active);
+            border-radius: 10px;
+            padding: 8px;
+            width: 220px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.7);
+            opacity: 0;
+            visibility: hidden;
+            z-index: 50;
+            transition: opacity 0.2s, transform 0.2s, visibility 0.2s;
+        }
+        .spawn-context-menu.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) scale(1);
+        }
+        .spawn-menu-title { font-size: 0.65rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em; padding: 4px 8px 6px; border-bottom: 1px solid var(--border-subtle); margin-bottom: 4px; }
+        .spawn-opt-btn { width: 100%; text-align: left; background: none; border: none; padding: 8px; font-size: 0.82rem; color: var(--text-secondary); cursor: pointer; border-radius: 6px; transition: background 0.15s, color 0.15s; }
+        .spawn-opt-btn:hover { background: rgba(255,255,255,0.04); color: var(--text-primary); }
+
+        /* WIDGET SPECIFIC CONTENT ARCHITECTURE */
+        .control-row { display: flex; gap: 8px; margin-bottom: 12px; }
+        .task-input { flex: 1; background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 10px 12px; color: var(--text-primary); font-family: inherit; font-size: 0.85rem; outline: none; transition: border-color 0.2s; }
+        .task-input:focus { border-color: var(--border-active); }
+        
+        .deploy-btn { background: var(--bg-terminal); color: var(--text-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0 14px; font-size: 0.8rem; font-weight: 500; cursor: pointer; transition: all 0.15s; }
+        .deploy-btn:hover:not(:disabled) { border-color: var(--border-active); color: var(--text-primary); }
         .deploy-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
-        .checklist-container { list-style: none; display: flex; flex-direction: column; gap: 2px; }
-        .checklist-item { padding: 10px 8px; border-bottom: 1px solid var(--border-subtle); font-size: 0.9rem; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: background 0.15s, padding-left 0.15s; border-radius: 4px; }
-        .checklist-item:hover { background: rgba(255, 255, 255, 0.015); padding-left: 12px; }
+        .checklist-container { list-style: none; display: flex; flex-direction: column; max-height: 200px; overflow-y: auto; }
+        .checklist-item { padding: 8px; border-bottom: 1px solid var(--border-subtle); font-size: 0.85rem; display: flex; align-items: center; justify-content: space-between; cursor: pointer; border-radius: 4px; transition: background 0.1s; }
+        .checklist-item:hover { background: rgba(255, 255, 255, 0.015); }
         .task-left-block { display: flex; align-items: center; min-width: 0; }
-        .status-box { font-family: monospace; font-size: 0.9rem; color: var(--text-muted); margin-right: 12px; width: 18px; flex-shrink: 0; }
-        .task-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .clear-single-btn { background: none; border: none; color: var(--text-dark); font-size: 0.78rem; cursor: pointer; margin-left: 12px; flex-shrink: 0; transition: color 0.15s; }
-        .clear-single-btn:hover { color: var(--accent-alert) !important; }
+        .status-box { font-family: monospace; margin-right: 10px; color: var(--text-muted); }
+        .clear-single-btn { background: none; border: none; color: var(--text-dark); font-size: 0.75rem; cursor: pointer; }
+        .clear-single-btn:hover { color: var(--accent-alert); }
         .resolved { color: var(--text-dark) !important; }
         .resolved .task-text { text-decoration: line-through; }
 
-        .metrics-footer { display: flex; justify-content: space-between; margin-top: auto; padding-top: 14px; font-size: 0.8rem; color: var(--text-muted); border-top: 1px dashed var(--border-subtle); align-items: center; }
-        .purge-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; text-decoration: underline; font-family: inherit; }
+        .ai-chat-log { background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 6px; height: 180px; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
+        .chat-bubble { font-size: 0.82rem; max-width: 85%; word-break: break-word; padding: 8px 12px; border-radius: 10px; }
+        .bubble-user { color: var(--text-primary); align-self: flex-end; background: var(--chat-user-bg); }
+        .bubble-gemini { color: var(--text-secondary); align-self: flex-start; background: var(--chat-gemini-bg); border: 1px solid var(--chat-gemini-border); }
 
-        .ai-chat-log { background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 8px; height: 280px; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 14px; margin-bottom: 14px; scroll-behavior: smooth; }
-        .chat-bubble { font-size: 0.88rem; line-height: 1.45; max-width: 85%; word-break: break-word; }
-        .bubble-user { color: var(--text-primary); align-self: flex-end; background: var(--chat-user-bg); padding: 9px 13px; border-radius: 12px 12px 2px 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); }
-        .bubble-gemini { color: var(--text-secondary); align-self: flex-start; background: var(--chat-gemini-bg); border: 1px solid var(--chat-gemini-border); padding: 11px 15px; border-radius: 12px 12px 12px 2px; }
+        .weather-display { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .temp-primary { font-size: 2.1rem; font-weight: 200; color: var(--text-primary); font-family: monospace; }
+        .weather-meta { font-size: 0.75rem; color: var(--text-muted); text-align: right; }
+        .forecast-container { display: flex; flex-direction: column; gap: 4px; background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 8px; }
+        .forecast-row { display: grid; grid-template-columns: 3fr 5fr 2fr; font-size: 0.75rem; }
 
-        .weather-display { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding: 4px 0; }
-        .temp-primary { font-size: 2.3rem; font-weight: 200; color: var(--text-primary); font-family: monospace; }
-        .weather-meta { font-size: 0.8rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 3px; text-align: right; }
-        .weather-meta span { color: var(--text-secondary); font-weight: 500; }
-        .forecast-container { display: flex; flex-direction: column; gap: 4px; background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 10px; }
-        .forecast-row { display: grid; grid-template-columns: 2.5fr 3.5fr 2fr; font-size: 0.8rem; padding: 6px 0; border-bottom: 1px solid var(--border-subtle); }
-        .forecast-row:last-child { border-bottom: none; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); row-gap: 2px; text-align: center; }
+        .calendar-day-label { color: var(--text-muted); font-size: 0.65rem; padding-bottom: 4px; text-transform: uppercase; }
+        .calendar-cell { font-size: 0.75rem; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-family: monospace; }
+        .calendar-cell.today { background: var(--text-primary); color: var(--bg-base); font-weight: 600; border-radius: 50%; }
 
-        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); row-gap: 4px; text-align: center; }
-        .calendar-day-label { color: var(--text-muted); font-weight: 500; font-size: 0.7rem; padding-bottom: 6px; text-transform: uppercase; }
-        .calendar-cell { color: var(--text-secondary); font-size: 0.8rem; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 4px; font-family: monospace; }
-        .calendar-cell.muted { color: var(--text-dark); }
-        .calendar-cell.today { background: var(--text-primary); color: var(--bg-base) !important; font-weight: 600; border-radius: 50%; }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+        .stat-card { background: var(--bg-terminal); border: 1px solid var(--border-subtle); padding: 10px; border-radius: 6px; }
+        .stat-label { font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; }
+        .stat-value { font-size: 1rem; color: var(--text-primary); font-family: monospace; }
+        .progress-track { background: var(--progress-track); height: 4px; border-radius: 2px; overflow: hidden; margin-top: 6px; }
+        .progress-fill { background: var(--text-primary); height: 100%; transition: width 0.3s; }
 
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
-        .stat-card { background: var(--bg-terminal); border: 1px solid var(--border-subtle); padding: 12px; border-radius: 8px; }
-        .stat-label { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
-        .stat-value { font-size: 1.1rem; font-weight: 500; color: var(--text-primary); font-family: monospace; margin-top: 2px; }
-        .progress-track { background: var(--progress-track); height: 5px; border-radius: 3px; overflow: hidden; margin-top: 8px; border: 1px solid rgba(255,255,255,0.01); }
-        .progress-fill { background: linear-gradient(90deg, var(--panel-header-line), var(--text-primary)); height: 100%; transition: width 0.4s ease; }
+        .material-selector { background: var(--bg-terminal); border: 1px solid var(--border-subtle); color: var(--text-primary); width: 100%; padding: 8px; border-radius: 6px; margin-bottom: 10px; font-family: inherit; font-size: 0.8rem; cursor: pointer; outline: none; }
+        .spec-table { width: 100%; font-family: monospace; font-size: 0.75rem; }
+        .spec-table td { padding: 6px 4px; border-bottom: 1px solid var(--border-subtle); }
+        .spec-table td:last-child { text-align: right; color: var(--text-primary); }
 
-        .material-selector { background: var(--bg-terminal); border: 1px solid var(--border-subtle); color: var(--text-primary); width: 100%; padding: 10px; border-radius: 8px; margin-bottom: 12px; outline: none; font-family: inherit; font-size: 0.85rem; cursor: pointer; }
-        .spec-table { width: 100%; font-family: monospace; font-size: 0.78rem; border-collapse: collapse; }
-        .spec-table td { padding: 8px; border-bottom: 1px solid var(--border-subtle); }
-        .spec-table tr:last-child td { border-bottom: none; }
-        .spec-table td:last-child { text-align: right; color: var(--text-primary); font-weight: 500; }
-
-        .logistics-list { list-style: none; font-size: 0.85rem; display: flex; flex-direction: column; gap: 8px; }
-        .logistics-item { display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 4px 0; }
-        .logistics-cb { accent-color: var(--text-primary); cursor: pointer; width: 14px; height: 14px; }
-
-        /* CALCULATOR STRUCTURAL CSS CONFIG */
-        .calc-screen { 
-            width: 100%; 
-            background: var(--bg-terminal); 
-            color: var(--text-primary); 
-            border: 1px solid var(--border-subtle); 
-            border-radius: 8px; 
-            padding: 14px; 
-            font-family: monospace; 
-            font-size: 1.35rem; 
-            text-align: right; 
-            outline: none; 
-            margin-bottom: 12px; 
-            min-height: 54px; 
-            overflow-x: auto; 
-            white-space: nowrap; 
-            display: block; 
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.6);
-        }
-        .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; width: 100%; }
-        .calc-btn { background: var(--bg-terminal); color: var(--text-secondary); border: 1px solid var(--border-subtle); padding: 13px 4px; font-family: monospace; font-size: 0.95rem; font-weight: 500; border-radius: 6px; cursor: pointer; transition: all 0.15s ease; text-align: center; }
-        .calc-btn:hover { border-color: var(--border-active); color: var(--text-primary); background: rgba(255,255,255,0.02); }
-        .calc-btn.op { color: var(--panel-title-color); }
-        .calc-btn.action { border-color: rgba(255,255,255,0.12); color: var(--text-primary); }
-
-        /* RE-ENGINEERED COMPONENT BLOCKS */
-        .converter-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
-        .scratch-pad { width: 100%; height: 130px; background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 12px; color: var(--text-secondary); font-family: monospace; font-size: 0.85rem; line-height: 1.45; resize: none; outline: none; transition: border-color 0.2s, background 0.2s; }
-        .scratch-pad:focus { border-color: var(--border-active); background: rgba(0,0,0,0.4); }
-        .timer-display { font-family: monospace; font-size: 2.2rem; font-weight: 200; text-align: center; color: var(--text-primary); margin: 8px 0 16px 0; background: var(--bg-terminal); border: 1px solid var(--border-subtle); padding: 12px; border-radius: 8px; letter-spacing: 0.02em; box-shadow: inset 0 2px 4px rgba(0,0,0,0.4); }
-
-        @media (max-width: 950px) {
-            body { padding: 20px 12px; }
-            header { flex-direction: column; align-items: flex-start; gap: 16px; }
-            .dashboard-grid { grid-template-columns: 1fr; gap: 16px; }
-            .col-3, .col-2 { grid-column: span 1; }
-            .ai-chat-log { height: 240px; }
-        }
+        .calc-screen { width: 100%; background: var(--bg-terminal); color: var(--text-primary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 10px; font-family: monospace; font-size: 1.2rem; text-align: right; margin-bottom: 8px; min-height: 44px; }
+        .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+        .calc-btn { background: var(--bg-terminal); color: var(--text-secondary); border: 1px solid var(--border-subtle); padding: 10px 2px; font-family: monospace; font-size: 0.85rem; border-radius: 4px; cursor: pointer; }
+        
+        .scratch-pad { width: 100%; height: 110px; background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 10px; color: var(--text-secondary); font-family: monospace; font-size: 0.8rem; resize: none; outline: none; }
+        .timer-display { font-family: monospace; font-size: 1.8rem; text-align: center; color: var(--text-primary); margin: 6px 0 12px 0; background: var(--bg-terminal); border: 1px solid var(--border-subtle); padding: 8px; border-radius: 6px; }
     </style>
 </head>
 <body>
 
     <div id="splash-screen-overlay">
-        <div class="splash-brand">Workspace Instance</div>
-        <div class="splash-status" id="splash-timestamp-node">INIT // RUNTIME_CORE_OK</div>
+        <div class="splash-brand">Workspace core</div>
         <div class="splash-loader-bar"><div class="splash-loader-progress"></div></div>
-    </div>
-
-    <div class="sidebar-drawer" id="workspace-drawer-node">
-        <div class="drawer-header">
-            <h3>Workspace Management</h3>
-            <button class="close-drawer-btn" onclick="toggleWorkspaceDrawer(false)">×</button>
-        </div>
-        <div class="tile-toggle-container">
-            <ul class="tile-toggle-list">
-                <li class="tile-toggle-item"><label>Daily Checklist</label><input type="checkbox" data-tile="tile-checklist" checked onchange="synchronizeTileVisibility(this)"></li>
-                <li class="tile-toggle-item"><label>Gemini Copilot</label><input type="checkbox" data-tile="tile-ai-engine" checked onchange="synchronizeTileVisibility(this)"></li>
-                <li class="tile-toggle-item"><label>Local Weather</label><input type="checkbox" data-tile="tile-weather" checked onchange="synchronizeTileVisibility(this)"></li>
-                <li class="tile-toggle-item"><label>Material Matrix</label><input type="checkbox" data-tile="tile-materials" checked onchange="synchronizeTileVisibility(this)"></li>
-                <li class="tile-toggle-item"><label>Logistics Calendar</label><input type="checkbox" data-tile="tile-calendar" checked onchange="synchronizeTileVisibility(this)"></li>
-                <li class="tile-toggle-item"><label>Cycling Telemetry</label><input type="checkbox" data-tile="tile-cycling" checked onchange="synchronizeTileVisibility(this)"></li>
-                <li class="tile-toggle-item"><label>Calculator Terminal</label><input type="checkbox" data-tile="tile-calculator" checked onchange="synchronizeTileVisibility(this)"></li>
-                <li class="tile-toggle-item"><label>Transit Logistics</label><input type="checkbox" data-tile="tile-transit" checked onchange="synchronizeTileVisibility(this)"></li>
-                <li class="tile-toggle-item"><label>Mass Converter</label><input type="checkbox" data-tile="tile-converter" checked onchange="synchronizeTileVisibility(this)"></li>
-                <li class="tile-toggle-item"><label>Notes Scratch Pad</label><input type="checkbox" data-tile="tile-scratch" checked onchange="synchronizeTileVisibility(this)"></li>
-                <li class="tile-toggle-item"><label>System Stopwatch</label><input type="checkbox" data-tile="tile-stopwatch" checked onchange="synchronizeTileVisibility(this)"></li>
-            </ul>
-        </div>
     </div>
 
     <div class="container">
         <header>
             <div>
                 <h1>Workspace Dashboard</h1>
-                <p class="subtitle">Unified design sandbox & production telemetry</p>
+                <p class="subtitle">Dynamic layout sandbox with inertial drag mechanics</p>
             </div>
             <div class="header-controls">
-                <button class="menu-trigger-btn" onclick="toggleWorkspaceDrawer(true)">☰ Manage Grid</button>
-                <button class="theme-toggle-btn" onclick="toggleDashboardTheme()">Theme: <span id="theme-status-lbl">Dark</span></button>
+                <button class="control-ui-btn" onclick="toggleStrictGeometry()">Sizing Mode: Auto</button>
+                <button class="control-ui-btn" onclick="toggleDashboardTheme()">Theme</button>
             </div>
         </header>
 
         <div class="dashboard-grid" id="main-dashboard-grid-node">
             
-            <div class="grid-item col-3" id="tile-checklist">
+            <div class="grid-item" id="tile-checklist">
                 <div class="panel">
-                    <h2>Daily Checklist <span class="drag-handle">⋮⋮ MOVE</span></h2>
-                    <div class="control-row" style="margin-top: 6px;">
-                        <input type="text" id="task-input-node" class="task-input" placeholder="Append engineering tracking entry...">
+                    <h2>
+                        <span class="tile-grab-surface">⋮ Daily Checklist</span>
+                        <div class="tile-action-controls">
+                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-checklist')">—</button>
+                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-checklist')">×</button>
+                        </div>
+                    </h2>
+                    <div class="control-row">
+                        <input type="text" id="task-input-node" class="task-input" placeholder="New track flag...">
                         <button class="deploy-btn" onclick="window.commitNewTask()">Add</button>
                     </div>
                     <ul class="checklist-container" id="checklist-render-node"></ul>
-                    <div class="metrics-footer">
-                        <div>Active Items: <span id="active-count" style="font-weight:600; color:var(--text-primary);">0</span> | Resolved: <span id="complete-count">0</span></div>
-                        <button class="purge-btn" onclick="window.purgeCompletedTasks()">Purge Resolved</button>
-                    </div>
                 </div>
             </div>
 
-            <div class="grid-item col-3" id="tile-ai-engine">
+            <div class="grid-item" id="tile-ai-engine">
                 <div class="panel">
-                    <h2>Gemini Copilot <span class="drag-handle">⋮⋮ MOVE</span></h2>
+                    <h2>
+                        <span class="tile-grab-surface">⋮ Gemini Copilot</span>
+                        <div class="tile-action-controls">
+                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-ai-engine')">—</button>
+                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-ai-engine')">×</button>
+                        </div>
+                    </h2>
                     <div class="ai-chat-log" id="ai-chat-viewport"></div>
-                    <div class="control-row" style="margin-bottom: 0;">
-                        <input type="text" id="ai-query-input" class="task-input" placeholder="Query orchestration engine...">
-                        <button class="deploy-btn" id="ai-submit-btn" onclick="dispatchAiQuery()">Query</button>
+                    <div class="control-row" style="margin-bottom:0;">
+                        <input type="text" id="ai-query-input" class="task-input" placeholder="Query model pipeline...">
+                        <button class="deploy-btn" onclick="dispatchAiQuery()">Send</button>
                     </div>
                 </div>
             </div>
 
-            <div class="grid-item col-2" id="tile-weather">
+            <div class="grid-item" id="tile-weather">
                 <div class="panel">
-                    <h2>Local Weather <span class="drag-handle">⋮⋮ MOVE</span></h2>
+                    <h2>
+                        <span class="tile-grab-surface">⋮ Local Weather</span>
+                        <div class="tile-action-controls">
+                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-weather')">—</button>
+                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-weather')">×</button>
+                        </div>
+                    </h2>
                     <div class="weather-display">
-                        <div>
-                            <div class="temp-primary" id="weather-temp">--°F</div>
-                            <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 2px;" id="weather-cond">Syncing telemetry...</div>
-                        </div>
+                        <div class="temp-primary" id="weather-temp">--°F</div>
                         <div class="weather-meta">
-                            <div>Station: <span>Old Town, ME</span></div>
-                            <div>Velocity: <span id="weather-wind">-- mph</span></div>
-                            <div>Humidity: <span id="weather-humidity">--%</span></div>
+                            <div>Station: <span style="color:var(--text-primary)">Old Town, ME</span></div>
+                            <div id="weather-cond">Syncing...</div>
                         </div>
                     </div>
-                    <div class="forecast-container" id="weather-forecast">
-                        <div class="forecast-row"><span>--</span><span>Downloading rows...</span><span style="text-align:right;">-- / --</span></div>
-                    </div>
+                    <div class="forecast-container" id="weather-forecast"></div>
                 </div>
             </div>
 
-            <div class="grid-item col-2" id="tile-materials">
+            <div class="grid-item" id="tile-materials">
                 <div class="panel">
-                    <h2>Material Matrix Lookup <span class="drag-handle">⋮⋮ MOVE</span></h2>
+                    <h2>
+                        <span class="tile-grab-surface">⋮ Material Matrix</span>
+                        <div class="tile-action-controls">
+                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-materials')">—</button>
+                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-materials')">×</button>
+                        </div>
+                    </h2>
                     <select id="material-selector-node" class="material-selector" onchange="updateMaterialSpecs()">
-                        <option value="petg">PETG (Carbon Fiber Reinforced)</option>
+                        <option value="petg">PETG (CF Reinforced)</option>
                         <option value="pla">PLA+ High-Performance</option>
                         <option value="alu">6061-T6 Aluminum Alloy</option>
                     </select>
                     <table class="spec-table">
                         <tr><td>Volumetric Density</td><td id="mat-density">1.27 g/cm³</td></tr>
-                        <tr><td>Ultimate Tensile Strength</td><td id="mat-tensile">48.5 MPa</td></tr>
-                        <tr><td>Flexural Modulus Matrix</td><td id="mat-modulus">3.8 GPa</td></tr>
+                        <tr><td>Tensile Strength</td><td id="mat-tensile">48.5 MPa</td></tr>
+                        <tr><td>Flexural Modulus</td><td id="mat-modulus">3.8 GPa</td></tr>
                     </table>
                 </div>
             </div>
 
-            <div class="grid-item col-2" id="tile-calendar">
+            <div class="grid-item" id="tile-calendar">
                 <div class="panel">
-                    <div class="calendar-header">
-                        <h2 id="calendar-header-title" style="width:100%; border:none; margin-bottom:0; padding-bottom:0;">May 2026 <span class="drag-handle" style="float:right;">⋮⋮ MOVE</span></h2>
-                    </div>
-                    <div class="calendar-grid" id="calendar-matrix-grid" style="margin-top:12px;"></div>
+                    <h2>
+                        <span class="tile-grab-surface">⋮ May 2026</span>
+                        <div class="tile-action-controls">
+                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-calendar')">—</button>
+                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-calendar')">×</button>
+                        </div>
+                    </h2>
+                    <div class="calendar-grid" id="calendar-matrix-grid"></div>
                 </div>
             </div>
 
-            <div class="grid-item col-2" id="tile-cycling">
+            <div class="grid-item" id="tile-cycling">
                 <div class="panel">
-                    <h2>Cycling Telemetry <span class="drag-handle">⋮⋮ MOVE</span></h2>
+                    <h2>
+                        <span class="tile-grab-surface">⋮ Cycling Telemetry</span>
+                        <div class="tile-action-controls">
+                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-cycling')">—</button>
+                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-cycling')">×</button>
+                        </div>
+                    </h2>
                     <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-label">Block Mileage</div>
-                            <div class="stat-value">76.0 mi</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-label">Avg Velocity</div>
-                            <div class="stat-value">15.8 mph</div>
-                        </div>
+                        <div class="stat-card"><div class="stat-label">Block Mileage</div><div class="stat-value">76.0 mi</div></div>
+                        <div class="stat-card"><div class="stat-label">Avg Speed</div><div class="stat-value">15.8 mph</div></div>
                     </div>
-                    <div style="font-size: 0.75rem; color: var(--text-muted);">
-                        Target Century Milestone: <strong>76%</strong>
-                        <div class="progress-track"><div class="progress-fill" style="width: 76%;"></div></div>
-                    </div>
+                    <div class="progress-track"><div class="progress-fill" style="width: 76%;"></div></div>
                 </div>
             </div>
 
-            <div class="grid-item col-2" id="tile-calculator">
+            <div class="grid-item" id="tile-calculator">
                 <div class="panel">
-                    <h2>Calculator Terminal <span class="drag-handle">⋮⋮ MOVE</span></h2>
-                    <div style="margin-top: 4px; display: flex; flex-direction: column;">
-                        <div id="calc-display-node" class="calc-screen">0</div>
-                        <div class="calc-grid">
-                            <button class="calc-btn action" onclick="clearCalculatorDisplay()">C</button>
-                            <button class="calc-btn op" onclick="appendCalculatorValue('/')">/</button>
-                            <button class="calc-btn op" onclick="appendCalculatorValue('*')">*</button>
-                            <button class="calc-btn op" onclick="appendCalculatorValue('-')">-</button>
-                            
-                            <button class="calc-btn" onclick="appendCalculatorValue('7')">7</button>
-                            <button class="calc-btn" onclick="appendCalculatorValue('8')">8</button>
-                            <button class="calc-btn" onclick="appendCalculatorValue('9')">9</button>
-                            <button class="calc-btn op" onclick="appendCalculatorValue('+')">+</button>
-                            
-                            <button class="calc-btn" onclick="appendCalculatorValue('4')">4</button>
-                            <button class="calc-btn" onclick="appendCalculatorValue('5')">5</button>
-                            <button class="calc-btn" onclick="appendCalculatorValue('6')">6</button>
-                            <button class="calc-btn action" style="grid-row: span 2; height: 100%; display:flex; align-items:center; justify-content:center;" onclick="evaluateCalculatorResult()">=</button>
-                            
-                            <button class="calc-btn" onclick="appendCalculatorValue('1')">1</button>
-                            <button class="calc-btn" onclick="appendCalculatorValue('2')">2</button>
-                            <button class="calc-btn" onclick="appendCalculatorValue('3')">3</button>
-                            
-                            <button class="calc-btn" style="grid-column: span 2;" onclick="appendCalculatorValue('0')">0</button>
-                            <button class="calc-btn" onclick="appendCalculatorValue('.')">.</button>
+                    <h2>
+                        <span class="tile-grab-surface">⋮ Calculator Terminal</span>
+                        <div class="tile-action-controls">
+                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-calculator')">—</button>
+                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-calculator')">×</button>
                         </div>
+                    </h2>
+                    <div id="calc-display-node" class="calc-screen">0</div>
+                    <div class="calc-grid">
+                        <button class="calc-btn" onclick="clearCalculatorDisplay()">C</button>
+                        <button class="calc-btn" onclick="appendCalculatorValue('/')">/</button>
+                        <button class="calc-btn" onclick="appendCalculatorValue('*')">*</button>
+                        <button class="calc-btn" onclick="appendCalculatorValue('-')">-</button>
+                        <button class="calc-btn" onclick="appendCalculatorValue('7')">7</button>
+                        <button class="calc-btn" onclick="appendCalculatorValue('8')">8</button>
+                        <button class="calc-btn" onclick="appendCalculatorValue('9')">9</button>
+                        <button class="calc-btn" onclick="appendCalculatorValue('+')">+</button>
+                        <button class="calc-btn" onclick="appendCalculatorValue('4')">4</button>
+                        <button class="calc-btn" onclick="appendCalculatorValue('5')">5</button>
+                        <button class="calc-btn" onclick="appendCalculatorValue('6')">6</button>
+                        <button class="calc-btn" style="grid-row: span 2; height:100%" onclick="evaluateCalculatorResult()">=</button>
+                        <button class="calc-btn" onclick="appendCalculatorValue('1')">1</button>
+                        <button class="calc-btn" onclick="appendCalculatorValue('2')">2</button>
+                        <button class="calc-btn" onclick="appendCalculatorValue('3')">3</button>
+                        <button class="calc-btn" style="grid-column: span 2;" onclick="appendCalculatorValue('0')">0</button>
+                        <button class="calc-btn" onclick="appendCalculatorValue('.')">.</button>
                     </div>
                 </div>
             </div>
 
-            <div class="grid-item col-2" id="tile-transit">
+            <div class="grid-item" id="tile-scratch">
                 <div class="panel">
-                    <h2>Transit & Travel Logistics <span class="drag-handle">⋮⋮ MOVE</span></h2>
-                    <ul class="logistics-list">
-                        <li class="logistics-item"><input type="checkbox" id="log-c1" class="logistics-cb" checked><label for="log-c1">Beeline navigation kit loaded</label></li>
-                        <li class="logistics-item"><input type="checkbox" id="log-c2" class="logistics-cb"><label for="log-c2">CAD geometry file export backup</label></li>
-                        <li class="logistics-item"><input type="checkbox" id="log-c3" class="logistics-cb" checked><label for="log-c3">Route itineraries synchronized</label></li>
-                        <li class="logistics-item"><input type="checkbox" id="log-c4" class="logistics-cb"><label for="log-c4">Pultrusion materials list verified</label></li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="grid-item col-2" id="tile-converter">
-                <div class="panel">
-                    <h2>Mass & Dimension Scaling <span class="drag-handle">⋮⋮ MOVE</span></h2>
-                    <div style="margin-top: 4px; display:flex; flex-direction:column; gap:4px;">
-                        <div class="converter-row">
-                            <input type="number" id="conv-input-grams" class="task-input" placeholder="Grams (g)" oninput="convertMassUnits('g')">
-                            <input type="number" id="conv-input-oz" class="task-input" placeholder="Ounces (oz)" oninput="convertMassUnits('oz')">
+                    <h2>
+                        <span class="tile-grab-surface">⋮ Notes Scratch Pad</span>
+                        <div class="tile-action-controls">
+                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-scratch')">—</button>
+                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-scratch')">×</button>
                         </div>
-                        <div class="converter-row">
-                            <input type="number" id="conv-input-mm" class="task-input" placeholder="Metric (mm)" oninput="convertDimensionUnits('mm')">
-                            <input type="number" id="conv-input-in" class="task-input" placeholder="Inches (in)" oninput="convertDimensionUnits('in')">
+                    </h2>
+                    <textarea id="scratch-pad-node" class="scratch-pad" placeholder="Drop temporary code blocks or notes here..." oninput="persistScratchText(this.value)"></textarea>
+                </div>
+            </div>
+
+            <div class="grid-item" id="tile-stopwatch">
+                <div class="panel">
+                    <h2>
+                        <span class="tile-grab-surface">⋮ Split Timer</span>
+                        <div class="tile-action-controls">
+                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-stopwatch')">—</button>
+                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-stopwatch')">×</button>
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="grid-item col-2" id="tile-scratch">
-                <div class="panel">
-                    <h2>Persistent Notes Scratch Pad <span class="drag-handle">⋮⋮ MOVE</span></h2>
-                    <textarea id="scratch-pad-node" class="scratch-pad" placeholder="Drop temporary code blocks, array fields, or file targets here..." oninput="persistScratchText(this.value)"></textarea>
-                </div>
-            </div>
-
-            <div class="grid-item col-2" id="tile-stopwatch">
-                <div class="panel">
-                    <h2>System Split Timer <span class="drag-handle">⋮⋮ MOVE</span></h2>
+                    </h2>
                     <div class="timer-display" id="stopwatch-display-lbl">00:00.0</div>
-                    <div class="control-row" style="margin-bottom:0; gap:8px;">
+                    <div class="control-row" style="margin-bottom:0;">
                         <button class="deploy-btn" style="flex:1;" id="stopwatch-toggle" onclick="toggleStopwatchSystem()">Start Intercept</button>
                         <button class="deploy-btn" onclick="resetStopwatchSystem()">Reset</button>
                     </div>
+                </div>
+            </div>
+
+            <div class="add-tile-blueprint" id="tile-spawner-root" onclick="toggleSpawnContextMenu(event)">
+                <span class="plus-icon-glyph">+</span>
+                <div class="spawn-context-menu" id="spawn-menu-node">
+                    <div class="spawn-menu-title">Inject Hidden Module</div>
+                    <div id="spawn-options-list"></div>
                 </div>
             </div>
 
@@ -451,16 +490,11 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        const GEMINI_API_KEY = "YOUR_GEMINI_API_KEY_HERE"; 
-
         const firebaseConfig = {
             apiKey: "AIzaSyACQZ-5RfnQg7gT1_V2PuxG4nA6uRm28uM",
             authDomain: "my-workspace-dashboard.firebaseapp.com",
             databaseURL: "https://my-workspace-dashboard-default-rtdb.firebaseio.com/", 
             projectId: "my-workspace-dashboard",
-            storageBucket: "my-workspace-dashboard.firebasestorage.app",
-            messagingSenderId: "584369640657",
-            appId: "1:584369640657:web:160320fd21b1b4993ce1f0"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -468,6 +502,7 @@
         const dataSyncRef = ref(db, 'dashboard/tasks');
 
         let datasetState = [];
+        let isStrictGeometry = false;
 
         const materialDatabase = {
             petg: { density: "1.27 g/cm³", tensile: "48.5 MPa", modulus: "3.8 GPa" },
@@ -475,261 +510,99 @@
             alu: { density: "2.70 g/cm³", tensile: "310 MPa", modulus: "68.9 GPa" }
         };
 
-        const weatherCodeMap = {
-            0: "Clear Skies", 1: "Mainly Clear", 2: "Partly Cloudy", 3: "Overcast",
-            45: "Foggy", 48: "Rime Fog", 51: "Light Drizzle", 53: "Moderate Drizzle",
-            55: "Dense Drizzle", 61: "Slight Rain", 63: "Moderate Rain", 65: "Heavy Rain",
-            71: "Slight Snowfall", 73: "Moderate Snowfall", 75: "Heavy Snowfall",
-            77: "Snow Grains", 80: "Slight Showers", 81: "Moderate Showers", 82: "Violent Showers",
-            85: "Slight Snow Showers", 86: "Heavy Snow Showers", 95: "Thunderstorm"
+        // --- ADD / REMOVE CANVAS MECHANICS ENGINE ---
+        const ALL_WIDGET_REGISTRY = {
+            "tile-checklist": "Daily Checklist",
+            "tile-ai-engine": "Gemini Copilot",
+            "tile-weather": "Local Weather",
+            "tile-materials": "Material Matrix",
+            "tile-calendar": "May 2026 Timeline",
+            "tile-cycling": "Cycling Telemetry",
+            "tile-calculator": "Calculator Terminal",
+            "tile-scratch": "Notes Scratch Pad",
+            "tile-stopwatch": "Split Timer"
         };
 
-        // --- EXPANDING SIDEBAR SYSTEM ---
-        window.toggleWorkspaceDrawer = function(openState) {
-            const drawer = document.getElementById('workspace-drawer-node');
-            if (openState) drawer.classList.add('open');
-            else drawer.classList.remove('open');
-        };
-
-        window.synchronizeTileVisibility = function(checkbox) {
-            const targetId = checkbox.getAttribute('data-tile');
-            const tileNode = document.getElementById(targetId);
-            if (!tileNode) return;
-
-            if (checkbox.checked) {
-                tileNode.classList.remove('hidden-tile');
-            } else {
-                tileNode.classList.add('hidden-tile');
-            }
-            saveTilePreferences();
-        };
-
-        function saveTilePreferences() {
-            const preferences = {};
-            document.querySelectorAll('.tile-toggle-list input').forEach(input => {
-                preferences[input.getAttribute('data-tile')] = input.checked;
-            });
-            localStorage.setItem('dashboard_tile_visibility_map', JSON.stringify(preferences));
-        }
-
-        function restoreTilePreferences() {
-            const stored = localStorage.getItem('dashboard_tile_visibility_map');
-            try {
-                const map = stored ? JSON.parse(stored) : {};
-                document.querySelectorAll('.tile-toggle-list input').forEach(input => {
-                    const id = input.getAttribute('data-tile');
-                    if (map[id] !== undefined) {
-                        input.checked = map[id];
-                        const tileNode = document.getElementById(id);
-                        if (tileNode) {
-                            if (map[id]) tileNode.classList.remove('hidden-tile');
-                            else tileNode.classList.add('hidden-tile');
-                        }
-                    }
-                });
-            } catch (e) { console.error(e); }
-        }
-
-        // --- SCALE MASS TRANSLATIONS ---
-        window.convertMassUnits = function(origin) {
-            const gNode = document.getElementById('conv-input-grams');
-            const ozNode = document.getElementById('conv-input-oz');
-            if (origin === 'g') {
-                const gVal = parseFloat(gNode.value);
-                ozNode.value = !isNaN(gVal) ? (gVal * 0.035274).toFixed(3) : '';
-            } else {
-                const ozVal = parseFloat(ozNode.value);
-                gNode.value = !isNaN(ozVal) ? (ozVal * 28.3495).toFixed(1) : '';
+        window.removeTileFromCanvas = function(id) {
+            const node = document.getElementById(id);
+            if(node) {
+                node.classList.add('hidden-tile');
+                saveCanvasLayoutState();
             }
         };
 
-        window.convertDimensionUnits = function(origin) {
-            const mmNode = document.getElementById('conv-input-mm');
-            const inNode = document.getElementById('conv-input-in');
-            if (origin === 'mm') {
-                const mmVal = parseFloat(mmNode.value);
-                inNode.value = !isNaN(mmVal) ? (mmVal / 25.4).toFixed(4) : '';
-            } else {
-                const inVal = parseFloat(inNode.value);
-                mmNode.value = !isNaN(inVal) ? (inVal * 25.4).toFixed(2) : '';
-            }
+        window.toggleTileCollapse = function(id) {
+            const node = document.getElementById(id);
+            if(!node) return;
+            const panel = node.querySelector('.panel');
+            panel.classList.toggle('collapsed-state');
+            saveCanvasLayoutState();
         };
 
-        // --- TEXT PAD CONTROLS ---
-        window.persistScratchText = function(text) {
-            localStorage.setItem('workspace_scratchpad_data', text);
+        window.toggleSpawnContextMenu = function(e) {
+            e.stopPropagation();
+            const menu = document.getElementById('spawn-menu-node');
+            buildSpawnMenuOptions();
+            menu.classList.toggle('active');
         };
 
-        function restoreScratchText() {
-            const storedText = localStorage.getItem('workspace_scratchpad_data') || '';
-            document.getElementById('scratch-pad-node').value = storedText;
-        }
+        function buildSpawnMenuOptions() {
+            const list = document.getElementById('spawn-options-list');
+            list.innerHTML = '';
+            let systemClear = true;
 
-        // --- SPLIT INTERCEPT CLOCK ENGINE ---
-        let stopwatchId = null;
-        let stopwatchStartTime = 0;
-        let stopwatchElapsed = 0;
-
-        window.toggleStopwatchSystem = function() {
-            const btn = document.getElementById('stopwatch-toggle');
-            if (stopwatchId) {
-                clearInterval(stopwatchId);
-                stopwatchId = null;
-                btn.textContent = "Start Intercept";
-            } else {
-                stopwatchStartTime = Date.now() - stopwatchElapsed;
-                stopwatchId = setInterval(refreshStopwatchUi, 100);
-                btn.textContent = "Halt System";
-            }
-        };
-
-        window.resetStopwatchSystem = function() {
-            clearInterval(stopwatchId);
-            stopwatchId = null;
-            stopwatchElapsed = 0;
-            document.getElementById('stopwatch-display-lbl').textContent = "00:00.0";
-            document.getElementById('stopwatch-toggle').textContent = "Start Intercept";
-        };
-
-        function refreshStopwatchUi() {
-            stopwatchElapsed = Date.now() - stopwatchStartTime;
-            const totalSecs = Math.floor(stopwatchElapsed / 1000);
-            const mins = Math.floor(totalSecs / 60);
-            const secs = totalSecs % 60;
-            const tenths = Math.floor((stopwatchElapsed % 1000) / 100);
-            
-            document.getElementById('stopwatch-display-lbl').textContent = 
-                `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}.${tenths}`;
-        }
-
-        // --- CHECKLIST DATABASE CORE ACTION PIPELINE ---
-        window.commitNewTask = function() {
-            const inputNode = document.getElementById('task-input-node');
-            if (!inputNode) return;
-            const val = inputNode.value.trim();
-            if (!val) return;
-            if (!Array.isArray(datasetState)) datasetState = [];
-            datasetState.push({ text: val, completed: false });
-            set(ref(db, 'dashboard/tasks'), datasetState).then(() => {
-                inputNode.value = '';
-                inputNode.focus();
-            });
-        };
-
-        window.toggleTaskCompleted = function(index) {
-            if (!Array.isArray(datasetState) || !datasetState[index]) return;
-            datasetState[index].completed = !datasetState[index].completed;
-            set(ref(db, 'dashboard/tasks'), datasetState);
-        };
-
-        window.deleteTargetTask = function(index) {
-            if (!Array.isArray(datasetState)) return;
-            datasetState.splice(index, 1);
-            set(ref(db, 'dashboard/tasks'), datasetState);
-        };
-
-        window.purgeCompletedTasks = function() {
-            if (!Array.isArray(datasetState)) return;
-            datasetState = datasetState.filter(t => !t.completed);
-            set(ref(db, 'dashboard/tasks'), datasetState);
-        };
-
-        window.toggleDashboardTheme = function() {
-            const current = document.documentElement.getAttribute('data-theme');
-            const target = current === 'light' ? 'dark' : 'light';
-            document.documentElement.setAttribute('data-theme', target);
-            localStorage.setItem('workspace_theme', target);
-            document.getElementById('theme-status-lbl').textContent = target.toUpperCase();
-        };
-
-        window.updateMaterialSpecs = function() {
-            const key = document.getElementById('material-selector-node').value;
-            const mat = materialDatabase[key];
-            if (!mat) return;
-            document.getElementById('mat-density').textContent = mat.density;
-            document.getElementById('mat-tensile').textContent = mat.tensile;
-            document.getElementById('mat-modulus').textContent = mat.modulus;
-        };
-
-        // CALCULATOR CODE STRUCTURE FIX
-        let calcExpressionStr = "";
-        window.appendCalculatorValue = function(val) {
-            const display = document.getElementById('calc-display-node');
-            if (calcExpressionStr === "0" && !isNaN(val)) {
-                calcExpressionStr = val;
-            } else {
-                calcExpressionStr += val;
-            }
-            display.textContent = calcExpressionStr ? calcExpressionStr : "0";
-        };
-
-        window.clearCalculatorDisplay = function() {
-            calcExpressionStr = "";
-            document.getElementById('calc-display-node').textContent = "0";
-        };
-
-        window.evaluateCalculatorResult = function() {
-            const display = document.getElementById('calc-display-node');
-            if (!calcExpressionStr) return;
-            try {
-                const sanitizedResult = Function(`"use strict"; return (${calcExpressionStr})`)();
-                calcExpressionStr = String(sanitizedResult);
-                display.textContent = calcExpressionStr;
-            } catch (err) {
-                display.textContent = "Error";
-                calcExpressionStr = "";
-            }
-        };
-
-        window.addEventListener('DOMContentLoaded', () => {
-            initDashboardTheme();
-            initDirectGeminiFetchChannel();
-            fetchLiveWeatherPipeline();
-            renderStaticCalendar();
-            initDragAndDropSystem();
-            restoreScratchText();
-            
-            // Generate real dynamic contextual metadata array for splash
-            const stampNode = document.getElementById('splash-timestamp-node');
-            if(stampNode) {
-                const activeTime = new Date();
-                const welcomeGreeting = activeTime.getHours() < 12 ? "MORNING_SESSION" : (activeTime.getHours() < 18 ? "AFTERNOON_SESSION" : "EVENING_SESSION");
-                stampNode.textContent = `INSTANCE // SYSTEM_${welcomeGreeting}_OK // ${activeTime.toLocaleTimeString()}`;
-            }
-
-            // High Precision Overlay Exit Timing
-            setTimeout(() => {
-                const overlay = document.getElementById('splash-screen-overlay');
-                if (overlay) {
-                    overlay.style.opacity = '0';
-                    setTimeout(() => { overlay.style.visibility = 'hidden'; }, 700);
+            Object.keys(ALL_WIDGET_REGISTRY).forEach(id => {
+                const targetNode = document.getElementById(id);
+                if (targetNode && targetNode.classList.contains('hidden-tile')) {
+                    systemClear = false;
+                    const btn = document.createElement('button');
+                    btn.className = 'spawn-opt-btn';
+                    btn.textContent = ALL_WIDGET_REGISTRY[id];
+                    btn.onclick = (e) => {
+                        e.stopPropagation();
+                        targetNode.classList.remove('hidden-tile');
+                        document.getElementById('spawn-menu-node').classList.remove('active');
+                        saveCanvasLayoutState();
+                    };
+                    list.appendChild(btn);
                 }
-            }, 1300);
-            
-            onValue(dataSyncRef, (snapshot) => {
-                const data = snapshot.val();
-                datasetState = data ? (Array.isArray(data) ? data : Object.values(data)) : [];
-                synchronizeChecklist();
             });
-        });
 
-        // --- GRID INTERACTIVE RE-DRAGGING MODULE ---
-        function initDragAndDropSystem() {
+            if(systemClear) {
+                list.innerHTML = '<div style="font-size:0.75rem; color:var(--text-muted); padding:6px 8px;">All modules active.</div>';
+            }
+        }
+
+        window.toggleStrictGeometry = function() {
+            const grid = document.getElementById('main-dashboard-grid-node');
+            const btn = document.querySelector('button[onclick="toggleStrictGeometry()"]');
+            isStrictGeometry = !isStrictGeometry;
+            if (isStrictGeometry) {
+                grid.classList.add('standardized-geometry');
+                btn.textContent = "Sizing Mode: Uniform";
+            } else {
+                grid.classList.remove('standardized-geometry');
+                btn.textContent = "Sizing Mode: Auto";
+            }
+        };
+
+        // --- HIGH VELOCITY INTERTIAL DRAG & DROP PIPELINE ---
+        function initDragPhysicsEngine() {
             const gridContainer = document.getElementById('main-dashboard-grid-node');
             const items = gridContainer.querySelectorAll('.grid-item');
             let draggedItem = null;
 
             items.forEach(item => {
-                const handle = item.querySelector('.drag-handle');
+                const grabber = item.querySelector('.tile-grab-surface');
+                if(!grabber) return;
+                
                 item.setAttribute('draggable', 'false');
-
-                handle.addEventListener('mouseenter', () => item.setAttribute('draggable', 'true'));
-                handle.addEventListener('mouseleave', () => { if (!draggedItem) item.setAttribute('draggable', 'false'); });
+                grabber.addEventListener('mouseenter', () => item.setAttribute('draggable', 'true'));
+                grabber.addEventListener('mouseleave', () => { if (!draggedItem) item.setAttribute('draggable', 'false'); });
 
                 item.addEventListener('dragstart', (e) => {
                     draggedItem = item;
                     setTimeout(() => item.classList.add('dragging'), 0);
-                    e.dataTransfer.effectAllowed = 'move';
                 });
 
                 item.addEventListener('dragend', () => {
@@ -737,31 +610,26 @@
                     items.forEach(i => i.classList.remove('drag-over'));
                     draggedItem = null;
                     item.setAttribute('draggable', 'false');
-                    saveLayoutOrder();
+                    saveCanvasLayoutState();
                 });
 
                 item.addEventListener('dragover', (e) => {
                     e.preventDefault();
-                    e.dataTransfer.dropEffect = 'move';
-                    if (item !== draggedItem) {
-                        item.classList.add('drag-over');
-                    }
+                    if (item !== draggedItem) item.classList.add('drag-over');
                 });
 
-                item.addEventListener('dragleave', () => {
-                    item.classList.remove('drag-over');
-                });
+                item.addEventListener('dragleave', () => item.classList.remove('drag-over'));
 
                 item.addEventListener('drop', (e) => {
                     e.preventDefault();
                     item.classList.remove('drag-over');
                     
                     if (item !== draggedItem) {
-                        const childrenArray = Array.from(gridContainer.children);
-                        const draggedIdx = childrenArray.indexOf(draggedItem);
-                        const targetIdx = childrenArray.indexOf(item);
+                        const allNodes = Array.from(gridContainer.children);
+                        const dragIdx = allNodes.indexOf(draggedItem);
+                        const targetIdx = allNodes.indexOf(item);
 
-                        if (draggedIdx < targetIdx) {
+                        if (dragIdx < targetIdx) {
                             gridContainer.insertBefore(draggedItem, item.nextSibling);
                         } else {
                             gridContainer.insertBefore(draggedItem, item);
@@ -770,201 +638,179 @@
                 });
             });
 
-            restoreLayoutOrder();
-            restoreTilePreferences();
+            restoreCanvasLayoutState();
         }
 
-        function saveLayoutOrder() {
+        function saveCanvasLayoutState() {
             const gridContainer = document.getElementById('main-dashboard-grid-node');
-            const orderIDs = Array.from(gridContainer.children).map(child => child.id);
-            localStorage.setItem('dashboard_tile_layout_sequence', JSON.stringify(orderIDs));
+            const orderIDs = Array.from(gridContainer.children)
+                .filter(child => child.id && child.id !== 'tile-spawner-root')
+                .map(child => {
+                    const panel = child.querySelector('.panel');
+                    return {
+                        id: child.id,
+                        hidden: child.classList.contains('hidden-tile'),
+                        collapsed: panel ? panel.classList.contains('collapsed-state') : false
+                    };
+                });
+            localStorage.setItem('workspace_physics_canvas_layout_v2', JSON.stringify(orderIDs));
         }
 
-        function restoreLayoutOrder() {
-            const storedSequence = localStorage.getItem('dashboard_tile_layout_sequence');
-            if (!storedSequence) return;
+        function restoreCanvasLayoutState() {
+            const raw = localStorage.getItem('workspace_physics_canvas_layout_v2');
+            if (!raw) return;
             try {
-                const orderIDs = JSON.parse(storedSequence);
+                const blueprints = JSON.parse(raw);
                 const gridContainer = document.getElementById('main-dashboard-grid-node');
-                orderIDs.forEach(id => {
-                    const tileNode = document.getElementById(id);
-                    if (tileNode) gridContainer.appendChild(tileNode);
+                const spawner = document.getElementById('tile-spawner-root');
+
+                blueprints.forEach(box => {
+                    const node = document.getElementById(box.id);
+                    if (node) {
+                        if (box.hidden) node.classList.add('hidden-tile');
+                        else node.classList.remove('hidden-tile');
+
+                        const panel = node.querySelector('.panel');
+                        if (panel && box.collapsed) panel.classList.add('collapsed-state');
+                        
+                        gridContainer.insertBefore(node, spawner);
+                    }
                 });
             } catch (err) { console.error(err); }
         }
 
-        // --- OPEN WEATHER PIPELINE CORE ---
-        async function fetchLiveWeatherPipeline() {
-            const lat = 44.9356;
-            const lon = -68.6464;
-            const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=auto`;
+        // --- WEATHER, AUX CALCULATORS, PERSISTENCE DRIVERS ---
+        window.persistScratchText = function(text) { localStorage.setItem('workspace_scratchpad_data', text); };
+        window.updateMaterialSpecs = function() {
+            const key = document.getElementById('material-selector-node').value;
+            const mat = materialDatabase[key];
+            if (mat) {
+                document.getElementById('mat-density').textContent = mat.density;
+                document.getElementById('mat-tensile').textContent = mat.tensile;
+                document.getElementById('mat-modulus').textContent = mat.modulus;
+            }
+        };
 
+        let calcExpressionStr = "";
+        window.appendCalculatorValue = function(val) {
+            const display = document.getElementById('calc-display-node');
+            calcExpressionStr = (calcExpressionStr === "0" && !isNaN(val)) ? val : calcExpressionStr + val;
+            display.textContent = calcExpressionStr || "0";
+        };
+        window.clearCalculatorDisplay = function() { calcExpressionStr = ""; document.getElementById('calc-display-node').textContent = "0"; };
+        window.evaluateCalculatorResult = function() {
+            const display = document.getElementById('calc-display-node');
             try {
-                const res = await fetch(apiUrl);
-                if (!res.ok) throw new Error("Network fault");
+                calcExpressionStr = String(Function(`"use strict"; return (${calcExpressionStr})`)());
+                display.textContent = calcExpressionStr;
+            } catch { display.textContent = "Error"; calcExpressionStr = ""; }
+        };
+
+        let stopwatchId = null, stopwatchElapsed = 0, stopwatchStartTime = 0;
+        window.toggleStopwatchSystem = function() {
+            const btn = document.getElementById('stopwatch-toggle');
+            if (stopwatchId) {
+                clearInterval(stopwatchId); stopwatchId = null; btn.textContent = "Start Intercept";
+            } else {
+                stopwatchStartTime = Date.now() - stopwatchElapsed;
+                stopwatchId = setInterval(() => {
+                    stopwatchElapsed = Date.now() - stopwatchStartTime;
+                    const totalSecs = Math.floor(stopwatchElapsed / 1000);
+                    document.getElementById('stopwatch-display-lbl').textContent = `${String(Math.floor(totalSecs / 60)).padStart(2, '0')}:${String(totalSecs % 60).padStart(2, '0')}.${Math.floor((stopwatchElapsed % 1000) / 100)}`;
+                }, 100);
+                btn.textContent = "Halt System";
+            }
+        };
+        window.resetStopwatchSystem = function() {
+            clearInterval(stopwatchId); stopwatchId = null; stopwatchElapsed = 0;
+            document.getElementById('stopwatch-display-lbl').textContent = "00:00.0";
+            document.getElementById('stopwatch-toggle').textContent = "Start Intercept";
+        };
+
+        async function fetchLiveWeatherPipeline() {
+            try {
+                const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=44.9356&longitude=-68.6464&current=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min&temperature_unit=fahrenheit&timezone=auto`);
                 const data = await res.json();
-
-                const current = data.current;
-                document.getElementById('weather-temp').textContent = `${Math.round(current.temperature_2m)}°F`;
-                document.getElementById('weather-cond').textContent = weatherCodeMap[current.weather_code] || "Overcast";
-                document.getElementById('weather-wind').textContent = `${Math.round(current.wind_speed_10m)} mph`;
-                document.getElementById('weather-humidity').textContent = `${current.relative_humidity_2m}%`;
-
-                const daily = data.daily;
-                const forecastContainer = document.getElementById('weather-forecast');
-                forecastContainer.innerHTML = '';
-
-                for (let i = 0; i < 2; i++) {
-                    const rawDate = new Date(daily.time[i] + 'T00:00:00');
-                    const options = { weekday: 'short', month: '2-digit', day: '2-digit' };
-                    const formattedDate = rawDate.toLocaleDateString('en-US', options);
-                    
-                    const conditionString = weatherCodeMap[daily.weather_code[i]] || "Variable";
-                    const maxT = Math.round(daily.temperature_2m_max[i]);
-                    const minT = Math.round(daily.temperature_2m_min[i]);
-
+                document.getElementById('weather-temp').textContent = `${Math.round(data.current.temperature_2m)}°F`;
+                document.getElementById('weather-cond').textContent = "Connected Node";
+                
+                const fContainer = document.getElementById('weather-forecast');
+                fContainer.innerHTML = '';
+                for(let i=0; i<2; i++) {
                     const row = document.createElement('div');
                     row.className = 'forecast-row';
-                    row.innerHTML = `<span>${formattedDate}</span><span>${conditionString}</span><span style="text-align:right;">${maxT}° / ${minT}°</span>`;
-                    forecastContainer.appendChild(row);
+                    row.innerHTML = `<span>Day ${i+1}</span><span>Variable Outlook</span><span style="text-align:right">${Math.round(data.daily.temperature_2m_max[i])}° / ${Math.round(data.daily.temperature_2m_min[i])}°</span>`;
+                    fContainer.appendChild(row);
                 }
-            } catch (err) {
-                document.getElementById('weather-cond').textContent = "Offline";
-            }
+            } catch { document.getElementById('weather-cond').textContent = "Offline Context"; }
         }
 
-        function initDashboardTheme() {
-            const preserved = localStorage.getItem('workspace_theme') || 'dark';
-            document.documentElement.setAttribute('data-theme', preserved);
-            document.getElementById('theme-status-lbl').textContent = preserved.toUpperCase();
-        }
+        window.toggleDashboardTheme = function() {
+            const curr = document.documentElement.getAttribute('data-theme');
+            document.documentElement.setAttribute('data-theme', curr === 'light' ? 'dark' : 'light');
+        };
 
-        function renderStaticCalendar() {
-            const gridNode = document.getElementById('calendar-matrix-grid');
-            if (!gridNode) return;
-            gridNode.innerHTML = '';
-            ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].forEach(l => {
-                const cell = document.createElement('div');
-                cell.className = 'calendar-day-label';
-                cell.textContent = l;
-                gridNode.appendChild(cell);
+        window.commitNewTask = function() {
+            const input = document.getElementById('task-input-node');
+            const val = input.value.trim();
+            if (!val) return;
+            datasetState.push({ text: val, completed: false });
+            set(ref(db, 'dashboard/tasks'), datasetState).then(() => { input.value = ''; });
+        };
+
+        window.toggleTaskCompleted = function(index) {
+            datasetState[index].completed = !datasetState[index].completed;
+            set(ref(db, 'dashboard/tasks'), datasetState);
+        };
+
+        window.deleteTargetTask = function(index) {
+            datasetState.splice(index, 1);
+            set(ref(db, 'dashboard/tasks'), datasetState);
+        };
+
+        function renderChecklist() {
+            const container = document.getElementById('checklist-render-node');
+            container.innerHTML = '';
+            datasetState.forEach((task, index) => {
+                const li = document.createElement('li');
+                li.className = 'checklist-item' + (task.completed ? ' resolved' : '');
+                li.innerHTML = `<div class="task-left-block"><span class="status-box">${task.completed ? '●' : '○'}</span><span class="task-text">${task.text}</span></div><button class="clear-single-btn">×</button>`;
+                li.addEventListener('click', (e) => { if(!e.target.classList.contains('clear-single-btn')) window.toggleTaskCompleted(index); });
+                li.querySelector('.clear-single-btn').addEventListener('click', (e) => { e.stopPropagation(); window.deleteTargetTask(index); });
+                container.appendChild(li);
             });
-            for (let p = 0; p < 5; p++) {
-                const cell = document.createElement('div');
-                cell.className = 'calendar-cell muted';
-                cell.textContent = 26 + p;
-                gridNode.appendChild(cell);
-            }
+        }
+
+        window.addEventListener('click', () => {
+            document.getElementById('spawn-menu-node').classList.remove('active');
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            fetchLiveWeatherPipeline();
+            initDragPhysicsEngine();
+            
+            const scratch = localStorage.getItem('workspace_scratchpad_data');
+            if (scratch) document.getElementById('scratch-pad-node').value = scratch;
+
+            const gridNode = document.getElementById('calendar-matrix-grid');
             for (let d = 1; d <= 31; d++) {
                 const cell = document.createElement('div');
                 cell.className = 'calendar-cell' + (d === 18 ? ' today' : '');
                 cell.textContent = d;
                 gridNode.appendChild(cell);
             }
-        }
 
-        // --- COPILOT CONTEXT GENERATOR PIPELINE ---
-        function initDirectGeminiFetchChannel() {
-            const logViewport = document.getElementById('ai-chat-viewport');
-            if (GEMINI_API_KEY === "YOUR_GEMINI_API_KEY_HERE") {
-                logViewport.innerHTML = '<div class="chat-bubble bubble-gemini" style="color:var(--accent-alert);"><strong>[Config Needed]</strong> Insert your API key on line 265 to map the query engine.</div>';
-                return;
-            }
-            logViewport.innerHTML = '<div class="chat-bubble bubble-gemini"><strong>[Gemini Framework Online]</strong> Awaiting workspace metrics...</div>';
-        }
+            setTimeout(() => {
+                const overlay = document.getElementById('splash-screen-overlay');
+                if(overlay) { overlay.style.opacity = '0'; setTimeout(() => overlay.style.visibility = 'hidden', 500); }
+            }, 800);
 
-        window.dispatchAiQuery = async function() {
-            const queryInput = document.getElementById('ai-query-input');
-            const logViewport = document.getElementById('ai-chat-viewport');
-            const submitBtn = document.getElementById('ai-submit-btn');
-            const rawText = queryInput.value.trim();
-            
-            if (!rawText) return;
-            if (GEMINI_API_KEY === "YOUR_GEMINI_API_KEY_HERE") {
-                alert("Please add your Gemini API Key on line 265 first.");
-                return;
-            }
-
-            queryInput.disabled = true;
-            submitBtn.disabled = true;
-
-            const userBubble = document.createElement('div');
-            userBubble.className = 'chat-bubble bubble-user';
-            userBubble.textContent = rawText;
-            logViewport.appendChild(userBubble);
-            queryInput.value = '';
-
-            const loadingBubble = document.createElement('div');
-            loadingBubble.className = 'chat-bubble bubble-gemini';
-            loadingBubble.innerHTML = '<em>Awaiting pipeline stream data...</em>';
-            logViewport.appendChild(loadingBubble);
-            logViewport.scrollTop = logViewport.scrollHeight;
-
-            try {
-                const directApiEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
-                
-                const response = await fetch(directApiEndpoint, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: rawText }] }],
-                        systemInstruction: { parts: [{ text: "You are an exceptionally concise workspace copilot assistant." }] }
-                    })
-                });
-
-                if (!response.ok) {
-                    const textErr = await response.text();
-                    throw new Error(`API Error: ${response.status} - ${textErr}`);
-                }
-
-                const data = await response.json();
-                const textReply = data.candidates?.[0]?.content?.parts?.[0]?.text || "No text response payload returned.";
-                loadingBubble.textContent = textReply;
-            } catch (err) {
-                loadingBubble.innerHTML = `<span style="color:var(--accent-alert);">Connection Failure: ${err.message}</span>`;
-            }
-            
-            queryInput.disabled = false;
-            submitBtn.disabled = false;
-            logViewport.scrollTop = logViewport.scrollHeight;
-        };
-
-        function synchronizeChecklist() {
-            const container = document.getElementById('checklist-render-node');
-            if (!container) return;
-            container.innerHTML = '';
-            let remCount = 0, compCount = 0;
-
-            if (datasetState.length === 0) {
-                container.innerHTML = '<div style="color:var(--text-dark); padding:10px; font-size:0.88rem;">Queue clean. No active log flags.</div>';
-            } else {
-                datasetState.forEach((task, index) => {
-                    task.completed ? compCount++ : remCount++;
-                    const li = document.createElement('li');
-                    li.className = 'checklist-item' + (task.completed ? ' resolved' : '');
-                    li.innerHTML = `
-                        <div class="task-left-block">
-                            <span class="status-box">${task.completed ? '●' : '○'}</span>
-                            <span class="task-text">${task.text}</span>
-                        </div>
-                        <button class="clear-single-btn">Delete</button>
-                    `;
-                    
-                    li.addEventListener('click', (e) => {
-                        if (e.target.classList.contains('clear-single-btn')) return;
-                        window.toggleTaskCompleted(index);
-                    });
-
-                    li.querySelector('.clear-single-btn').addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        window.deleteTargetTask(index);
-                    });
-                    container.appendChild(li);
-                });
-            }
-            document.getElementById('active-count').textContent = remCount;
-            document.getElementById('complete-count').textContent = compCount;
-        }
+            onValue(dataSyncRef, (snapshot) => {
+                const data = snapshot.val();
+                datasetState = data ? (Array.isArray(data) ? data : Object.values(data)) : [];
+                renderChecklist();
+            });
+        });
     </script>
 </body>
 </html>
