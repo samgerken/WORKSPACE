@@ -62,15 +62,20 @@
         .theme-toggle-btn { background: var(--bg-terminal); color: var(--text-secondary); border: 1px solid var(--border-subtle); padding: 6px 12px; font-family: monospace; font-size: 0.75rem; text-transform: uppercase; border-radius: 4px; cursor: pointer; }
         .theme-toggle-btn:hover { border-color: var(--border-active); color: var(--text-primary); }
 
+        /* DRAGGABLE GRID STYLES */
         .dashboard-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 24px; }
         .col-3 { grid-column: span 3; }
         .col-2 { grid-column: span 2; }
         
-        .dashboard-column { display: flex; flex-direction: column; gap: 24px; }
+        .grid-item { cursor: grab; transition: transform 0.2s ease, opacity 0.2s ease; }
+        .grid-item:active { cursor: grabbing; }
+        .grid-item.dragging { opacity: 0.4; transform: scale(0.98); }
+        .grid-item.drag-over { border-radius: 12px; outline: 2px dashed var(--border-active); outline-offset: 4px; }
 
-        section.panel, div.panel { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; height: 100%; }
+        section.panel, div.panel { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; height: 100%; min-height: 220px; }
         
-        h2 { color: var(--panel-title-color); font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; border-left: 2px solid var(--panel-header-line); padding-left: 10px; }
+        h2 { color: var(--panel-title-color); font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; border-left: 2px solid var(--panel-header-line); padding-left: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .drag-handle-hint { font-size: 0.7rem; color: var(--text-dark); letter-spacing: 0; text-transform: none; font-weight: normal; font-family: monospace; }
 
         .control-row { display: flex; gap: 12px; margin-bottom: 20px; }
         .task-input { flex: 1; background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 12px 16px; color: var(--text-primary); font-family: inherit; font-size: 0.95rem; outline: none; min-width: 0; }
@@ -161,10 +166,11 @@
             </div>
         </header>
 
-        <div class="dashboard-grid">
-            <div class="col-3">
+        <div class="dashboard-grid" id="main-dashboard-grid-node">
+            
+            <div class="grid-item col-3" draggable="true" id="tile-checklist">
                 <div class="panel">
-                    <h2>Daily Checklist</h2>
+                    <h2>Daily Checklist <span class="drag-handle-hint">⋮⋮ drag</span></h2>
                     <div class="control-row" style="margin-top: 14px;">
                         <input type="text" id="task-input-node" class="task-input" placeholder="Add tracking log entry...">
                         <button class="deploy-btn" onclick="window.commitNewTask()">Add</button>
@@ -177,9 +183,9 @@
                 </div>
             </div>
 
-            <div class="col-3">
+            <div class="grid-item col-3" draggable="true" id="tile-ai-engine">
                 <div class="panel">
-                    <h2>Local Engine Assistant</h2>
+                    <h2>Local Engine Assistant <span class="drag-handle-hint">⋮⋮ drag</span></h2>
                     <div class="ai-chat-log" id="ai-chat-viewport" style="margin-top: 14px;"></div>
                     <div class="control-row" style="margin-bottom: 0;">
                         <input type="text" id="ai-query-input" class="task-input" placeholder="Loading local engine runtime layers..." disabled>
@@ -188,9 +194,9 @@
                 </div>
             </div>
 
-            <div class="col-2 dashboard-column">
+            <div class="grid-item col-2" draggable="true" id="tile-weather">
                 <div class="panel">
-                    <h2>Local Weather</h2>
+                    <h2>Local Weather <span class="drag-handle-hint">⋮⋮ drag</span></h2>
                     <div class="weather-display" style="margin-top: 14px;">
                         <div>
                             <div class="temp-primary" id="weather-temp">--°F</div>
@@ -206,9 +212,11 @@
                         <div class="forecast-row"><span>--</span><span>Syncing details...</span><span style="text-align:right;">-- / --</span></div>
                     </div>
                 </div>
+            </div>
 
+            <div class="grid-item col-2" draggable="true" id="tile-materials">
                 <div class="panel">
-                    <h2>Material Matrix Lookup</h2>
+                    <h2>Material Matrix Lookup <span class="drag-handle-hint">⋮⋮ drag</span></h2>
                     <select id="material-selector-node" class="material-selector" style="margin-top: 14px;" onchange="updateMaterialSpecs()">
                         <option value="petg">PETG (Carbon Fiber Reinforced)</option>
                         <option value="pla">PLA+ High-Performance</option>
@@ -222,16 +230,18 @@
                 </div>
             </div>
 
-            <div class="col-2 dashboard-column">
+            <div class="grid-item col-2" draggable="true" id="tile-calendar">
                 <div class="panel">
                     <div class="calendar-header">
-                        <h2 id="calendar-header-title">May 2026</h2>
+                        <h2 id="calendar-header-title" style="width:100%;">May 2026 <span class="drag-handle-hint" style="float:right;">⋮⋮ drag</span></h2>
                     </div>
                     <div class="calendar-grid" id="calendar-matrix-grid"></div>
                 </div>
+            </div>
 
+            <div class="grid-item col-2" draggable="true" id="tile-cycling">
                 <div class="panel">
-                    <h2>Cycling Telemetry</h2>
+                    <h2>Cycling Telemetry <span class="drag-handle-hint">⋮⋮ drag</span></h2>
                     <div class="stats-grid" style="margin-top: 14px;">
                         <div class="stat-card">
                             <div class="stat-label">Block Mileage</div>
@@ -249,9 +259,9 @@
                 </div>
             </div>
 
-            <div class="col-2 dashboard-column">
+            <div class="grid-item col-2" draggable="true" id="tile-calculator">
                 <div class="panel">
-                    <h2>Calculator Terminal</h2>
+                    <h2>Calculator Terminal <span class="drag-handle-hint">⋮⋮ drag</span></h2>
                     <div style="margin-top: 14px; display: flex; flex-direction: column;">
                         <div id="calc-display-node" class="calc-screen">0</div>
                         <div class="calc-grid">
@@ -279,9 +289,11 @@
                         </div>
                     </div>
                 </div>
+            </div>
 
+            <div class="grid-item col-2" draggable="true" id="tile-transit">
                 <div class="panel">
-                    <h2>Transit & Travel Logistics</h2>
+                    <h2>Transit & Travel Logistics <span class="drag-handle-hint">⋮⋮ drag</span></h2>
                     <ul class="logistics-list" style="margin-top: 14px;">
                         <li class="logistics-item"><input type="checkbox" id="log-c1" class="logistics-cb" checked><label for="log-c1">Beeline navigation kit loaded</label></li>
                         <li class="logistics-item"><input type="checkbox" id="log-c2" class="logistics-cb"><label for="log-c2">CAD geometry file export backup</label></li>
@@ -290,6 +302,7 @@
                     </ul>
                 </div>
             </div>
+
         </div>
     </div>
 
@@ -322,7 +335,6 @@
             alu: { density: "2.70 g/cm³", tensile: "310 MPa", modulus: "68.9 GPa" }
         };
 
-        // Mapping Open-Meteo WMO weather codes to human-readable text strings
         const weatherCodeMap = {
             0: "Clear Skies", 1: "Mainly Clear", 2: "Partly Cloudy", 3: "Overcast",
             45: "Foggy", 48: "Depositing Rime Fog", 51: "Light Drizzle", 53: "Moderate Drizzle",
@@ -414,6 +426,7 @@
             initWebLlmEngine();
             fetchLiveWeatherPipeline();
             renderStaticCalendar();
+            initDragAndDropSystem();
             
             onValue(dataSyncRef, (snapshot) => {
                 const data = snapshot.val();
@@ -422,9 +435,94 @@
             });
         });
 
-        // --- LIVE WEATHER DATA SUBSCRIPTION ENGINE ---
+        // --- NATIVE DRAG AND DROP SNAP PIPELINE ---
+        function initDragAndDropSystem() {
+            const gridContainer = document.getElementById('main-dashboard-grid-node');
+            const items = gridContainer.querySelectorAll('.grid-item');
+            let draggedItem = null;
+
+            items.forEach(item => {
+                // Prevent inner input controls, calculators, and drop-downs from triggering drag events
+                item.addEventListener('mousedown', (e) => {
+                    const tag = e.target.tagName.toLowerCase();
+                    if (tag === 'input' || tag === 'select' || tag === 'button' || tag === 'textarea' || e.target.closest('.calc-grid') || e.target.closest('.checklist-container')) {
+                        item.setAttribute('draggable', 'false');
+                    } else {
+                        item.setAttribute('draggable', 'true');
+                    }
+                });
+
+                item.addEventListener('dragstart', (e) => {
+                    draggedItem = item;
+                    setTimeout(() => item.classList.add('dragging'), 0);
+                    e.dataTransfer.effectAllowed = 'move';
+                });
+
+                item.addEventListener('dragend', () => {
+                    draggedItem.classList.remove('dragging');
+                    items.forEach(i => i.classList.remove('drag-over'));
+                    draggedItem = null;
+                    saveLayoutOrder(); // Commits new arrangement index to local memory
+                });
+
+                item.addEventListener('dragover', (e) => {
+                    e.preventDefault(); // Required to allow a drop event
+                    e.dataTransfer.dropEffect = 'move';
+                    if (item !== draggedItem) {
+                        item.classList.add('drag-over');
+                    }
+                });
+
+                item.addEventListener('dragleave', () => {
+                    item.classList.remove('drag-over');
+                });
+
+                item.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    item.classList.remove('drag-over');
+                    
+                    if (item !== draggedItem) {
+                        const childrenArray = Array.from(gridContainer.children);
+                        const draggedIdx = childrenArray.indexOf(draggedItem);
+                        const targetIdx = childrenArray.indexOf(item);
+
+                        if (draggedIdx < targetIdx) {
+                            gridContainer.insertBefore(draggedItem, item.nextSibling);
+                        } else {
+                            gridContainer.insertBefore(draggedItem, item);
+                        }
+                    }
+                });
+            });
+
+            // Restore previously saved layout configuration order if available
+            restoreLayoutOrder();
+        }
+
+        function saveLayoutOrder() {
+            const gridContainer = document.getElementById('main-dashboard-grid-node');
+            const orderIDs = Array.from(gridContainer.children).map(child => child.id);
+            localStorage.setItem('dashboard_tile_layout_sequence', JSON.stringify(orderIDs));
+        }
+
+        function restoreLayoutOrder() {
+            const storedSequence = localStorage.getItem('dashboard_tile_layout_sequence');
+            if (!storedSequence) return;
+            try {
+                const orderIDs = JSON.parse(storedSequence);
+                const gridContainer = document.getElementById('main-dashboard-grid-node');
+                orderIDs.forEach(id => {
+                    const tileNode = document.getElementById(id);
+                    if (tileNode) {
+                        gridContainer.appendChild(tileNode); // Appending re-orders existing elements in DOM sequence
+                    }
+                });
+            } catch (err) {
+                console.error("Layout index restoration failed", err);
+            }
+        }
+
         async function fetchLiveWeatherPipeline() {
-            // Latitude & Longitude targeted coordinates for Old Town, ME area
             const lat = 44.9356;
             const lon = -68.6464;
             const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=auto`;
@@ -434,17 +532,15 @@
                 if (!res.ok) throw new Error("Network latency fault");
                 const data = await res.json();
 
-                // 1. Process Current Metrics
                 const current = data.current;
                 document.getElementById('weather-temp').textContent = `${Math.round(current.temperature_2m)}°F`;
                 document.getElementById('weather-cond').textContent = weatherCodeMap[current.weather_code] || "Overcast";
                 document.getElementById('weather-wind').textContent = `${Math.round(current.wind_speed_10m)} mph`;
                 document.getElementById('weather-humidity').textContent = `${current.relative_humidity_2m}%`;
 
-                // 2. Process Two-Day Forecast Blocks
                 const daily = data.daily;
                 const forecastContainer = document.getElementById('weather-forecast');
-                forecastContainer.innerHTML = ''; // Wipe formatting placeholders
+                forecastContainer.innerHTML = '';
 
                 for (let i = 0; i < 2; i++) {
                     const rawDate = new Date(daily.time[i] + 'T00:00:00');
@@ -460,7 +556,6 @@
                     row.innerHTML = `<span>${formattedDate}</span><span>${conditionString}</span><span style="text-align:right;">${maxT}° / ${minT}°</span>`;
                     forecastContainer.appendChild(row);
                 }
-
             } catch (err) {
                 console.error("Weather refresh failed: ", err);
                 document.getElementById('weather-cond').textContent = "Offline";
