@@ -275,7 +275,6 @@
         let activeChatSession = null;
         let datasetState = [];
         let scratchpadDebounceTimer = null;
-        let isInitialLoadDone = false;
 
         const materialDatabase = {
             petg: { density: "1.27 g/cm³", tensile: "48.5 MPa", modulus: "3.8 GPa" },
@@ -283,9 +282,8 @@
             alu: { density: "2.70 g/cm³", tensile: "310 MPa", modulus: "68.9 GPa" }
         };
 
-        // --- GLOBAL SCOPE WINDOW BINDINGS (DECLARED IMMEDIATELY ON PARSE) ---
+        // --- SCOPE PROTECTION BLOCK: BIND DIRECTLY AND IMMEDIATELY TO THE WINDOW OBJECT ---
         window.commitNewTask = function() {
-            if (!isInitialLoadDone) return;
             const inputNode = document.getElementById('task-input-node');
             if (!inputNode) return;
             
@@ -306,13 +304,13 @@
         };
 
         window.deleteTargetTask = function(index) {
-            if (!isInitialLoadDone || !datasetState) return;
+            if (!datasetState) return;
             datasetState.splice(index, 1);
             set(ref(db, 'dashboard/tasks'), datasetState);
         };
 
         window.purgeCompletedTasks = function() {
-            if (!isInitialLoadDone || !datasetState) return;
+            if (!datasetState) return;
             datasetState = datasetState.filter(t => !t.completed);
             set(ref(db, 'dashboard/tasks'), datasetState);
         };
@@ -334,7 +332,7 @@
             document.getElementById('mat-modulus').textContent = mat.modulus;
         };
 
-        // --- CORE APPLICATION LIFECYCLE INITIALIZATION ---
+        // --- LIFECYCLE LISTENERS ---
         window.addEventListener('DOMContentLoaded', () => {
             initDashboardTheme();
             initializeAutomaticPipeline();
@@ -344,7 +342,6 @@
             onValue(dataSyncRef, (snapshot) => {
                 const data = snapshot.val();
                 datasetState = data !== null ? data : [];
-                isInitialLoadDone = true; 
                 synchronizeChecklist();
             });
         });
