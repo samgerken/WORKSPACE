@@ -70,7 +70,6 @@
         .panel-title-container { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
         
         h2 { color: var(--panel-title-color); font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; border-left: 2px solid var(--panel-header-line); padding-left: 10px; }
-        .panel-meta-tracker { font-family: monospace; font-size: 0.65rem; color: var(--text-dark); text-transform: uppercase; letter-spacing: 0.05em; }
 
         .control-row { display: flex; gap: 12px; margin-bottom: 20px; }
         .task-input { flex: 1; background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 12px 16px; color: var(--text-primary); font-family: inherit; font-size: 0.95rem; outline: none; }
@@ -117,6 +116,7 @@
         .progress-fill { background: var(--text-primary); height: 100%; transition: width 0.3s ease; }
 
         .scratchpad-area { background: var(--bg-terminal); color: var(--text-primary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 14px; font-family: monospace; font-size: 0.85rem; min-height: 110px; width: 100%; outline: none; resize: vertical; }
+        .scratchpad-status { font-size: 0.7rem; color: var(--text-dark); margin-top: 4px; text-align: right; font-family: monospace; }
         .material-selector { background: var(--bg-terminal); border: 1px solid var(--border-subtle); color: var(--text-primary); width: 100%; padding: 10px; border-radius: 6px; margin-bottom: 12px; outline: none; }
         .spec-table { width: 100%; font-family: monospace; font-size: 0.8rem; border-collapse: collapse; }
         .spec-table td { padding: 6px 8px; border-bottom: 1px solid var(--border-subtle); }
@@ -230,7 +230,8 @@
             <div class="dashboard-column">
                 <div class="panel">
                     <h2>Scratchpad Terminal</h2>
-                    <textarea id="scratchpad-text-node" class="scratchpad-area" style="margin-top: 14px;" placeholder="Stage local strings, variables or transient macros..." spellcheck="false"></textarea>
+                    <textarea id="scratchpad-text-node" class="scratchpad-area" style="margin-top: 14px;" placeholder="Stage local strings, variables or transient macros..." spellcheck="false" disabled></textarea>
+                    <div id="scratchpad-status-lbl" class="scratchpad-status">Connecting to cloud sync...</div>
                 </div>
             </div>
         </div>
@@ -253,12 +254,14 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
-        const dataSyncRef = ref(db, 'dashboard/tasks'); // Firm target path
+        
+        const dataSyncRef = ref(db, 'dashboard/tasks');
+        const scratchpadSyncRef = ref(db, 'dashboard/scratchpad');
 
-        const TARGET_PIPELINE_KEY = 'AIzaSyAM5FFmnoIt6284nAky_30KAAQJB3sq36o';
         let aiClient = null;
         let activeChatSession = null;
         let datasetState = [];
+        let scratchpadDebounceTimer = null;
 
         const materialDatabase = {
             petg: { density: "1.27 g/cm³", tensile: "48.5 MPa", modulus: "3.8 GPa" },
@@ -270,7 +273,7 @@
             initDashboardTheme();
             initializeAutomaticPipeline();
             renderStaticCalendar();
-            initializeScratchpadEngine();
+            initializeCloudScratchpad();
             
             onValue(dataSyncRef, (snapshot) => {
                 datasetState = snapshot.val() || [];
@@ -292,11 +295,29 @@
             document.getElementById('theme-status-lbl').textContent = target.toUpperCase();
         }
 
-        function initializeScratchpadEngine() {
+        function initializeCloudScratchpad() {
             const node = document.getElementById('scratchpad-text-node');
-            const cached = localStorage.getItem('workspace_scratchpad');
-            if (cached && node) node.value = cached;
-            node?.addEventListener('input', () => localStorage.setItem('workspace_scratchpad', node.value));
+            const status = document.getElementById('scratchpad-status-lbl');
+            if (!node) return;
+
+            onValue(scratchpadSyncRef, (snapshot) => {
+                const cloudText = snapshot.val() || "";
+                if (document.activeElement !== node) {
+                    node.value = cloudText;
+                }
+                node.disabled = false;
+                status.textContent = "Cloud Sync Active";
+            });
+
+            node.addEventListener('input', () => {
+                status.textContent = "Typing...";
+                clearTimeout(scratchpadDebounceTimer);
+                scratchpadDebounceTimer = setTimeout(() => {
+                    set(scratchpadSyncRef, node.value)
+                        .then(() => { status.textContent = "Saved to Cloud"; })
+                        .catch(() => { status.textContent = "Sync Error"; });
+                }, 400);
+            });
         }
 
         window.updateMaterialSpecs = function() {
@@ -318,7 +339,6 @@
                 cell.textContent = l;
                 gridNode.appendChild(cell);
             });
-            // Fixed pad calculation placeholder for May 2026 (Starts Friday)
             for (let p = 0; p < 5; p++) {
                 const cell = document.createElement('div');
                 cell.className = 'calendar-cell muted';
@@ -339,15 +359,29 @@
 
         function initializeAutomaticPipeline() {
             const logViewport = document.getElementById('ai-chat-viewport');
+            let activeApiKey = localStorage.getItem('workspace_gemini_key');
+            
+            if (!activeApiKey) {
+                activeApiKey = prompt("Enter a valid Gemini API Key to initialize the console (this will be securely stored locally in your browser):");
+                if (activeApiKey) {
+                    localStorage.setItem('workspace_gemini_key', activeApiKey.trim());
+                }
+            }
+
+            if (!activeApiKey) {
+                logViewport.innerHTML = '<div class="chat-bubble bubble-gemini" style="color:var(--accent-alert);"><strong>[Console Offline]</strong> API Key is required. Refresh to provide key.</div>';
+                return;
+            }
+
             try {
-                aiClient = new GoogleGenAI({ apiKey: TARGET_PIPELINE_KEY });
+                aiClient = new GoogleGenAI({ apiKey: activeApiKey });
                 activeChatSession = aiClient.chats.create({
                     model: 'gemini-2.5-flash',
                     config: { systemInstruction: "You are a concise terminal assistant." }
                 });
-                logViewport.innerHTML = '<div class="chat-bubble bubble-gemini"><strong>[Console Online]</strong> Modules restored.</div>';
+                logViewport.innerHTML = '<div class="chat-bubble bubble-gemini"><strong>[Console Online]</strong> Secure local session active.</div>';
             } catch (err) {
-                logViewport.innerHTML = `<div>Error: ${err.message}</div>`;
+                logViewport.innerHTML = `<div class="chat-bubble bubble-gemini" style="color:var(--accent-alert);">Initialization Error: ${err.message}</div>`;
             }
         }
 
@@ -377,7 +411,12 @@
                 let response = await activeChatSession.sendMessage({ message: rawText });
                 loadingBubble.innerHTML = parseMarkdown(response.text);
             } catch (err) {
-                loadingBubble.innerHTML = `<span>Error: ${err.message}</span>`;
+                if (err.message.includes("API_KEY_INVALID") || err.message.includes("403")) {
+                    loadingBubble.innerHTML = `<span style="color:var(--accent-alert);">Key rejected. Storage cleared. Refresh to retry.</span>`;
+                    localStorage.removeItem('workspace_gemini_key');
+                } else {
+                    loadingBubble.innerHTML = `<span>Error: ${err.message}</span>`;
+                }
             }
             
             queryInput.disabled = false;
