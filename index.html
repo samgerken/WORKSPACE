@@ -6,7 +6,7 @@
     <title>Workspace Dashboard</title>
     <style>
         :root {
-            /* 5% Higher Contrast Dark Mode: Darker base background, slightly lighter panels */
+            /* 5% Higher Contrast Dark Mode */
             --bg-base: #050506;
             --bg-surface: rgba(255, 255, 255, 0.03);
             --bg-terminal: #000000;
@@ -68,15 +68,17 @@
         .col-3 { grid-column: span 3; }
         .col-2 { grid-column: span 2; }
         
-        .grid-item { cursor: grab; transition: transform 0.2s ease, opacity 0.2s ease; }
-        .grid-item:active { cursor: grabbing; }
-        .grid-item.dragging { opacity: 0.4; transform: scale(0.98); }
+        .grid-item { transition: transform 0.2s ease, opacity 0.2s ease; position: relative; }
+        .grid-item.dragging { opacity: 0.3; transform: scale(0.97); }
         .grid-item.drag-over { border-radius: 12px; outline: 2px dashed var(--border-active); outline-offset: 4px; }
 
         section.panel, div.panel { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; height: 100%; min-height: 220px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2); }
         
         h2 { color: var(--panel-title-color); font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; border-left: 2px solid var(--panel-header-line); padding-left: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .drag-handle-hint { font-size: 0.7rem; color: var(--text-dark); letter-spacing: 0; text-transform: none; font-weight: normal; font-family: monospace; }
+        
+        /* Dedicated Drag Handle UI element */
+        .drag-handle { cursor: grab; font-size: 0.85rem; color: var(--text-muted); padding: 2px 6px; background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 4px; font-family: monospace; user-select: none; }
+        .drag-handle:active { cursor: grabbing; border-color: var(--text-primary); color: var(--text-primary); }
 
         .control-row { display: flex; gap: 12px; margin-bottom: 20px; }
         .task-input { flex: 1; background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 12px 16px; color: var(--text-primary); font-family: inherit; font-size: 0.95rem; outline: none; min-width: 0; }
@@ -165,9 +167,9 @@
 
         <div class="dashboard-grid" id="main-dashboard-grid-node">
             
-            <div class="grid-item col-3" draggable="true" id="tile-checklist">
+            <div class="grid-item col-3" id="tile-checklist">
                 <div class="panel">
-                    <h2>Daily Checklist <span class="drag-handle-hint">⋮⋮ drag</span></h2>
+                    <h2>Daily Checklist <span class="drag-handle" title="Click and drag to move layout">⋮⋮ DRAG</span></h2>
                     <div class="control-row" style="margin-top: 14px;">
                         <input type="text" id="task-input-node" class="task-input" placeholder="Add tracking log entry...">
                         <button class="deploy-btn" onclick="window.commitNewTask()">Add</button>
@@ -180,9 +182,9 @@
                 </div>
             </div>
 
-            <div class="grid-item col-3" draggable="true" id="tile-ai-engine">
+            <div class="grid-item col-3" id="tile-ai-engine">
                 <div class="panel">
-                    <h2>Gemini Copilot <span class="drag-handle-hint">⋮⋮ drag</span></h2>
+                    <h2>Gemini Copilot <span class="drag-handle" title="Click and drag to move layout">⋮⋮ DRAG</span></h2>
                     <div class="ai-chat-log" id="ai-chat-viewport" style="margin-top: 14px;"></div>
                     <div class="control-row" style="margin-bottom: 0;">
                         <input type="text" id="ai-query-input" class="task-input" placeholder="Query Gemini environment engine...">
@@ -191,9 +193,9 @@
                 </div>
             </div>
 
-            <div class="grid-item col-2" draggable="true" id="tile-weather">
+            <div class="grid-item col-2" id="tile-weather">
                 <div class="panel">
-                    <h2>Local Weather <span class="drag-handle-hint">⋮⋮ drag</span></h2>
+                    <h2>Local Weather <span class="drag-handle" title="Click and drag to move layout">⋮⋮ DRAG</span></h2>
                     <div class="weather-display" style="margin-top: 14px;">
                         <div>
                             <div class="temp-primary" id="weather-temp">--°F</div>
@@ -211,9 +213,9 @@
                 </div>
             </div>
 
-            <div class="grid-item col-2" draggable="true" id="tile-materials">
+            <div class="grid-item col-2" id="tile-materials">
                 <div class="panel">
-                    <h2>Material Matrix Lookup <span class="drag-handle-hint">⋮⋮ drag</span></h2>
+                    <h2>Material Matrix Lookup <span class="drag-handle" title="Click and drag to move layout">⋮⋮ DRAG</span></h2>
                     <select id="material-selector-node" class="material-selector" style="margin-top: 14px;" onchange="updateMaterialSpecs()">
                         <option value="petg">PETG (Carbon Fiber Reinforced)</option>
                         <option value="pla">PLA+ High-Performance</option>
@@ -227,18 +229,18 @@
                 </div>
             </div>
 
-            <div class="grid-item col-2" draggable="true" id="tile-calendar">
+            <div class="grid-item col-2" id="tile-calendar">
                 <div class="panel">
                     <div class="calendar-header">
-                        <h2 id="calendar-header-title" style="width:100%;">May 2026 <span class="drag-handle-hint" style="float:right;">⋮⋮ drag</span></h2>
+                        <h2 id="calendar-header-title" style="width:100%;">May 2026 <span class="drag-handle" title="Click and drag to move layout" style="float:right;">⋮⋮ DRAG</span></h2>
                     </div>
                     <div class="calendar-grid" id="calendar-matrix-grid"></div>
                 </div>
             </div>
 
-            <div class="grid-item col-2" draggable="true" id="tile-cycling">
+            <div class="grid-item col-2" id="tile-cycling">
                 <div class="panel">
-                    <h2>Cycling Telemetry <span class="drag-handle-hint">⋮⋮ drag</span></h2>
+                    <h2>Cycling Telemetry <span class="drag-handle" title="Click and drag to move layout">⋮⋮ DRAG</span></h2>
                     <div class="stats-grid" style="margin-top: 14px;">
                         <div class="stat-card">
                             <div class="stat-label">Block Mileage</div>
@@ -256,9 +258,9 @@
                 </div>
             </div>
 
-            <div class="grid-item col-2" draggable="true" id="tile-calculator">
+            <div class="grid-item col-2" id="tile-calculator">
                 <div class="panel">
-                    <h2>Calculator Terminal <span class="drag-handle-hint">⋮⋮ drag</span></h2>
+                    <h2>Calculator Terminal <span class="drag-handle" title="Click and drag to move layout">⋮⋮ DRAG</span></h2>
                     <div style="margin-top: 14px; display: flex; flex-direction: column;">
                         <div id="calc-display-node" class="calc-screen">0</div>
                         <div class="calc-grid">
@@ -288,9 +290,9 @@
                 </div>
             </div>
 
-            <div class="grid-item col-2" draggable="true" id="tile-transit">
+            <div class="grid-item col-2" id="tile-transit">
                 <div class="panel">
-                    <h2>Transit & Travel Logistics <span class="drag-handle-hint">⋮⋮ drag</span></h2>
+                    <h2>Transit & Travel Logistics <span class="drag-handle" title="Click and drag to move layout">⋮⋮ DRAG</span></h2>
                     <ul class="logistics-list" style="margin-top: 14px;">
                         <li class="logistics-item"><input type="checkbox" id="log-c1" class="logistics-cb" checked><label for="log-c1">Beeline navigation kit loaded</label></li>
                         <li class="logistics-item"><input type="checkbox" id="log-c2" class="logistics-cb"><label for="log-c2">CAD geometry file export backup</label></li>
@@ -303,9 +305,22 @@
         </div>
     </div>
 
+    <script type="importmap">
+      {
+        "imports": {
+          "@google/generative-ai": "https://esm.run/@google/generative-ai"
+        }
+      }
+    </script>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { GoogleGenAI } from "@google/generative-ai";
+
+        // --- CORE FRONTEND CONFIGURATIONS ---
+        // Add your real Gemini API token right here to run completely serverless!
+        const GEMINI_API_KEY = "YOUR_GEMINI_API_KEY_HERE"; 
 
         const firebaseConfig = {
             apiKey: "AIzaSyACQZ-5RfnQg7gT1_V2PuxG4nA6uRm28uM",
@@ -322,6 +337,7 @@
         const dataSyncRef = ref(db, 'dashboard/tasks');
 
         let datasetState = [];
+        let aiModelInstance = null;
 
         const materialDatabase = {
             petg: { density: "1.27 g/cm³", tensile: "48.5 MPa", modulus: "3.8 GPa" },
@@ -417,7 +433,7 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             initDashboardTheme();
-            initGeminiChatLog();
+            initDirectGeminiSdk();
             fetchLiveWeatherPipeline();
             renderStaticCalendar();
             initDragAndDropSystem();
@@ -429,21 +445,21 @@
             });
         });
 
-        // --- DRAG AND DROP HANDLERS ---
+        // --- ROBUST DRAG AND DROP HANDLERS WITH TARGETED HANDLES ---
         function initDragAndDropSystem() {
             const gridContainer = document.getElementById('main-dashboard-grid-node');
             const items = gridContainer.querySelectorAll('.grid-item');
             let draggedItem = null;
 
             items.forEach(item => {
-                item.addEventListener('mousedown', (e) => {
-                    const tag = e.target.tagName.toLowerCase();
-                    if (tag === 'input' || tag === 'select' || tag === 'button' || tag === 'textarea' || e.target.closest('.calc-grid') || e.target.closest('.checklist-container') || e.target.closest('.ai-chat-log')) {
-                        item.setAttribute('draggable', 'false');
-                    } else {
-                        item.setAttribute('draggable', 'true');
-                    }
-                });
+                const handle = item.querySelector('.drag-handle');
+                
+                // Clicking anywhere else resets draggable status to ensure form/scroll controls function smoothly
+                item.setAttribute('draggable', 'false');
+
+                // Explicitly activate dragging only when picking up by the text handle block
+                handle.addEventListener('mouseenter', () => item.setAttribute('draggable', 'true'));
+                handle.addEventListener('mouseleave', () => { if (!draggedItem) item.setAttribute('draggable', 'false'); });
 
                 item.addEventListener('dragstart', (e) => {
                     draggedItem = item;
@@ -452,9 +468,10 @@
                 });
 
                 item.addEventListener('dragend', () => {
-                    draggedItem.classList.remove('dragging');
+                    item.classList.remove('dragging');
                     items.forEach(i => i.classList.remove('drag-over'));
                     draggedItem = null;
+                    item.setAttribute('draggable', 'false');
                     saveLayoutOrder();
                 });
 
@@ -508,7 +525,7 @@
                     if (tileNode) gridContainer.appendChild(tileNode);
                 });
             } catch (err) {
-                console.error("Layout sequence restoration failed", err);
+                console.error("Layout index alignment correction failed", err);
             }
         }
 
@@ -583,10 +600,23 @@
             }
         }
 
-        // --- BACKEND STREAMING GEMINI COPILOT CONFIGURATION ---
-        function initGeminiChatLog() {
+        // --- DIRECT SERVERLESS GEMINI AI ENGINE LAYER ---
+        function initDirectGeminiSdk() {
             const logViewport = document.getElementById('ai-chat-viewport');
-            logViewport.innerHTML = '<div class="chat-bubble bubble-gemini"><strong>[Gemini Engine Online]</strong> Environment API bridges active. How can I assist with the project engineering pipeline?</div>';
+            
+            if (GEMINI_API_KEY === "YOUR_GEMINI_API_KEY_HERE") {
+                logViewport.innerHTML = '<div class="chat-bubble bubble-gemini" style="color:var(--accent-alert);"><strong>[Config Required]</strong> Provide your API token on line 219 of index.html to activate direct serverless execution.</div>';
+                return;
+            }
+
+            try {
+                // Initialize the official Google Gen AI Client SDK securely directly inside the script environment
+                const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
+                aiModelInstance = ai.models.get({ model: "gemini-2.5-flash" });
+                logViewport.innerHTML = '<div class="chat-bubble bubble-gemini"><strong>[Gemini 2.5 Engine Online]</strong> Directly connected. Core infrastructure proxy pipeline bypassed successfully.</div>';
+            } catch (err) {
+                logViewport.innerHTML = `<div class="chat-bubble bubble-gemini" style="color:var(--accent-alert);"><strong>SDK Init Fault:</strong> ${err.message}</div>`;
+            }
         }
 
         window.dispatchAiQuery = async function() {
@@ -594,7 +624,12 @@
             const logViewport = document.getElementById('ai-chat-viewport');
             const submitBtn = document.getElementById('ai-submit-btn');
             const rawText = queryInput.value.trim();
+            
             if (!rawText) return;
+            if (!aiModelInstance) {
+                alert("AI Engine is not initialized. Please verify your API Key setting.");
+                return;
+            }
 
             queryInput.disabled = true;
             submitBtn.disabled = true;
@@ -607,23 +642,22 @@
 
             const loadingBubble = document.createElement('div');
             loadingBubble.className = 'chat-bubble bubble-gemini';
-            loadingBubble.innerHTML = '<em>Connecting to Gemini pipeline...</em>';
+            loadingBubble.innerHTML = '<em>Generating response (Direct API Stream)...</em>';
             logViewport.appendChild(loadingBubble);
             logViewport.scrollTop = logViewport.scrollHeight;
 
             try {
-                // Pointing to your serverless backend edge route to run remote Gemini calls safely without raw frontend key exposure
-                const response = await fetch('/api/gemini-proxy', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ prompt: rawText })
+                // Execute direct serverless inference call bypassing your proxy routes
+                const result = await aiModelInstance.generateContent({
+                    contents: rawText,
+                    config: {
+                        systemInstruction: "You are a highly efficient, concise engineering workspace dashboard assistant."
+                    }
                 });
                 
-                if (!response.ok) throw new Error("Edge infrastructure routing failure");
-                const resData = await response.json();
-                loadingBubble.textContent = resData.reply || "No structural tokens returned.";
+                loadingBubble.textContent = result.text;
             } catch (err) {
-                loadingBubble.innerHTML = `<span style="color:var(--accent-alert);">Bridge failure: ${err.message}. Ensure your local backend proxy server is active.</span>`;
+                loadingBubble.innerHTML = `<span style="color:var(--accent-alert);">API Response Error: ${err.message}</span>`;
             }
             
             queryInput.disabled = false;
