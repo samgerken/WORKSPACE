@@ -157,12 +157,12 @@
                     <h2>Daily Checklist</h2>
                     <div class="control-row" style="margin-top: 14px;">
                         <input type="text" id="task-input-node" class="task-input" placeholder="Add tracking log entry...">
-                        <button class="deploy-btn" onclick="commitNewTask()">Add</button>
+                        <button class="deploy-btn" onclick="window.commitNewTask()">Add</button>
                     </div>
                     <ul class="checklist-container" id="checklist-render-node"></ul>
                     <div class="metrics-footer">
                         <div>Active: <span id="active-count">0</span> | Resolved: <span id="complete-count">0</span></div>
-                        <button class="purge-btn" onclick="purgeCompletedTasks()">Purge Resolved</button>
+                        <button class="purge-btn" onclick="window.purgeCompletedTasks()">Purge Resolved</button>
                     </div>
                 </div>
             </div>
@@ -370,7 +370,7 @@
         }
 
         function parseMarkdown(text) {
-            return text.replace(/`([^`]+)`/g, '<code>$1</code>').replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+            return text.replace(/`([^`]+)`/g, '<code>$1</code>').replace(/\*\*([^*]+)\*\"/g, '<strong>$1</strong>');
         }
 
         function initializeAutomaticPipeline() {
