@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Workspace Core Dashboard - Advanced Physics v3</title>
+    <title>Workspace Core Dashboard - Quantum Physics v4</title>
     <style>
         :root {
             --bg-base: #0b0c10;
@@ -66,7 +66,7 @@
         
         .container { max-width: 1600px; margin: 0 auto; }
 
-        /* SPLASH SCREEN ACCELERATOR */
+        /* SPLASH INTRO ACCELERATOR */
         #splash-screen-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -91,21 +91,21 @@
         .control-ui-btn { background: var(--bg-surface); backdrop-filter: blur(var(--blur-strength)); color: var(--text-secondary); border: 1px solid var(--border-subtle); padding: 9px 16px; font-family: inherit; font-size: 0.8rem; font-weight: 500; border-radius: 8px; cursor: pointer; transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1); }
         .control-ui-btn:hover { border-color: var(--border-active); color: var(--text-primary); background: rgba(255,255,255,0.03); }
 
-        /* THE AUTONOMOUS MASONRY DYNAMICS ENGINE */
+        /* THE DYNAMIC INTERTIAL GRID CANVAS */
         .dashboard-grid { 
             display: grid; 
             grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); 
             gap: 24px; 
             align-items: start;
-            transition: all 0.4s ease;
+            position: relative;
         }
 
-        /* DYNAMIC GEOMETRY MODIFIERS */
+        /* GEOMETRIC BLUEPRINT SIZES */
         .grid-item.sz-wide { grid-column: span 2; }
         .grid-item.sz-tall { grid-row: span 2; }
         .grid-item.sz-wide.sz-tall { grid-column: span 2; grid-row: span 2; }
 
-        /* UNIFORM BLUEPRINT OVERRIDE BLOCK */
+        /* UNIFORM藍圖 Blueprints Override Block */
         .dashboard-grid.standardized-geometry {
             grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)) !important;
         }
@@ -120,22 +120,30 @@
             height: 54px !important;
         }
 
-        /* PHYSICS SYSTEM TILES MECHANICS */
+        /* PHYSICS SYSTEM POINTER INTERACTION MECHANICAL TILES */
         .grid-item { 
             position: relative; 
-            transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.25s ease, box-shadow 0.4s ease;
-            transform-origin: center center;
+            transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease;
         }
-        .grid-item.dragging { 
-            opacity: 0.6; 
-            transform: scale(1.03) rotateZ(2deg) translateY(-8px); 
-            box-shadow: 0 40px 80px rgba(0,0,0,0.9);
-            z-index: 100;
+        
+        /* STRICT POINTER DRAG OVERRIDES */
+        .grid-item.pointer-dragging {
+            position: fixed !important;
+            z-index: 9999 !important;
+            pointer-events: none !important;
+            transform: scale(1.04) rotateZ(1.5deg) !important;
+            box-shadow: 0 45px 90px rgba(0,0,0,0.95), 0 0 0 1px rgba(255,255,255,0.1);
+            transition: none !important;
         }
-        .grid-item.drag-over { 
-            transform: scale(0.97) translateY(4px);
+        .grid-item.pointer-dragging .panel {
+            background: rgba(28, 33, 46, 0.9) !important;
+            border-color: var(--border-active) !important;
+        }
+        .grid-item.physics-displaced {
+            transform: translateY(8px) scale(0.99);
             opacity: 0.85;
         }
+
         .hidden-tile { display: none !important; }
 
         .panel { 
@@ -147,7 +155,7 @@
             display: flex; 
             flex-direction: column; 
             box-shadow: var(--panel-shadow); 
-            transition: border-color 0.25s, height 0.3s ease; 
+            transition: border-color 0.25s, height 0.3s cubic-bezier(0.1, 0.9, 0.2, 1); 
             overflow: hidden;
             width: 100%;
             height: 100%;
@@ -155,10 +163,9 @@
         }
         .panel:hover { 
             border-color: rgba(255, 255, 255, 0.08); 
-            box-shadow: 0 28px 55px -10px rgba(0,0,0,0.95), 0 0 0 1px rgba(255,255,255,0.05); 
         }
         
-        /* HEADER DRAG BAR UTILITIES */
+        /* DRAG BAR UTILITIES */
         h2 { 
             color: var(--panel-title-color); 
             font-size: 0.7rem; 
@@ -173,7 +180,7 @@
             margin-bottom: 14px;
             user-select: none;
         }
-        .tile-grab-surface { cursor: grab; flex-grow: 1; padding: 2px 0; }
+        .tile-grab-surface { cursor: grab; flex-grow: 1; padding: 2px 0; touch-action: none; }
         .tile-grab-surface:active { cursor: grabbing; }
         
         .tile-action-controls { display: flex; gap: 8px; align-items: center; }
@@ -181,12 +188,12 @@
         .tile-control-trigger:hover { color: var(--text-primary); background: rgba(255,255,255,0.05); }
         .tile-control-trigger.remove-trigger:hover { color: var(--accent-alert); }
 
-        /* COLLAPSED LOGIC MODIFIERS */
+        /* COLLAPSED MODIFIERS */
         .panel.collapsed-state { height: 54px !important; min-height: 54px !important; }
         .panel.collapsed-state > *:not(h2) { display: none !important; }
         .panel.collapsed-state h2 { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
 
-        /* BLACK CANVASES MODULAR ADD CAROUSEL */
+        /* THE BLACK "+" CANVAS ADD CAROUSEL */
         .add-tile-blueprint {
             background: #050608;
             border: 2px dashed rgba(255,255,255,0.03);
@@ -215,22 +222,24 @@
             transform: rotate(90deg);
         }
 
-        /* CONTEXT SPAWN MENU LAYER */
+        /* CONTEXT SPAWN LAYER */
         .spawn-context-menu {
             position: absolute;
             bottom: calc(100% + 8px);
             left: 50%;
             transform: translateX(-50%) scale(0.95);
-            background: rgba(10, 12, 18, 0.96);
+            background: rgba(10, 12, 18, 0.98);
             backdrop-filter: blur(20px);
             border: 1px solid var(--border-active);
             border-radius: 10px;
             padding: 8px;
-            width: 240px;
+            width: 260px;
+            max-height: 380px;
+            overflow-y: auto;
             box-shadow: 0 15px 40px rgba(0,0,0,0.7);
             opacity: 0;
             visibility: hidden;
-            z-index: 500;
+            z-index: 99999;
             transition: opacity 0.2s, transform 0.2s, visibility 0.2s;
         }
         .spawn-context-menu.active {
@@ -266,7 +275,6 @@
         .forecast-row { display: grid; grid-template-columns: 3fr 5fr 2fr; font-size: 0.75rem; }
 
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); row-gap: 2px; text-align: center; }
-        .calendar-day-label { color: var(--text-muted); font-size: 0.65rem; text-transform: uppercase; }
         .calendar-cell { font-size: 0.75rem; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-family: monospace; }
         .calendar-cell.today { background: var(--text-primary); color: var(--bg-base); font-weight: 600; border-radius: 50%; }
 
@@ -303,7 +311,7 @@
         <header>
             <div>
                 <h1>Workspace Dashboard</h1>
-                <p class="subtitle">Fluid inertia physics matrix with dynamic cross-axis sizing parameters</p>
+                <p class="subtitle">Real-time tracking matrix & physics engine configuration</p>
             </div>
             <div class="header-controls">
                 <button class="control-ui-btn" onclick="toggleStrictGeometry()">Sizing Mode: Dynamic Grid</button>
@@ -318,7 +326,7 @@
                     <h2>
                         <span class="tile-grab-surface">⋮ Daily Tasks</span>
                         <div class="tile-action-controls">
-                            <button class="tile-control-trigger" title="Cycle Size" onclick="cycleTileSizeGeometry('tile-checklist')">⤢</button>
+                            <button class="tile-control-trigger" onclick="cycleTileSizeGeometry('tile-checklist')">⤢</button>
                             <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-checklist')">—</button>
                             <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-checklist')">×</button>
                         </div>
@@ -336,7 +344,7 @@
                     <h2>
                         <span class="tile-grab-surface">⋮ Gemini Copilot</span>
                         <div class="tile-action-controls">
-                            <button class="tile-control-trigger" title="Cycle Size" onclick="cycleTileSizeGeometry('tile-ai-engine')">⤢</button>
+                            <button class="tile-control-trigger" onclick="cycleTileSizeGeometry('tile-ai-engine')">⤢</button>
                             <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-ai-engine')">—</button>
                             <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-ai-engine')">×</button>
                         </div>
@@ -354,7 +362,7 @@
                     <h2>
                         <span class="tile-grab-surface">⋮ Local Weather</span>
                         <div class="tile-action-controls">
-                            <button class="tile-control-trigger" title="Cycle Size" onclick="cycleTileSizeGeometry('tile-weather')">⤢</button>
+                            <button class="tile-control-trigger" onclick="cycleTileSizeGeometry('tile-weather')">⤢</button>
                             <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-weather')">—</button>
                             <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-weather')">×</button>
                         </div>
@@ -375,7 +383,7 @@
                     <h2>
                         <span class="tile-grab-surface">⋮ Real Estate Scout</span>
                         <div class="tile-action-controls">
-                            <button class="tile-control-trigger" title="Cycle Size" onclick="cycleTileSizeGeometry('tile-property-hunt')">⤢</button>
+                            <button class="tile-control-trigger" onclick="cycleTileSizeGeometry('tile-property-hunt')">⤢</button>
                             <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-property-hunt')">—</button>
                             <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-property-hunt')">×</button>
                         </div>
@@ -387,34 +395,190 @@
                         <div class="forecast-row" style="grid-template-columns: 5fr 3fr; border-bottom:1px solid var(--border-subtle); padding-bottom:4px;">
                             <span>📍 Bangor Core Plots</span><span style="color:var(--text-muted);text-align:right;">Audited</span>
                         </div>
-                        <div class="forecast-row" style="grid-template-columns: 5fr 3fr; border-bottom:1px solid var(--border-subtle); padding-bottom:4px;">
-                            <span>📍 Orono Multi-Unit Listings</span><span style="color:var(--text-muted);text-align:right;">Tracking</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-item" id="tile-veg-macros">
+                <div class="panel">
+                    <h2>
+                        <span class="tile-grab-surface">⋮ Vegetarian Macro Lab</span>
+                        <div class="tile-action-controls">
+                            <button class="tile-control-trigger" onclick="cycleTileSizeGeometry('tile-veg-macros')">⤢</button>
+                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-veg-macros')">—</button>
+                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-veg-macros')">×</button>
+                        </div>
+                    </h2>
+                    <table class="spec-table">
+                        <tr><td>Organic Soy Curls (Dehydrated)</td><td>72g Protein Base</td></tr>
+                        <tr><td>Gardein Plant-Ground Mix</td><td>120g Serving Block</td></tr>
+                        <tr><td>Daily Clean Target Index</td><td style="color:#4ade80;">100% Plant-Based</td></tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="grid-item" id="tile-mass-recipe">
+                <div class="panel">
+                    <h2>
+                        <span class="tile-grab-surface">⋮ Gram-Mass Scalar</span>
+                        <div class="tile-action-controls">
+                            <button class="tile-control-trigger" onclick="cycleTileSizeGeometry('tile-mass-recipe')">⤢</button>
+                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-mass-recipe')">—</button>
+                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-mass-recipe')">×</button>
+                        </div>
+                    </h2>
+                    <div style="font-size: 0.8rem; margin-bottom:8px;">Base: <span style="color:var(--text-primary);">700g Bread Flour</span> Matrix</div>
+                    <table class="spec-table">
+                        <tr><td>Water mass (68% hydration)</td><td>476 g</td></tr>
+                        <tr><td>Fine Sea Salt (2%)</td><td>14 g</td></tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="grid-item" id="tile-beeline-velo">
+                <div class="panel">
+                    <h2>
+                        <span class="tile-grab-surface">⋮ Beeline Velo Hub</span>
+                        <div class="tile-action-controls">
+                            <button class="tile-control-trigger" onclick="cycleTileSizeGeometry('tile-beeline-velo')">⤢</button>
+                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-beeline-velo')">—</button>
+                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-beeline-velo')">×</button>
+                        </div>
+                    </h2>
+                    <div class="forecast-container" style="background:transparent;padding:0;border:none;">
+                        <div class="forecast-row" style="grid-template-columns: 6fr 4fr;">
+                            <span>Hardware Mount</span><span style="color:#4ade80;text-align:right;">Locked</span>
+                        </div>
+                        <div class="forecast-row" style="grid-template-columns: 6fr 4fr; margin-top:4px;">
+                            <span>Telemetry Sync</span><span style="color:var(--text-muted);text-align:right;">Parity Checked</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="grid-item" id="tile-cad-forge">
+            <div class="grid-item" id="tile-subaru-log">
                 <div class="panel">
                     <h2>
-                        <span class="tile-grab-surface">⋮ CAD Automation Forge</span>
+                        <span class="tile-grab-surface">⋮ Outback Maintenance</span>
                         <div class="tile-action-controls">
-                            <button class="tile-control-trigger" title="Cycle Size" onclick="cycleTileSizeGeometry('tile-cad-forge')">⤢</button>
-                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-cad-forge')">—</button>
-                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-cad-forge')">×</button>
+                            <button class="tile-control-trigger" onclick="cycleTileSizeGeometry('tile-subaru-log')">⤢</button>
+                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-subaru-log')">—</button>
+                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-subaru-log')">×</button>
                         </div>
                     </h2>
-                    <div class="code-snippet-box" id="cad-macro-box">Dim swApp As Object&#10;Sub Main()&#10;Set swApp = Application.SldWorks&#10;Set Part = swApp.ActiveDoc&#10;' Export Assembly Matrix Configuration Layer&#10;End Sub</div>
-                    <button class="deploy-btn" style="width:100%;padding:8px;" onclick="copyCadMacroToClipboard()">Copy Active Macro Hook</button>
+                    <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:6px;">Chassis Architecture: 2014 Outback 2.5i</div>
+                    <table class="spec-table">
+                        <tr><td>Engine Oil Spec</td><td>5W-30 Synthetic Mix</td></tr>
+                        <tr><td>Sump Fluid Capacity</td><td>5.1 US Quarts</td></tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="grid-item" id="tile-print-debugger">
+                <div class="panel">
+                    <h2>
+                        <span class="tile-grab-surface">⋮ Additive Defect Debugger</span>
+                        <div class="tile-action-controls">
+                            <button class="tile-control-trigger" onclick="cycleTileSizeGeometry('tile-print-debugger')">⤢</button>
+                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-print-debugger')">—</button>
+                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-print-debugger')">×</button>
+                        </div>
+                    </h2>
+                    <select class="material-selector" style="margin-bottom:6px;">
+                        <option>First Layer Lift / Warping</option>
+                        <option>PETG Stringing/Volumetric Blobs</option>
+                    </select>
+                    <div class="stat-card" style="font-size:0.75rem; padding:8px;">
+                        Remedy: Scrub build plate with Isopropyl Alcohol. Drop initial Z-height indexing parameters by 0.02mm.
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-item" id="tile-git-terminal">
+                <div class="panel">
+                    <h2>
+                        <span class="tile-grab-surface">⋮ Git Automation Hook</span>
+                        <div class="tile-action-controls">
+                            <button class="tile-control-trigger" onclick="cycleTileSizeGeometry('tile-git-terminal')">⤢</button>
+                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-git-terminal')">—</button>
+                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-git-terminal')">×</button>
+                        </div>
+                    </h2>
+                    <div class="code-snippet-box" style="max-height:60px; margin-bottom:6px;">git add index.html&#10;git commit -m "update build"&#10;git push origin main</div>
+                    <button class="deploy-btn" style="width:100%; padding:6px;" onclick="navigator.clipboard.writeText('git add index.html && git commit -m \'update layout build\' && git push origin main')">Copy Clean Push String</button>
+                </div>
+            </div>
+
+            <div class="grid-item" id="tile-rail-tracker">
+                <div class="panel">
+                    <h2>
+                        <span class="tile-grab-surface">⋮ Eastern Rail Logistics</span>
+                        <div class="tile-action-controls">
+                            <button class="tile-control-trigger" onclick="cycleTileSizeGeometry('tile-rail-tracker')">⤢</button>
+                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-rail-tracker')">—</button>
+                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-rail-tracker')">×</button>
+                        </div>
+                    </h2>
+                    <table class="spec-table">
+                        <tr><td>Boston Regional Transit Line</td><td style="color:#f87171;">Delayed 4m</td></tr>
+                        <tr><td>Cambridge Loop Connector</td><td>Nominal</td></tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="grid-item" id="tile-mexico-dining">
+                <div class="panel">
+                    <h2>
+                        <span class="tile-grab-surface">⋮ Playa del Carmen Archive</span>
+                        <div class="tile-action-controls">
+                            <button class="tile-control-trigger" onclick="cycleTileSizeGeometry('tile-mexico-dining')">⤢</button>
+                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-mexico-dining')">—</button>
+                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-mexico-dining')">×</button>
+                        </div>
+                    </h2>
+                    <div class="stat-card" style="font-size:0.75rem; padding:8px;">
+                        🌴 Coastal Matrix Menu Ledger: Verified excellent local infrastructure variations and plant-based protein dishes.
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-item" id="tile-spanish-audio">
+                <div class="panel">
+                    <h2>
+                        <span class="tile-grab-surface">⋮ Spain Discography (2010s)</span>
+                        <div class="tile-action-controls">
+                            <button class="tile-control-trigger" onclick="cycleTileSizeGeometry('tile-spanish-audio')">⤢</button>
+                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-spanish-audio')">—</button>
+                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-spanish-audio')">×</button>
+                        </div>
+                    </h2>
+                    <div class="forecast-container" style="background:transparent;padding:0;border:none;font-size:0.75rem;">
+                        • Atmospheric Indie Synth Layers<br>
+                        • Post-2012 Acoustic Matrix Frameworks
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-item" id="tile-vba-macros">
+                <div class="panel">
+                    <h2>
+                        <span class="tile-grab-surface">⋮ CAD VBA Macro Store</span>
+                        <div class="tile-action-controls">
+                            <button class="tile-control-trigger" onclick="cycleTileSizeGeometry('tile-vba-macros')">⤢</button>
+                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-vba-macros')">—</button>
+                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-vba-macros')">×</button>
+                        </div>
+                    </h2>
+                    <div class="code-snippet-box" style="max-height:75px;">' Auto-Convert active file format to Rhino .3DM document layer&#10;Part.SaveAs3 "output.3dm", 0, 2</div>
                 </div>
             </div>
 
             <div class="grid-item" id="tile-materials">
                 <div class="panel">
                     <h2>
-                        <span class="tile-grab-surface">⋮ Structural Materials Matrix</span>
+                        <span class="tile-grab-surface">⋮ Materials Engineering Matrix</span>
                         <div class="tile-action-controls">
-                            <button class="tile-control-trigger" title="Cycle Size" onclick="cycleTileSizeGeometry('tile-materials')">⤢</button>
+                            <button class="tile-control-trigger" onclick="cycleTileSizeGeometry('tile-materials')">⤢</button>
                             <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-materials')">—</button>
                             <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-materials')">×</button>
                         </div>
@@ -427,60 +591,7 @@
                     <table class="spec-table">
                         <tr><td>Volumetric Density</td><td id="mat-density">1.27 g/cm³</td></tr>
                         <tr><td>Tensile Strength Max</td><td id="mat-tensile">48.5 MPa</td></tr>
-                        <tr><td>Flexural Elastic Modulus</td><td id="mat-modulus">3.8 GPa</td></tr>
                     </table>
-                </div>
-            </div>
-
-            <div class="grid-item" id="tile-calendar">
-                <div class="panel">
-                    <h2>
-                        <span class="tile-grab-surface">⋮ May 2026 Timeline</span>
-                        <div class="tile-action-controls">
-                            <button class="tile-control-trigger" title="Cycle Size" onclick="cycleTileSizeGeometry('tile-calendar')">⤢</button>
-                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-calendar')">—</button>
-                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-calendar')">×</button>
-                        </div>
-                    </h2>
-                    <div class="calendar-grid" id="calendar-matrix-grid"></div>
-                </div>
-            </div>
-
-            <div class="grid-item" id="tile-cycling">
-                <div class="panel">
-                    <h2>
-                        <span class="tile-grab-surface">⋮ Cycling Telemetry Log</span>
-                        <div class="tile-action-controls">
-                            <button class="tile-control-trigger" title="Cycle Size" onclick="cycleTileSizeGeometry('tile-cycling')">⤢</button>
-                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-cycling')">—</button>
-                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-cycling')">×</button>
-                        </div>
-                    </h2>
-                    <div class="stats-grid">
-                        <div class="stat-card"><div class="stat-label">Block Distance</div><div class="stat-value">76.0 mi</div></div>
-                        <div class="stat-card"><div class="stat-label">System Velocity Avg</div><div class="stat-value">15.8 mph</div></div>
-                    </div>
-                    <div class="progress-track"><div class="progress-fill" style="width: 76%;"></div></div>
-                </div>
-            </div>
-
-            <div class="grid-item" id="tile-travel">
-                <div class="panel">
-                    <h2>
-                        <span class="tile-grab-surface">⋮ Travel Logistics Engine</span>
-                        <div class="tile-action-controls">
-                            <button class="tile-control-trigger" title="Cycle Size" onclick="cycleTileSizeGeometry('tile-travel')">⤢</button>
-                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-travel')">—</button>
-                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-travel')">×</button>
-                        </div>
-                    </h2>
-                    <div style="font-size:0.8rem;">
-                        <div style="margin-bottom:6px; color:var(--text-muted);">Upcoming Target: <span style="color:var(--text-primary)">Cambridge Blueprint</span></div>
-                        <div class="stat-card" style="padding:6px 10px; font-family:monospace; font-size:0.75rem;">
-                            🏨 Core Lodging Arranged<br>
-                            🍽️ Local Micro-Dining Bookmarked
-                        </div>
-                    </div>
                 </div>
             </div>
 
@@ -489,7 +600,7 @@
                     <h2>
                         <span class="tile-grab-surface">⋮ Computation Terminal</span>
                         <div class="tile-action-controls">
-                            <button class="tile-control-trigger" title="Cycle Size" onclick="cycleTileSizeGeometry('tile-calculator')">⤢</button>
+                            <button class="tile-control-trigger" onclick="cycleTileSizeGeometry('tile-calculator')">⤢</button>
                             <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-calculator')">—</button>
                             <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-calculator')">×</button>
                         </div>
@@ -513,38 +624,6 @@
                         <button class="calc-btn" onclick="appendCalculatorValue('3')">3</button>
                         <button class="calc-btn" style="grid-column: span 2;" onclick="appendCalculatorValue('0')">0</button>
                         <button class="calc-btn" onclick="appendCalculatorValue('.')">.</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="grid-item" id="tile-scratch">
-                <div class="panel">
-                    <h2>
-                        <span class="tile-grab-surface">⋮ Notes Scratch Pad</span>
-                        <div class="tile-action-controls">
-                            <button class="tile-control-trigger" title="Cycle Size" onclick="cycleTileSizeGeometry('tile-scratch')">⤢</button>
-                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-scratch')">—</button>
-                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-scratch')">×</button>
-                        </div>
-                    </h2>
-                    <textarea id="scratch-pad-node" class="scratch-pad" placeholder="Drop transient raw data vectors or code elements here..." oninput="persistScratchText(this.value)"></textarea>
-                </div>
-            </div>
-
-            <div class="grid-item" id="tile-stopwatch">
-                <div class="panel">
-                    <h2>
-                        <span class="tile-grab-surface">⋮ Split Execution Timer</span>
-                        <div class="tile-action-controls">
-                            <button class="tile-control-trigger" title="Cycle Size" onclick="cycleTileSizeGeometry('tile-stopwatch')">⤢</button>
-                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-stopwatch')">—</button>
-                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-stopwatch')">×</button>
-                        </div>
-                    </h2>
-                    <div class="timer-display" id="stopwatch-display-lbl">00:00.0</div>
-                    <div class="control-row" style="margin-bottom:0;">
-                        <button class="deploy-btn" style="flex:1;" id="stopwatch-toggle" onclick="toggleStopwatchSystem()">Start Intercept</button>
-                        <button class="deploy-btn" onclick="resetStopwatchSystem()">Reset</button>
                     </div>
                 </div>
             </div>
@@ -579,9 +658,9 @@
         let isStrictGeometry = false;
 
         const materialDatabase = {
-            petg: { density: "1.27 g/cm³", tensile: "48.5 MPa", modulus: "3.8 GPa" },
-            pla: { density: "1.24 g/cm³", tensile: "65.0 MPa", modulus: "4.1 GPa" },
-            alu: { density: "2.70 g/cm³", tensile: "310 MPa", modulus: "68.9 GPa" }
+            petg: { density: "1.27 g/cm³", tensile: "48.5 MPa" },
+            pla: { density: "1.24 g/cm³", tensile: "65.0 MPa" },
+            alu: { density: "2.70 g/cm³", tensile: "310 MPa" }
         };
 
         const ALL_WIDGET_REGISTRY = {
@@ -589,47 +668,45 @@
             "tile-ai-engine": "Gemini Copilot",
             "tile-weather": "Local Weather",
             "tile-property-hunt": "Real Estate Scout",
-            "tile-cad-forge": "CAD Automation Forge",
-            "tile-materials": "Structural Materials Matrix",
-            "tile-calendar": "May 2026 Timeline",
-            "tile-cycling": "Cycling Telemetry Log",
-            "tile-travel": "Travel Logistics Engine",
-            "tile-calculator": "Computation Terminal",
-            "tile-scratch": "Notes Scratch Pad",
-            "tile-stopwatch": "Split Execution Timer"
+            "tile-veg-macros": "Vegetarian Macro Lab",
+            "tile-mass-recipe": "Gram-Mass Scalar",
+            "tile-beeline-velo": "Beeline Velo Hub",
+            "tile-subaru-log": "Outback Maintenance",
+            "tile-print-debugger": "Additive Defect Debugger",
+            "tile-git-terminal": "Git Automation Hook",
+            "tile-rail-tracker": "Eastern Rail Logistics",
+            "tile-mexico-dining": "Playa del Carmen Archive",
+            "tile-spanish-audio": "Spain Discography (2010s)",
+            "tile-vba-macros": "CAD VBA Macro Store",
+            "tile-materials": "Materials Engineering Matrix",
+            "tile-calculator": "Computation Terminal"
         };
 
-        // --- MULTI-DIMENSIONAL GEOMETRY ITERATOR ENGINE ---
         window.cycleTileSizeGeometry = function(id) {
             const node = document.getElementById(id);
             if (!node) return;
-
             if (!node.classList.contains('sz-wide') && !node.classList.contains('sz-tall')) {
-                node.classList.add('sz-wide'); // State 2: Wide
+                node.classList.add('sz-wide');
             } else if (node.classList.contains('sz-wide') && !node.classList.contains('sz-tall')) {
                 node.classList.remove('sz-wide');
-                node.classList.add('sz-tall'); // State 3: Tall
+                node.classList.add('sz-tall');
             } else if (!node.classList.contains('sz-wide') && node.classList.contains('sz-tall')) {
-                node.classList.add('sz-wide'); // State 4: Mega Block
+                node.classList.add('sz-wide');
             } else {
-                node.classList.remove('sz-wide', 'sz-tall'); // State 1: Standard
+                node.classList.remove('sz-wide', 'sz-tall');
             }
             saveCanvasLayoutState();
         };
 
         window.removeTileFromCanvas = function(id) {
             const node = document.getElementById(id);
-            if(node) {
-                node.classList.add('hidden-tile');
-                saveCanvasLayoutState();
-            }
+            if(node) { node.classList.add('hidden-tile'); saveCanvasLayoutState(); }
         };
 
         window.toggleTileCollapse = function(id) {
             const node = document.getElementById(id);
             if(!node) return;
-            const panel = node.querySelector('.panel');
-            panel.classList.toggle('collapsed-state');
+            node.querySelector('.panel').classList.toggle('collapsed-state');
             saveCanvasLayoutState();
         };
 
@@ -644,7 +721,6 @@
             const list = document.getElementById('spawn-options-list');
             list.innerHTML = '';
             let systemClear = true;
-
             Object.keys(ALL_WIDGET_REGISTRY).forEach(id => {
                 const targetNode = document.getElementById(id);
                 if (targetNode && targetNode.classList.contains('hidden-tile')) {
@@ -661,10 +737,7 @@
                     list.appendChild(btn);
                 }
             });
-
-            if(systemClear) {
-                list.innerHTML = '<div style="font-size:0.75rem; color:var(--text-muted); padding:6px 8px;">All engine modules online.</div>';
-            }
+            if(systemClear) list.innerHTML = '<div style="font-size:0.75rem; color:var(--text-muted); padding:6px 8px;">All engine modules active.</div>';
         }
 
         window.toggleStrictGeometry = function() {
@@ -680,57 +753,93 @@
             }
         };
 
-        // --- PHYSICAL INERTIAL DRAG-OVER FLUID ARCHITECTURE ---
-        function initDragPhysicsEngine() {
+        // --- QUANTUM FLUID POINTER-EVENT PHYSICS ENGINE ---
+        function initPointerCollisionPhysicsEngine() {
             const gridContainer = document.getElementById('main-dashboard-grid-node');
-            const items = gridContainer.querySelectorAll('.grid-item');
-            let draggedItem = null;
+            let activeTargetNode = null;
+            let grabOffsetX = 0, grabOffsetY = 0;
+            let currentTrackedElements = [];
 
-            items.forEach(item => {
-                const grabber = item.querySelector('.tile-grab-surface');
-                if(!grabber) return;
+            gridContainer.addEventListener('pointerdown', (e) => {
+                const handle = e.target.closest('.tile-grab-surface');
+                if (!handle) return;
                 
-                item.setAttribute('draggable', 'false');
-                grabber.addEventListener('mouseenter', () => item.setAttribute('draggable', 'true'));
-                grabber.addEventListener('mouseleave', () => { if (!draggedItem) item.setAttribute('draggable', 'false'); });
+                const itemNode = handle.closest('.grid-item');
+                if (!itemNode) return;
 
-                item.addEventListener('dragstart', (e) => {
-                    draggedItem = item;
-                    setTimeout(() => item.classList.add('dragging'), 0);
-                });
+                e.preventDefault();
+                activeTargetNode = itemNode;
+                currentTrackedElements = Array.from(gridContainer.children).filter(el => el !== activeTargetNode && el.id !== 'tile-spawner-root' && !el.classList.contains('hidden-tile'));
+                
+                const box = activeTargetNode.getBoundingClientRect();
+                grabOffsetX = e.clientX - box.left;
+                grabOffsetY = e.clientY - box.top;
 
-                item.addEventListener('dragend', () => {
-                    item.classList.remove('dragging');
-                    items.forEach(i => i.classList.remove('drag-over'));
-                    draggedItem = null;
-                    item.setAttribute('draggable', 'false');
-                    saveCanvasLayoutState();
-                });
+                activeTargetNode.style.width = box.width + 'px';
+                activeTargetNode.style.height = box.height + 'px';
+                activeTargetNode.classList.add('pointer-dragging');
+                
+                activeTargetNode.style.left = (e.clientX - grabOffsetX) + 'px';
+                activeTargetNode.style.top = (e.clientY - grabOffsetY) + 'px';
+                activeTargetNode.setPointerCapture(e.pointerId);
+            });
 
-                item.addEventListener('dragover', (e) => {
-                    e.preventDefault();
-                    if (item !== draggedItem) item.classList.add('drag-over');
-                });
+            gridContainer.addEventListener('pointermove', (e) => {
+                if (!activeTargetNode) return;
+                
+                const currentLeft = e.clientX - grabOffsetX;
+                const currentTop = e.clientY - grabOffsetY;
+                activeTargetNode.style.left = currentLeft + 'px';
+                activeTargetNode.style.top = currentTop + 'px';
 
-                item.addEventListener('dragleave', () => item.classList.remove('drag-over'));
+                // Real-time Bounding Collision Check Vector
+                let targetSwapNode = null;
+                let closestDistance = Infinity;
 
-                item.addEventListener('drop', (e) => {
-                    e.preventDefault();
-                    item.classList.remove('drag-over');
+                currentTrackedElements.forEach(el => {
+                    const elBox = el.getBoundingClientRect();
+                    const elCenterX = elBox.left + elBox.width / 2;
+                    const elCenterY = elBox.top + elBox.height / 2;
                     
-                    if (item !== draggedItem) {
-                        const allNodes = Array.from(gridContainer.children);
-                        const dragIdx = allNodes.indexOf(draggedItem);
-                        const targetIdx = allNodes.indexOf(item);
-
-                        if (dragIdx < targetIdx) {
-                            gridContainer.insertBefore(draggedItem, item.nextSibling);
-                        } else {
-                            gridContainer.insertBefore(draggedItem, item);
-                        }
+                    const distance = Math.hypot(e.clientX - elCenterX, e.clientY - elCenterY);
+                    if (distance < closestDistance && distance < 180) {
+                        closestDistance = distance;
+                        targetSwapNode = el;
                     }
                 });
+
+                currentTrackedElements.forEach(el => el.classList.remove('physics-displaced'));
+                
+                if (targetSwapNode) {
+                    targetSwapNode.classList.add('physics-displaced');
+                    const allNodes = Array.from(gridContainer.children);
+                    const activeIdx = allNodes.indexOf(activeTargetNode);
+                    const swapIdx = allNodes.indexOf(targetSwapNode);
+
+                    if (activeIdx < swapIdx) {
+                        gridContainer.insertBefore(activeTargetNode, targetSwapNode.nextSibling);
+                    } else {
+                        gridContainer.insertBefore(activeTargetNode, targetSwapNode);
+                    }
+                }
             });
+
+            const clearDragStateBlock = (e) => {
+                if (!activeTargetNode) return;
+                activeTargetNode.releasePointerCapture(e.pointerId);
+                activeTargetNode.classList.remove('pointer-dragging');
+                activeTargetNode.style.width = '';
+                activeTargetNode.style.height = '';
+                activeTargetNode.style.left = '';
+                activeTargetNode.style.top = '';
+                
+                currentTrackedElements.forEach(el => el.classList.remove('physics-displaced'));
+                activeTargetNode = null;
+                saveCanvasLayoutState();
+            };
+
+            gridContainer.addEventListener('pointerup', clearDragStateBlock);
+            gridContainer.addEventListener('pointercancel', clearDragStateBlock);
 
             restoreCanvasLayoutState();
         }
@@ -740,63 +849,43 @@
             const orderIDs = Array.from(gridContainer.children)
                 .filter(child => child.id && child.id !== 'tile-spawner-root')
                 .map(child => {
-                    const panel = child.querySelector('.panel');
                     return {
                         id: child.id,
                         hidden: child.classList.contains('hidden-tile'),
-                        collapsed: panel ? panel.classList.contains('collapsed-state') : false,
+                        collapsed: child.querySelector('.panel')?.classList.contains('collapsed-state'),
                         wide: child.classList.contains('sz-wide'),
                         tall: child.classList.contains('sz-tall')
                     };
                 });
-            localStorage.setItem('workspace_physics_canvas_layout_v3', JSON.stringify(orderIDs));
+            localStorage.setItem('workspace_canvas_layout_v4', JSON.stringify(orderIDs));
         }
 
         function restoreCanvasLayoutState() {
-            const raw = localStorage.getItem('workspace_physics_canvas_layout_v3');
+            const raw = localStorage.getItem('workspace_canvas_layout_v4');
             if (!raw) return;
             try {
                 const blueprints = JSON.parse(raw);
                 const gridContainer = document.getElementById('main-dashboard-grid-node');
                 const spawner = document.getElementById('tile-spawner-root');
-
                 blueprints.forEach(box => {
                     const node = document.getElementById(box.id);
                     if (node) {
-                        if (box.hidden) node.classList.add('hidden-tile');
-                        else node.classList.remove('hidden-tile');
-
-                        if (box.wide) node.classList.add('sz-wide');
-                        else node.classList.remove('sz-wide');
-
-                        if (box.tall) node.classList.add('sz-tall');
-                        else node.classList.remove('sz-tall');
-
-                        const panel = node.querySelector('.panel');
-                        if (panel && box.collapsed) panel.classList.add('collapsed-state');
-                        
+                        if (box.hidden) node.classList.add('hidden-tile'); else node.classList.remove('hidden-tile');
+                        if (box.wide) node.classList.add('sz-wide'); else node.classList.remove('sz-wide');
+                        if (box.tall) node.classList.add('sz-tall'); else node.classList.remove('sz-tall');
+                        if (box.collapsed) node.querySelector('.panel')?.classList.add('collapsed-state');
                         gridContainer.insertBefore(node, spawner);
                     }
                 });
             } catch (err) { console.error(err); }
         }
 
-        // --- SYSTEM CORE FUNCTIONS (AUX CHANNELS & UTILITIES) ---
-        window.copyCadMacroToClipboard = function() {
-            const txt = document.getElementById('cad-macro-box').innerText;
-            navigator.clipboard.writeText(txt).then(() => {
-                alert("VBA Hook Vector copied to hardware clipboard.");
-            });
-        };
-
-        window.persistScratchText = function(text) { localStorage.setItem('workspace_scratchpad_data', text); };
         window.updateMaterialSpecs = function() {
             const key = document.getElementById('material-selector-node').value;
             const mat = materialDatabase[key];
             if (mat) {
                 document.getElementById('mat-density').textContent = mat.density;
                 document.getElementById('mat-tensile').textContent = mat.tensile;
-                document.getElementById('mat-modulus').textContent = mat.modulus;
             }
         };
 
@@ -815,43 +904,21 @@
             } catch { display.textContent = "Error"; calcExpressionStr = ""; }
         };
 
-        let stopwatchId = null, stopwatchElapsed = 0, stopwatchStartTime = 0;
-        window.toggleStopwatchSystem = function() {
-            const btn = document.getElementById('stopwatch-toggle');
-            if (stopwatchId) {
-                clearInterval(stopwatchId); stopwatchId = null; btn.textContent = "Start Intercept";
-            } else {
-                stopwatchStartTime = Date.now() - stopwatchElapsed;
-                stopwatchId = setInterval(() => {
-                    stopwatchElapsed = Date.now() - stopwatchStartTime;
-                    const totalSecs = Math.floor(stopwatchElapsed / 1000);
-                    document.getElementById('stopwatch-display-lbl').textContent = `${String(Math.floor(totalSecs / 60)).padStart(2, '0')}:${String(totalSecs % 60).padStart(2, '0')}.${Math.floor((stopwatchElapsed % 1000) / 100)}`;
-                }, 100);
-                btn.textContent = "Halt System";
-            }
-        };
-        window.resetStopwatchSystem = function() {
-            clearInterval(stopwatchId); stopwatchId = null; stopwatchElapsed = 0;
-            document.getElementById('stopwatch-display-lbl').textContent = "00:00.0";
-            document.getElementById('stopwatch-toggle').textContent = "Start Intercept";
-        };
-
         async function fetchLiveWeatherPipeline() {
             try {
-                const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=44.9356&longitude=-68.6464&current=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min&temperature_unit=fahrenheit&timezone=auto`);
+                const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=44.9356&longitude=-68.6464&current=temperature_2m&daily=temperature_2m_max,temperature_2m_min&temperature_unit=fahrenheit&timezone=auto`);
                 const data = await res.json();
                 document.getElementById('weather-temp').textContent = `${Math.round(data.current.temperature_2m)}°F`;
-                document.getElementById('weather-cond').textContent = "Atmospheric Node Linked";
-                
+                document.getElementById('weather-cond').textContent = "Node Linked";
                 const fContainer = document.getElementById('weather-forecast');
                 fContainer.innerHTML = '';
                 for(let i=0; i<2; i++) {
                     const row = document.createElement('div');
                     row.className = 'forecast-row';
-                    row.innerHTML = `<span>Day ${i+1}</span><span>Variable Outlook</span><span style="text-align:right">${Math.round(data.daily.temperature_2m_max[i])}° / ${Math.round(data.daily.temperature_2m_min[i])}°</span>`;
+                    row.innerHTML = `<span>Day ${i+1}</span><span>Outlook</span><span style="text-align:right">${Math.round(data.daily.temperature_2m_max[i])}°/${Math.round(data.daily.temperature_2m_min[i])}°</span>`;
                     fContainer.appendChild(row);
                 }
-            } catch { document.getElementById('weather-cond').textContent = "Static Matrix Node"; }
+            } catch { document.getElementById('weather-cond').textContent = "Static Node"; }
         }
 
         window.toggleDashboardTheme = function() {
@@ -861,8 +928,7 @@
 
         window.commitNewTask = function() {
             const input = document.getElementById('task-input-node');
-            const val = input.value.trim();
-            if (!val) return;
+            const val = input.value.trim(); if (!val) return;
             datasetState.push({ text: val, completed: false });
             set(ref(db, 'dashboard/tasks'), datasetState).then(() => { input.value = ''; });
         };
@@ -873,8 +939,7 @@
         };
 
         window.deleteTargetTask = function(index) {
-            datasetState.splice(index, 1);
-            set(ref(db, 'dashboard/tasks'), datasetState);
+            datasetState.splice(index, 1); set(ref(db, 'dashboard/tasks'), datasetState);
         };
 
         function renderChecklist() {
@@ -883,37 +948,22 @@
             datasetState.forEach((task, index) => {
                 const li = document.createElement('li');
                 li.className = 'checklist-item' + (task.completed ? ' resolved' : '');
-                li.innerHTML = `<div class="task-left-block"><span class="status-box" style="margin-right:10px;">${task.completed ? '●' : '○'}</span><span class="task-text">${task.text}</span></div><button class="clear-single-btn" style="background:none;border:none;color:var(--text-dark);cursor:pointer;">×</button>`;
+                li.innerHTML = `<div style="display:flex;align-items:center;"><span style="margin-right:10px;">${task.completed ? '●' : '○'}</span><span>${task.text}</span></div><button class="clear-single-btn" style="background:none;border:none;color:var(--text-dark);cursor:pointer;">×</button>`;
                 li.addEventListener('click', (e) => { if(!e.target.classList.contains('clear-single-btn')) window.toggleTaskCompleted(index); });
                 li.querySelector('.clear-single-btn').addEventListener('click', (e) => { e.stopPropagation(); window.deleteTargetTask(index); });
                 container.appendChild(li);
             });
         }
 
-        window.addEventListener('click', () => {
-            document.getElementById('spawn-menu-node').classList.remove('active');
-        });
+        window.addEventListener('click', () => { document.getElementById('spawn-menu-node').classList.remove('active'); });
 
         window.addEventListener('DOMContentLoaded', () => {
             fetchLiveWeatherPipeline();
-            initDragPhysicsEngine();
-            
-            const scratch = localStorage.getItem('workspace_scratchpad_data');
-            if (scratch) document.getElementById('scratch-pad-node').value = scratch;
-
-            const gridNode = document.getElementById('calendar-matrix-grid');
-            for (let d = 1; d <= 31; d++) {
-                const cell = document.createElement('div');
-                cell.className = 'calendar-cell' + (d === 18 ? ' today' : '');
-                cell.textContent = d;
-                gridNode.appendChild(cell);
-            }
-
+            initPointerCollisionPhysicsEngine();
             setTimeout(() => {
                 const overlay = document.getElementById('splash-screen-overlay');
                 if(overlay) { overlay.style.opacity = '0'; setTimeout(() => overlay.style.visibility = 'hidden', 500); }
             }, 800);
-
             onValue(dataSyncRef, (snapshot) => {
                 const data = snapshot.val();
                 datasetState = data ? (Array.isArray(data) ? data : Object.values(data)) : [];
