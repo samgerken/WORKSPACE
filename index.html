@@ -404,7 +404,6 @@
             const display = document.getElementById('calc-display-node');
             if (!calcExpressionStr) return;
             try {
-                // Safely parse mathematical operations without dangerous eval() execution vectors
                 const sanitizedResult = Function(`"use strict"; return (${calcExpressionStr})`)();
                 calcExpressionStr = String(sanitizedResult);
                 display.textContent = calcExpressionStr;
