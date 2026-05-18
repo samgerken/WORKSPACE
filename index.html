@@ -6,22 +6,23 @@
     <title>Workspace Dashboard</title>
     <style>
         :root {
-            --bg-base: #0b0b0d;
-            --bg-surface: rgba(255, 255, 255, 0.01);
+            /* 5% Higher Contrast Dark Mode: Darker base background, slightly lighter panels */
+            --bg-base: #050506;
+            --bg-surface: rgba(255, 255, 255, 0.03);
             --bg-terminal: #000000;
-            --border-subtle: rgba(255, 255, 255, 0.05);
-            --border-active: rgba(255, 255, 255, 0.2);
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --border-active: rgba(255, 255, 255, 0.3);
             --text-primary: #ffffff;
-            --text-secondary: #e4e4e7;
-            --text-muted: #71717a;
-            --text-dark: #3f3f3f;
+            --text-secondary: #f4f4f5;
+            --text-muted: #a1a1aa;
+            --text-dark: #52525b;
             --accent-alert: #f87171;
             
-            --panel-header-line: #52525b;
-            --panel-title-color: #a1a1aa;
+            --panel-header-line: #71717a;
+            --panel-title-color: #d4d4d8;
             --chat-user-bg: #27272a;
-            --chat-gemini-bg: rgba(255, 255, 255, 0.02);
-            --chat-gemini-border: rgba(255, 255, 255, 0.04);
+            --chat-gemini-bg: rgba(255, 255, 255, 0.04);
+            --chat-gemini-border: rgba(255, 255, 255, 0.06);
             --code-bg: #18181b;
             --pre-bg: #09090b;
             
@@ -72,7 +73,7 @@
         .grid-item.dragging { opacity: 0.4; transform: scale(0.98); }
         .grid-item.drag-over { border-radius: 12px; outline: 2px dashed var(--border-active); outline-offset: 4px; }
 
-        section.panel, div.panel { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; height: 100%; min-height: 220px; }
+        section.panel, div.panel { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; height: 100%; min-height: 220px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2); }
         
         h2 { color: var(--panel-title-color); font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; border-left: 2px solid var(--panel-header-line); padding-left: 10px; display: flex; justify-content: space-between; align-items: center; }
         .drag-handle-hint { font-size: 0.7rem; color: var(--text-dark); letter-spacing: 0; text-transform: none; font-weight: normal; font-family: monospace; }
@@ -148,10 +149,6 @@
             .ai-chat-log { height: 260px; }
         }
     </style>
-    
-    <script type="importmap">
-      { "imports": { "@mlc-ai/web-llm": "https://esm.run/@mlc-ai/web-llm" } }
-    </script>
 </head>
 <body>
 
@@ -185,11 +182,11 @@
 
             <div class="grid-item col-3" draggable="true" id="tile-ai-engine">
                 <div class="panel">
-                    <h2>Local Engine Assistant <span class="drag-handle-hint">⋮⋮ drag</span></h2>
+                    <h2>Gemini Copilot <span class="drag-handle-hint">⋮⋮ drag</span></h2>
                     <div class="ai-chat-log" id="ai-chat-viewport" style="margin-top: 14px;"></div>
                     <div class="control-row" style="margin-bottom: 0;">
-                        <input type="text" id="ai-query-input" class="task-input" placeholder="Loading local engine runtime layers..." disabled>
-                        <button class="deploy-btn" id="ai-submit-btn" onclick="dispatchAiQuery()" disabled>Query</button>
+                        <input type="text" id="ai-query-input" class="task-input" placeholder="Query Gemini environment engine...">
+                        <button class="deploy-btn" id="ai-submit-btn" onclick="dispatchAiQuery()">Query</button>
                     </div>
                 </div>
             </div>
@@ -309,7 +306,6 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-        import * as webllm from "@mlc-ai/web-llm";
 
         const firebaseConfig = {
             apiKey: "AIzaSyACQZ-5RfnQg7gT1_V2PuxG4nA6uRm28uM",
@@ -325,9 +321,7 @@
         const db = getDatabase(app);
         const dataSyncRef = ref(db, 'dashboard/tasks');
 
-        let engineInstance = null;
         let datasetState = [];
-        const targetModelId = "Qwen2.5-1.5B-Instruct-q4f16_1-MLC";
 
         const materialDatabase = {
             petg: { density: "1.27 g/cm³", tensile: "48.5 MPa", modulus: "3.8 GPa" },
@@ -423,7 +417,7 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             initDashboardTheme();
-            initWebLlmEngine();
+            initGeminiChatLog();
             fetchLiveWeatherPipeline();
             renderStaticCalendar();
             initDragAndDropSystem();
@@ -435,17 +429,16 @@
             });
         });
 
-        // --- NATIVE DRAG AND DROP SNAP PIPELINE ---
+        // --- DRAG AND DROP HANDLERS ---
         function initDragAndDropSystem() {
             const gridContainer = document.getElementById('main-dashboard-grid-node');
             const items = gridContainer.querySelectorAll('.grid-item');
             let draggedItem = null;
 
             items.forEach(item => {
-                // Prevent inner input controls, calculators, and drop-downs from triggering drag events
                 item.addEventListener('mousedown', (e) => {
                     const tag = e.target.tagName.toLowerCase();
-                    if (tag === 'input' || tag === 'select' || tag === 'button' || tag === 'textarea' || e.target.closest('.calc-grid') || e.target.closest('.checklist-container')) {
+                    if (tag === 'input' || tag === 'select' || tag === 'button' || tag === 'textarea' || e.target.closest('.calc-grid') || e.target.closest('.checklist-container') || e.target.closest('.ai-chat-log')) {
                         item.setAttribute('draggable', 'false');
                     } else {
                         item.setAttribute('draggable', 'true');
@@ -462,11 +455,11 @@
                     draggedItem.classList.remove('dragging');
                     items.forEach(i => i.classList.remove('drag-over'));
                     draggedItem = null;
-                    saveLayoutOrder(); // Commits new arrangement index to local memory
+                    saveLayoutOrder();
                 });
 
                 item.addEventListener('dragover', (e) => {
-                    e.preventDefault(); // Required to allow a drop event
+                    e.preventDefault();
                     e.dataTransfer.dropEffect = 'move';
                     if (item !== draggedItem) {
                         item.classList.add('drag-over');
@@ -495,7 +488,6 @@
                 });
             });
 
-            // Restore previously saved layout configuration order if available
             restoreLayoutOrder();
         }
 
@@ -513,15 +505,14 @@
                 const gridContainer = document.getElementById('main-dashboard-grid-node');
                 orderIDs.forEach(id => {
                     const tileNode = document.getElementById(id);
-                    if (tileNode) {
-                        gridContainer.appendChild(tileNode); // Appending re-orders existing elements in DOM sequence
-                    }
+                    if (tileNode) gridContainer.appendChild(tileNode);
                 });
             } catch (err) {
-                console.error("Layout index restoration failed", err);
+                console.error("Layout sequence restoration failed", err);
             }
         }
 
+        // --- LIVE WEATHER DATA PIPELINE ---
         async function fetchLiveWeatherPipeline() {
             const lat = 44.9356;
             const lon = -68.6464;
@@ -592,30 +583,10 @@
             }
         }
 
-        async function initWebLlmEngine() {
+        // --- BACKEND STREAMING GEMINI COPILOT CONFIGURATION ---
+        function initGeminiChatLog() {
             const logViewport = document.getElementById('ai-chat-viewport');
-            logViewport.innerHTML = '<div class="chat-bubble bubble-gemini"><strong>[System]</strong> Testing WebGPU initialization...</div>';
-            
-            try {
-                engineInstance = new webllm.CreateMLCEngine();
-                engineInstance.setInitProgressCallback((report) => {
-                    logViewport.innerHTML = `<div class="chat-bubble bubble-gemini"><strong>[Local Engine Build]</strong><br>${report.text}</div>`;
-                    logViewport.scrollTop = logViewport.scrollHeight;
-                });
-
-                await engineInstance.reload(targetModelId, {
-                    temperature: 0.3,
-                    system_prompt: "You are a concise engineering dashboard copilot."
-                });
-
-                logViewport.innerHTML = '<div class="chat-bubble bubble-gemini"><strong>[Engine Online]</strong> WebGPU pipeline complete. Model compiled locally and ready with zero query caps.</div>';
-                
-                document.getElementById('ai-query-input').disabled = false;
-                document.getElementById('ai-submit-btn').disabled = false;
-                document.getElementById('ai-query-input').placeholder = "Query local runtime memory layer...";
-            } catch (err) {
-                logViewport.innerHTML = `<div class="chat-bubble bubble-gemini" style="color:var(--accent-alert);"><strong>WebGPU Init Fault:</strong> ${err.message}<br><br>Make sure your browser has WebGPU enabled (Chrome/Edge/Brave/Safari 18+).</div>`;
-            }
+            logViewport.innerHTML = '<div class="chat-bubble bubble-gemini"><strong>[Gemini Engine Online]</strong> Environment API bridges active. How can I assist with the project engineering pipeline?</div>';
         }
 
         window.dispatchAiQuery = async function() {
@@ -623,7 +594,7 @@
             const logViewport = document.getElementById('ai-chat-viewport');
             const submitBtn = document.getElementById('ai-submit-btn');
             const rawText = queryInput.value.trim();
-            if (!rawText || !engineInstance) return;
+            if (!rawText) return;
 
             queryInput.disabled = true;
             submitBtn.disabled = true;
@@ -636,16 +607,23 @@
 
             const loadingBubble = document.createElement('div');
             loadingBubble.className = 'chat-bubble bubble-gemini';
-            loadingBubble.innerHTML = '<em>Thinking (Local GPU)...</em>';
+            loadingBubble.innerHTML = '<em>Connecting to Gemini pipeline...</em>';
             logViewport.appendChild(loadingBubble);
             logViewport.scrollTop = logViewport.scrollHeight;
 
             try {
-                const messages = [{ role: "user", content: rawText }];
-                const reply = await engineInstance.chat.completions.create({ messages });
-                loadingBubble.textContent = reply.choices[0].message.content;
+                // Pointing to your serverless backend edge route to run remote Gemini calls safely without raw frontend key exposure
+                const response = await fetch('/api/gemini-proxy', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt: rawText })
+                });
+                
+                if (!response.ok) throw new Error("Edge infrastructure routing failure");
+                const resData = await response.json();
+                loadingBubble.textContent = resData.reply || "No structural tokens returned.";
             } catch (err) {
-                loadingBubble.innerHTML = `<span style="color:var(--accent-alert);">Engine processing failure: ${err.message}</span>`;
+                loadingBubble.innerHTML = `<span style="color:var(--accent-alert);">Bridge failure: ${err.message}. Ensure your local backend proxy server is active.</span>`;
             }
             
             queryInput.disabled = false;
