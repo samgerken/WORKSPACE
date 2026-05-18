@@ -16,6 +16,7 @@
             --text-muted: #71717a;
             --text-dark: #3f3f3f;
             --accent-alert: #f87171;
+            
             --panel-header-line: #52525b;
             --panel-title-color: #a1a1aa;
             --chat-user-bg: #27272a;
@@ -23,6 +24,7 @@
             --chat-gemini-border: rgba(255, 255, 255, 0.04);
             --code-bg: #18181b;
             --pre-bg: #09090b;
+            
             --font-stack: Calibri, Candara, "Segoe UI", Optima, Arial, sans-serif;
             --progress-track: #18181b;
         }
@@ -38,6 +40,7 @@
             --text-muted: #71717a;
             --text-dark: #a1a1aa;
             --accent-alert: #dc2626;
+            
             --panel-header-line: #a1a1aa;
             --panel-title-color: #4b5563;
             --chat-user-bg: #e4e4e7;
@@ -49,56 +52,79 @@
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background-color: var(--bg-base); color: var(--text-secondary); font-family: var(--font-stack); padding: 40px 20px; line-height: 1.5; }
+        body { background-color: var(--bg-base); color: var(--text-secondary); font-family: var(--font-stack); padding: 40px 20px; line-height: 1.5; letter-spacing: -0.01em; transition: background-color 0.2s ease, color 0.2s ease; }
         .container { max-width: 1250px; margin: 0 auto; }
-        
+
         header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 20px; }
         h1 { color: var(--text-primary); font-size: 1.7rem; font-weight: 700; }
         .subtitle { color: var(--text-muted); font-size: 0.9rem; margin-top: 2px; }
 
         .theme-toggle-btn { background: var(--bg-terminal); color: var(--text-secondary); border: 1px solid var(--border-subtle); padding: 6px 12px; font-family: monospace; font-size: 0.75rem; text-transform: uppercase; border-radius: 4px; cursor: pointer; }
-        
+        .theme-toggle-btn:hover { border-color: var(--border-active); color: var(--text-primary); }
+
         .top-row-container { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
+        .bottom-row-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; align-items: start; }
+        .dashboard-column { display: flex; flex-direction: column; gap: 24px; }
+
         section.panel, div.panel { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; }
+        .panel-title-container { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
         
-        h2 { color: var(--panel-title-color); font-size: 0.78rem; font-weight: 700; text-transform: uppercase; border-left: 2px solid var(--panel-header-line); padding-left: 10px; }
-        .control-row { display: flex; gap: 12px; margin-top: 16px; margin-bottom: 20px; }
-        
+        h2 { color: var(--panel-title-color); font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; border-left: 2px solid var(--panel-header-line); padding-left: 10px; }
+        .panel-meta-tracker { font-family: monospace; font-size: 0.65rem; color: var(--text-dark); text-transform: uppercase; letter-spacing: 0.05em; }
+
+        .control-row { display: flex; gap: 12px; margin-bottom: 20px; }
         .task-input { flex: 1; background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 12px 16px; color: var(--text-primary); font-family: inherit; font-size: 0.95rem; outline: none; }
         .task-input:focus { border-color: var(--border-active); }
-        
         .deploy-btn { background: var(--text-primary); color: var(--bg-base); border: none; border-radius: 6px; padding: 0 20px; font-weight: 600; cursor: pointer; }
+
         .checklist-container { list-style: none; }
-        
-        .checklist-item { padding: 12px 10px; border-bottom: 1px solid var(--border-subtle); font-size: 0.95rem; display: flex; align-items: center; justify-content: space-between; cursor: pointer; border-radius: 4px; }
-        .checklist-item:hover { background: rgba(255, 255, 255, 0.02); }
+        .checklist-item { padding: 12px 10px; border-bottom: 1px solid var(--border-subtle); font-size: 0.95rem; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
         .task-left-block { display: flex; align-items: center; }
         .status-box { font-family: monospace; font-weight: bold; color: var(--text-muted); margin-right: 14px; min-width: 28px; }
-        
         .clear-single-btn { background: none; border: none; color: var(--text-dark); font-size: 0.8rem; cursor: pointer; }
-        .checklist-item:hover .clear-single-btn { color: var(--text-muted); }
         .clear-single-btn:hover { color: var(--accent-alert) !important; }
-        
         .resolved { color: var(--text-dark) !important; }
         .resolved .task-text { text-decoration: line-through; }
-        
-        .metrics-footer { display: flex; justify-content: space-between; margin-top: auto; padding-top: 16px; font-size: 0.85rem; color: var(--text-muted); border-top: 1px dashed var(--border-subtle); }
-        .purge-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; text-decoration: underline; font-family: inherit; }
 
-        .ai-chat-log { background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 8px; height: 320px; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 16px; }
+        .metrics-footer { display: flex; justify-content: space-between; margin-top: auto; padding-top: 16px; font-size: 0.85rem; color: var(--text-muted); border-top: 1px dashed var(--border-subtle); }
+        .purge-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; text-decoration: underline; }
+
+        .ai-chat-log { background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 8px; height: 320px; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 16px; margin-bottom: 14px; }
         .chat-bubble { font-size: 0.9rem; line-height: 1.5; max-width: 85%; }
         .bubble-user { color: var(--text-primary); align-self: flex-end; background: var(--chat-user-bg); padding: 10px 14px; border-radius: 12px 12px 2px 12px; }
         .bubble-gemini { color: var(--text-secondary); align-self: flex-start; background: var(--chat-gemini-bg); border: 1px solid var(--chat-gemini-border); padding: 12px 16px; border-radius: 12px 12px 12px 2px; }
-        .bubble-gemini code { font-family: monospace; background: var(--code-bg); padding: 2px 6px; border-radius: 4px; color: #f43f5e; }
-        .bubble-gemini pre { background: var(--pre-bg); padding: 12px; border-radius: 6px; overflow-x: auto; margin: 10px 0; border: 1px solid var(--border-subtle); }
+
+        .weather-display { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: center; margin-bottom: 16px; }
+        .temp-primary { font-size: 2.4rem; font-weight: 700; color: var(--text-primary); }
+        .weather-meta { font-size: 0.85rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 4px; }
+        .weather-meta span { color: var(--text-secondary); font-weight: 600; }
+        .forecast-container { display: flex; flex-direction: column; gap: 6px; background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 12px; }
+        .forecast-row { display: grid; grid-template-columns: 2.5fr 3.5fr 2fr; font-size: 0.85rem; padding: 4px 0; border-bottom: 1px solid var(--border-subtle); }
+        .forecast-row:last-child { border-bottom: none; }
+
+        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); row-gap: 6px; text-align: center; }
+        .calendar-day-label { color: var(--text-muted); font-weight: 600; font-size: 0.75rem; padding-bottom: 8px; }
+        .calendar-cell { color: var(--text-secondary); font-size: 0.85rem; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 4px; }
+        .calendar-cell.muted { color: var(--text-dark); }
+        .calendar-cell.today { border: 1px solid var(--text-primary); color: var(--text-primary); font-weight: 700; }
+
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+        .stat-card { background: var(--bg-terminal); border: 1px solid var(--border-subtle); padding: 12px; border-radius: 6px; }
+        .stat-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; }
+        .stat-value { font-size: 1.15rem; font-weight: 700; color: var(--text-primary); font-family: monospace; }
+        .progress-track { background: var(--progress-track); height: 8px; border-radius: 4px; overflow: hidden; border: 1px solid var(--border-subtle); margin-top: 6px; }
+        .progress-fill { background: var(--text-primary); height: 100%; transition: width 0.3s ease; }
+
+        .scratchpad-area { background: var(--bg-terminal); color: var(--text-primary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 14px; font-family: monospace; font-size: 0.85rem; min-height: 110px; width: 100%; outline: none; resize: vertical; }
+        .material-selector { background: var(--bg-terminal); border: 1px solid var(--border-subtle); color: var(--text-primary); width: 100%; padding: 10px; border-radius: 6px; margin-bottom: 12px; outline: none; }
+        .spec-table { width: 100%; font-family: monospace; font-size: 0.8rem; border-collapse: collapse; }
+        .spec-table td { padding: 6px 8px; border-bottom: 1px solid var(--border-subtle); }
+        .spec-table td:last-child { text-align: right; color: var(--text-primary); font-weight: 600; }
     </style>
     
     <script type="importmap">
-      {
-        "imports": {
-          "@google/genai": "https://esm.run/@google/genai"
-        }
-      }
+      { "imports": { "@google/genai": "https://esm.run/@google/genai" } }
     </script>
 </head>
 <body>
@@ -107,7 +133,7 @@
         <header>
             <div>
                 <h1>Workspace Dashboard</h1>
-                <p class="subtitle">Daily log sync pipeline</p>
+                <p class="subtitle">Unified logistics & development environment</p>
             </div>
             <div>
                 <button class="theme-toggle-btn" onclick="toggleDashboardTheme()">Theme: <span id="theme-status-lbl">Dark</span></button>
@@ -118,7 +144,7 @@
             <div class="panel">
                 <h2>Daily Checklist</h2>
                 <div class="control-row">
-                    <input type="text" id="task-input-node" class="task-input" placeholder="Add structural tasks...">
+                    <input type="text" id="task-input-node" class="task-input" placeholder="Add tracking log entry...">
                     <button class="deploy-btn" onclick="commitNewTask()">Add</button>
                 </div>
                 <ul class="checklist-container" id="checklist-render-node"></ul>
@@ -130,11 +156,81 @@
 
             <div class="panel">
                 <h2>Gemini Assistant Console</h2>
-                <div class="control-row"></div>
                 <div class="ai-chat-log" id="ai-chat-viewport"></div>
                 <div class="control-row" style="margin-bottom: 0;">
-                    <input type="text" id="ai-query-input" class="task-input" placeholder="Query interface parameters...">
+                    <input type="text" id="ai-query-input" class="task-input" placeholder="Query model coordinates...">
                     <button class="deploy-btn" id="ai-submit-btn" onclick="dispatchAiQuery()">Query</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-row-container">
+            <div class="dashboard-column">
+                <div class="panel">
+                    <h2>Local Weather</h2>
+                    <div class="weather-display" style="margin-top: 14px;">
+                        <div>
+                            <div class="temp-primary">58°F</div>
+                            <div style="font-size: 0.9rem; color: var(--text-muted); margin-top: 2px;">Overcast</div>
+                        </div>
+                        <div class="weather-meta">
+                            <div>Location: <span>Old Town, ME</span></div>
+                            <div>Wind: <span>WNW 9 mph</span></div>
+                            <div>Humidity: <span>42%</span></div>
+                        </div>
+                    </div>
+                    <div class="forecast-container">
+                        <div class="forecast-row"><span>Tue 05/19</span><span>AM Showers</span><span style="text-align:right;">55° / 40°</span></div>
+                        <div class="forecast-row"><span>Wed 05/20</span><span>Clear Skies</span><span style="text-align:right;">66° / 42°</span></div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h2>Material Matrix Lookup</h2>
+                    <select id="material-selector-node" class="material-selector" style="margin-top: 14px;" onchange="updateMaterialSpecs()">
+                        <option value="petg">PETG (Carbon Fiber Reinforced)</option>
+                        <option value="pla">PLA+ High-Performance</option>
+                        <option value="alu">6061-T6 Aluminum Alloy</option>
+                    </select>
+                    <table class="spec-table">
+                        <tr><td>Density</td><td id="mat-density">1.27 g/cm³</td></tr>
+                        <tr><td>Tensile Strength</td><td id="mat-tensile">48.5 MPa</td></tr>
+                        <tr><td>Flexural Modulus</td><td id="mat-modulus">3.8 GPa</td></tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="dashboard-column">
+                <div class="panel">
+                    <div class="calendar-header">
+                        <h2 id="calendar-header-title">May 2026</h2>
+                    </div>
+                    <div class="calendar-grid" id="calendar-matrix-grid"></div>
+                </div>
+
+                <div class="panel">
+                    <h2>Cycling Telemetry</h2>
+                    <div class="stats-grid" style="margin-top: 14px;">
+                        <div class="stat-card">
+                            <div class="stat-label">Block Mileage</div>
+                            <div class="stat-value">76.0 mi</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Avg Speed</div>
+                            <div class="stat-value">15.8 mph</div>
+                        </div>
+                    </div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted);">
+                        Target Century Milestone: <strong>76%</strong>
+                        <div class="progress-track"><div class="progress-fill" style="width: 76%;"></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-column">
+                <div class="panel">
+                    <h2>Scratchpad Terminal</h2>
+                    <textarea id="scratchpad-text-node" class="scratchpad-area" style="margin-top: 14px;" placeholder="Stage local strings, variables or transient macros..." spellcheck="false"></textarea>
                 </div>
             </div>
         </div>
@@ -145,7 +241,6 @@
         import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
         import { GoogleGenAI } from "@google/genai";
 
-        // Firebase Sync Initialization
         const firebaseConfig = {
             apiKey: "AIzaSyACQZ-5RfnQg7gT1_V2PuxG4nA6uRm28uM",
             authDomain: "my-workspace-dashboard.firebaseapp.com",
@@ -158,18 +253,25 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
-        const dataSyncRef = ref(db, 'dashboard/tasks'); // Matches active tree node path
+        const dataSyncRef = ref(db, 'dashboard/tasks'); // Firm target path
 
         const TARGET_PIPELINE_KEY = 'AIzaSyAM5FFmnoIt6284nAky_30KAAQJB3sq36o';
         let aiClient = null;
         let activeChatSession = null;
         let datasetState = [];
 
+        const materialDatabase = {
+            petg: { density: "1.27 g/cm³", tensile: "48.5 MPa", modulus: "3.8 GPa" },
+            pla: { density: "1.24 g/cm³", tensile: "65.0 MPa", modulus: "4.1 GPa" },
+            alu: { density: "2.70 g/cm³", tensile: "310 MPa", modulus: "68.9 GPa" }
+        };
+
         window.addEventListener('DOMContentLoaded', () => {
             initDashboardTheme();
             initializeAutomaticPipeline();
+            renderStaticCalendar();
+            initializeScratchpadEngine();
             
-            // Core Cloud Realtime Listener
             onValue(dataSyncRef, (snapshot) => {
                 datasetState = snapshot.val() || [];
                 synchronizeChecklist();
@@ -177,9 +279,9 @@
         });
 
         function initDashboardTheme() {
-            const preservedTheme = localStorage.getItem('workspace_theme') || 'dark';
-            document.documentElement.setAttribute('data-theme', preservedTheme);
-            document.getElementById('theme-status-lbl').textContent = preservedTheme.toUpperCase();
+            const preserved = localStorage.getItem('workspace_theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', preserved);
+            document.getElementById('theme-status-lbl').textContent = preserved.toUpperCase();
         }
 
         window.toggleDashboardTheme = function() {
@@ -190,14 +292,49 @@
             document.getElementById('theme-status-lbl').textContent = target.toUpperCase();
         }
 
+        function initializeScratchpadEngine() {
+            const node = document.getElementById('scratchpad-text-node');
+            const cached = localStorage.getItem('workspace_scratchpad');
+            if (cached && node) node.value = cached;
+            node?.addEventListener('input', () => localStorage.setItem('workspace_scratchpad', node.value));
+        }
+
+        window.updateMaterialSpecs = function() {
+            const key = document.getElementById('material-selector-node').value;
+            const mat = materialDatabase[key];
+            if (!mat) return;
+            document.getElementById('mat-density').textContent = mat.density;
+            document.getElementById('mat-tensile').textContent = mat.tensile;
+            document.getElementById('mat-modulus').textContent = mat.modulus;
+        }
+
+        function renderStaticCalendar() {
+            const gridNode = document.getElementById('calendar-matrix-grid');
+            if (!gridNode) return;
+            gridNode.innerHTML = '';
+            ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].forEach(l => {
+                const cell = document.createElement('div');
+                cell.className = 'calendar-day-label';
+                cell.textContent = l;
+                gridNode.appendChild(cell);
+            });
+            // Fixed pad calculation placeholder for May 2026 (Starts Friday)
+            for (let p = 0; p < 5; p++) {
+                const cell = document.createElement('div');
+                cell.className = 'calendar-cell muted';
+                cell.textContent = 26 + p;
+                gridNode.appendChild(cell);
+            }
+            for (let d = 1; d <= 31; d++) {
+                const cell = document.createElement('div');
+                cell.className = 'calendar-cell' + (d === 18 ? ' today' : '');
+                cell.textContent = d;
+                gridNode.appendChild(cell);
+            }
+        }
+
         function parseMarkdown(text) {
-            let html = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
-                .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>')
-                .replace(/`([^`]+)`/g, '<code>$1</code>')
-                .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-                .replace(/^\s*[\-\*]\s+(.+)$/gm, '<li>$1</li>');
-            if (html.includes('<li>')) html = html.replace(/((?:<li>.+<\/li>\s*)+)/g, '<ul>$1</ul>');
-            return html.split('\n\n').map(p => p.trim().startsWith('<u') || p.trim().startsWith('<p') || p.trim().startsWith('<pre') ? p : `<p>${p.replace(/\n/g, '<br>')}</p>`).join('');
+            return text.replace(/`([^`]+)`/g, '<code>$1</code>').replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
         }
 
         function initializeAutomaticPipeline() {
@@ -206,11 +343,11 @@
                 aiClient = new GoogleGenAI({ apiKey: TARGET_PIPELINE_KEY });
                 activeChatSession = aiClient.chats.create({
                     model: 'gemini-2.5-flash',
-                    config: { systemInstruction: "You are a concise engineering development terminal workspace assistant." }
+                    config: { systemInstruction: "You are a concise terminal assistant." }
                 });
-                logViewport.innerHTML = '<div class="chat-bubble bubble-gemini"><strong>[Console Pipeline Online]</strong></div>';
+                logViewport.innerHTML = '<div class="chat-bubble bubble-gemini"><strong>[Console Online]</strong> Modules restored.</div>';
             } catch (err) {
-                logViewport.innerHTML = `<div class="chat-bubble bubble-gemini" style="color:var(--accent-alert);">[Initialization Error]: ${err.message}</div>`;
+                logViewport.innerHTML = `<div>Error: ${err.message}</div>`;
             }
         }
 
@@ -232,7 +369,7 @@
 
             const loadingBubble = document.createElement('div');
             loadingBubble.className = 'chat-bubble bubble-gemini';
-            loadingBubble.innerHTML = '<em>Awaiting stream data...</em>';
+            loadingBubble.innerHTML = '<em>Thinking...</em>';
             logViewport.appendChild(loadingBubble);
             logViewport.scrollTop = logViewport.scrollHeight;
 
@@ -240,12 +377,11 @@
                 let response = await activeChatSession.sendMessage({ message: rawText });
                 loadingBubble.innerHTML = parseMarkdown(response.text);
             } catch (err) {
-                loadingBubble.innerHTML = `<span style="color:var(--accent-alert);">[Connectivity Error]: ${err.message}</span>`;
+                loadingBubble.innerHTML = `<span>Error: ${err.message}</span>`;
             }
             
             queryInput.disabled = false;
             submitBtn.disabled = false;
-            queryInput.focus();
             logViewport.scrollTop = logViewport.scrollHeight;
         }
 
@@ -256,7 +392,7 @@
             let remCount = 0, compCount = 0;
 
             if (datasetState.length === 0) {
-                container.innerHTML = '<div class="empty-state">No pending actions items found.</div>';
+                container.innerHTML = '<div style="color:var(--text-dark); padding:10px;">Queue empty.</div>';
             } else {
                 datasetState.forEach((task, index) => {
                     task.completed ? compCount++ : remCount++;
@@ -281,7 +417,6 @@
                         datasetState.splice(index, 1);
                         set(dataSyncRef, datasetState);
                     });
-
                     container.appendChild(li);
                 });
             }
