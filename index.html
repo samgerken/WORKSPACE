@@ -117,8 +117,13 @@
         .progress-track { background: var(--progress-track); height: 8px; border-radius: 4px; overflow: hidden; border: 1px solid var(--border-subtle); margin-top: 6px; }
         .progress-fill { background: var(--text-primary); height: 100%; transition: width 0.3s ease; }
 
-        .scratchpad-area { background: var(--bg-terminal); color: var(--text-primary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 14px; font-family: monospace; font-size: 0.85rem; min-height: 140px; width: 100%; outline: none; resize: vertical; }
-        .scratchpad-status { font-size: 0.7rem; color: var(--text-dark); margin-top: 4px; text-align: right; font-family: monospace; }
+        /* CALCULATOR TERMINAL STYLES */
+        .calc-screen { width: 100%; background: var(--bg-terminal); color: var(--text-primary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 14px; font-family: monospace; font-size: 1.2rem; text-align: right; outline: none; margin-bottom: 12px; min-height: 50px; }
+        .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+        .calc-btn { background: var(--bg-terminal); color: var(--text-secondary); border: 1px solid var(--border-subtle); padding: 12px; font-family: monospace; font-size: 0.95rem; font-weight: 600; border-radius: 6px; cursor: pointer; transition: all 0.15s ease; }
+        .calc-btn:hover { border-color: var(--border-active); color: var(--text-primary); }
+        .calc-btn.op { color: var(--text-muted); }
+        .calc-btn.action { background: var(--text-primary); color: var(--bg-base); border: none; }
         
         .material-selector { background: var(--bg-terminal); border: 1px solid var(--border-subtle); color: var(--text-primary); width: 100%; padding: 10px; border-radius: 6px; margin-bottom: 12px; outline: none; }
         .spec-table { width: 100%; font-family: monospace; font-size: 0.8rem; border-collapse: collapse; }
@@ -246,9 +251,33 @@
 
             <div class="col-2 dashboard-column">
                 <div class="panel">
-                    <h2>Scratchpad Terminal</h2>
-                    <textarea id="scratchpad-text-node" class="scratchpad-area" style="margin-top: 14px;" placeholder="Stage local strings, variables or transient macros..." spellcheck="false" disabled></textarea>
-                    <div id="scratchpad-status-lbl" class="scratchpad-status">Connecting to cloud sync...</div>
+                    <h2>Calculator Terminal</h2>
+                    <div style="margin-top: 14px; display: flex; flex-direction: column;">
+                        <div id="calc-display-node" class="calc-screen">0</div>
+                        <div class="calc-grid">
+                            <button class="calc-btn action" onclick="clearCalculatorDisplay()">C</button>
+                            <button class="calc-btn op" onclick="appendCalculatorValue('/')">/</button>
+                            <button class="calc-btn op" onclick="appendCalculatorValue('*')">*</button>
+                            <button class="calc-btn op" onclick="appendCalculatorValue('-')">-</button>
+                            
+                            <button class="calc-btn" onclick="appendCalculatorValue('7')">7</button>
+                            <button class="calc-btn" onclick="appendCalculatorValue('8')">8</button>
+                            <button class="calc-btn" onclick="appendCalculatorValue('9')">9</button>
+                            <button class="calc-btn op" onclick="appendCalculatorValue('+')">+</button>
+                            
+                            <button class="calc-btn" onclick="appendCalculatorValue('4')">4</button>
+                            <button class="calc-btn" onclick="appendCalculatorValue('5')">5</button>
+                            <button class="calc-btn" onclick="appendCalculatorValue('6')">6</button>
+                            <button class="calc-btn action" style="grid-row: span 2; height: 100%;" onclick="evaluateCalculatorResult()">=</button>
+                            
+                            <button class="calc-btn" onclick="appendCalculatorValue('1')">1</button>
+                            <button class="calc-btn" onclick="appendCalculatorValue('2')">2</button>
+                            <button class="calc-btn" onclick="appendCalculatorValue('3')">3</button>
+                            
+                            <button class="calc-btn" style="grid-column: span 2;" onclick="appendCalculatorValue('0')">0</button>
+                            <button class="calc-btn" onclick="appendCalculatorValue('.')">.</button>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="panel">
@@ -284,12 +313,10 @@
         const db = getDatabase(app);
         
         const dataSyncRef = ref(db, 'dashboard/tasks');
-        const scratchpadSyncRef = ref(db, 'dashboard/scratchpad');
 
         let aiClient = null;
         let activeChatSession = null;
         let datasetState = [];
-        let scratchpadDebounceTimer = null;
 
         const materialDatabase = {
             petg: { density: "1.27 g/cm³", tensile: "48.5 MPa", modulus: "3.8 GPa" },
@@ -356,12 +383,42 @@
             document.getElementById('mat-modulus').textContent = mat.modulus;
         };
 
+        // --- CALCULATOR SYSTEM CONTROLS ---
+        let calcExpressionStr = "";
+        window.appendCalculatorValue = function(val) {
+            const display = document.getElementById('calc-display-node');
+            if (calcExpressionStr === "0" && !isNaN(val)) {
+                calcExpressionStr = val;
+            } else {
+                calcExpressionStr += val;
+            }
+            display.textContent = calcExpressionStr;
+        };
+
+        window.clearCalculatorDisplay = function() {
+            calcExpressionStr = "";
+            document.getElementById('calc-display-node').textContent = "0";
+        };
+
+        window.evaluateCalculatorResult = function() {
+            const display = document.getElementById('calc-display-node');
+            if (!calcExpressionStr) return;
+            try {
+                // Safely parse mathematical operations without dangerous eval() execution vectors
+                const sanitizedResult = Function(`"use strict"; return (${calcExpressionStr})`)();
+                calcExpressionStr = String(sanitizedResult);
+                display.textContent = calcExpressionStr;
+            } catch (err) {
+                display.textContent = "Error";
+                calcExpressionStr = "";
+            }
+        };
+
         // --- DATA FLOW SUBSCRIPTIONS ---
         window.addEventListener('DOMContentLoaded', () => {
             initDashboardTheme();
             initializeAutomaticPipeline();
             renderStaticCalendar();
-            initializeCloudScratchpad();
             
             onValue(dataSyncRef, (snapshot) => {
                 const data = snapshot.val();
@@ -378,31 +435,6 @@
             const preserved = localStorage.getItem('workspace_theme') || 'dark';
             document.documentElement.setAttribute('data-theme', preserved);
             document.getElementById('theme-status-lbl').textContent = preserved.toUpperCase();
-        }
-
-        function initializeCloudScratchpad() {
-            const node = document.getElementById('scratchpad-text-node');
-            const status = document.getElementById('scratchpad-status-lbl');
-            if (!node) return;
-
-            onValue(scratchpadSyncRef, (snapshot) => {
-                const cloudText = snapshot.val() || "";
-                if (document.activeElement !== node) {
-                    node.value = cloudText;
-                }
-                node.disabled = false;
-                status.textContent = "Cloud Sync Active";
-            });
-
-            node.addEventListener('input', () => {
-                status.textContent = "Typing...";
-                clearTimeout(scratchpadDebounceTimer);
-                scratchpadDebounceTimer = setTimeout(() => {
-                    set(scratchpadSyncRef, node.value)
-                        .then(() => { status.textContent = "Saved to Cloud"; })
-                        .catch(() => { status.textContent = "Sync Error"; });
-                }, 400);
-            });
         }
 
         function renderStaticCalendar() {
