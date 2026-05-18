@@ -283,6 +283,58 @@
             alu: { density: "2.70 g/cm³", tensile: "310 MPa", modulus: "68.9 GPa" }
         };
 
+        // --- GLOBAL SCOPE WINDOW BINDINGS (DECLARED IMMEDIATELY ON PARSE) ---
+        window.commitNewTask = function() {
+            if (!isInitialLoadDone) return;
+            const inputNode = document.getElementById('task-input-node');
+            if (!inputNode) return;
+            
+            const val = inputNode.value.trim();
+            if (!val) return;
+            
+            if (!datasetState) datasetState = [];
+            datasetState.push({ text: val, completed: false });
+            
+            set(ref(db, 'dashboard/tasks'), datasetState)
+                .then(() => {
+                    inputNode.value = '';
+                    inputNode.focus();
+                })
+                .catch((err) => {
+                    console.error("Write execution error: ", err);
+                });
+        };
+
+        window.deleteTargetTask = function(index) {
+            if (!isInitialLoadDone || !datasetState) return;
+            datasetState.splice(index, 1);
+            set(ref(db, 'dashboard/tasks'), datasetState);
+        };
+
+        window.purgeCompletedTasks = function() {
+            if (!isInitialLoadDone || !datasetState) return;
+            datasetState = datasetState.filter(t => !t.completed);
+            set(ref(db, 'dashboard/tasks'), datasetState);
+        };
+
+        window.toggleDashboardTheme = function() {
+            const current = document.documentElement.getAttribute('data-theme');
+            const target = current === 'light' ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', target);
+            localStorage.setItem('workspace_theme', target);
+            document.getElementById('theme-status-lbl').textContent = target.toUpperCase();
+        };
+
+        window.updateMaterialSpecs = function() {
+            const key = document.getElementById('material-selector-node').value;
+            const mat = materialDatabase[key];
+            if (!mat) return;
+            document.getElementById('mat-density').textContent = mat.density;
+            document.getElementById('mat-tensile').textContent = mat.tensile;
+            document.getElementById('mat-modulus').textContent = mat.modulus;
+        };
+
+        // --- CORE APPLICATION LIFECYCLE INITIALIZATION ---
         window.addEventListener('DOMContentLoaded', () => {
             initDashboardTheme();
             initializeAutomaticPipeline();
@@ -301,14 +353,6 @@
             const preserved = localStorage.getItem('workspace_theme') || 'dark';
             document.documentElement.setAttribute('data-theme', preserved);
             document.getElementById('theme-status-lbl').textContent = preserved.toUpperCase();
-        }
-
-        window.toggleDashboardTheme = function() {
-            const current = document.documentElement.getAttribute('data-theme');
-            const target = current === 'light' ? 'dark' : 'light';
-            document.documentElement.setAttribute('data-theme', target);
-            localStorage.setItem('workspace_theme', target);
-            document.getElementById('theme-status-lbl').textContent = target.toUpperCase();
         }
 
         function initializeCloudScratchpad() {
@@ -336,15 +380,6 @@
             });
         }
 
-        window.updateMaterialSpecs = function() {
-            const key = document.getElementById('material-selector-node').value;
-            const mat = materialDatabase[key];
-            if (!mat) return;
-            document.getElementById('mat-density').textContent = mat.density;
-            document.getElementById('mat-tensile').textContent = mat.tensile;
-            document.getElementById('mat-modulus').textContent = mat.modulus;
-        }
-
         function renderStaticCalendar() {
             const gridNode = document.getElementById('calendar-matrix-grid');
             if (!gridNode) return;
@@ -370,7 +405,7 @@
         }
 
         function parseMarkdown(text) {
-            return text.replace(/`([^`]+)`/g, '<code>$1</code>').replace(/\*\*([^*]+)\*\"/g, '<strong>$1</strong>');
+            return text.replace(/`([^`]+)`/g, '<code>$1</code>').replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
         }
 
         function initializeAutomaticPipeline() {
@@ -438,7 +473,7 @@
             queryInput.disabled = false;
             submitBtn.disabled = false;
             logViewport.scrollTop = logViewport.scrollHeight;
-        }
+        };
 
         function synchronizeChecklist() {
             const container = document.getElementById('checklist-render-node');
@@ -476,39 +511,6 @@
             }
             document.getElementById('active-count').textContent = remCount;
             document.getElementById('complete-count').textContent = compCount;
-        }
-
-        window.commitNewTask = function() {
-            if (!isInitialLoadDone) return;
-            const inputNode = document.getElementById('task-input-node');
-            if (!inputNode) return;
-            
-            const val = inputNode.value.trim();
-            if (!val) return;
-            
-            if (!datasetState) datasetState = [];
-            datasetState.push({ text: val, completed: false });
-            
-            set(ref(db, 'dashboard/tasks'), datasetState)
-                .then(() => {
-                    inputNode.value = '';
-                    inputNode.focus();
-                })
-                .catch((err) => {
-                    console.error("Write execution error: ", err);
-                });
-        }
-
-        window.deleteTargetTask = function(index) {
-            if (!isInitialLoadDone || !datasetState) return;
-            datasetState.splice(index, 1);
-            set(ref(db, 'dashboard/tasks'), datasetState);
-        }
-
-        window.purgeCompletedTasks = function() {
-            if (!isInitialLoadDone || !datasetState) return;
-            datasetState = datasetState.filter(t => !t.completed);
-            set(ref(db, 'dashboard/tasks'), datasetState);
         }
     </script>
 </body>
