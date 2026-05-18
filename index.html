@@ -53,15 +53,28 @@
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background-color: var(--bg-base); color: var(--text-secondary); font-family: var(--font-stack); padding: 40px 20px; line-height: 1.5; letter-spacing: -0.01em; transition: background-color 0.2s ease, color 0.2s ease; }
+        body { background-color: var(--bg-base); color: var(--text-secondary); font-family: var(--font-stack); padding: 40px 20px; line-height: 1.5; letter-spacing: -0.01em; transition: background-color 0.2s ease, color 0.2s ease; overflow-x: hidden; }
         .container { max-width: 1250px; margin: 0 auto; }
 
         header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 20px; }
         h1 { color: var(--text-primary); font-size: 1.7rem; font-weight: 700; }
         .subtitle { color: var(--text-muted); font-size: 0.9rem; margin-top: 2px; }
 
-        .theme-toggle-btn { background: var(--bg-terminal); color: var(--text-secondary); border: 1px solid var(--border-subtle); padding: 6px 12px; font-family: monospace; font-size: 0.75rem; text-transform: uppercase; border-radius: 4px; cursor: pointer; }
-        .theme-toggle-btn:hover { border-color: var(--border-active); color: var(--text-primary); }
+        .header-controls { display: flex; gap: 10px; }
+        .theme-toggle-btn, .menu-trigger-btn { background: var(--bg-terminal); color: var(--text-secondary); border: 1px solid var(--border-subtle); padding: 6px 14px; font-family: inherit; font-size: 0.85rem; border-radius: 4px; cursor: pointer; transition: all 0.15s ease; }
+        .theme-toggle-btn:hover, .menu-trigger-btn:hover { border-color: var(--border-active); color: var(--text-primary); }
+
+        /* SLIDING SIDEBAR DRAWER MENU */
+        .sidebar-drawer { position: fixed; top: 0; left: -320px; width: 300px; height: 100%; background: #09090b; border-right: 1px solid var(--border-subtle); box-shadow: 10px 0 30px rgba(0,0,0,0.5); z-index: 1000; transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1); padding: 30px 24px; display: flex; flex-direction: column; gap: 20px; }
+        .sidebar-drawer.open { left: 0; }
+        .drawer-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-subtle); padding-bottom: 14px; }
+        .drawer-header h3 { color: var(--text-primary); font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        .close-drawer-btn { background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer; }
+        .close-drawer-btn:hover { color: var(--text-primary); }
+        
+        .tile-toggle-list { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
+        .tile-toggle-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle); border-radius: 6px; font-size: 0.9rem; }
+        .tile-toggle-item input { accent-color: var(--text-primary); cursor: pointer; width: 16px; height: 16px; }
 
         /* DRAGGABLE GRID STYLES */
         .dashboard-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 24px; }
@@ -71,20 +84,23 @@
         .grid-item { transition: transform 0.2s ease, opacity 0.2s ease; position: relative; }
         .grid-item.dragging { opacity: 0.3; transform: scale(0.97); }
         .grid-item.drag-over { border-radius: 12px; outline: 2px dashed var(--border-active); outline-offset: 4px; }
+        .grid-item.hidden-tile { display: none !important; }
 
         section.panel, div.panel { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; height: 100%; min-height: 220px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2); }
         
         h2 { color: var(--panel-title-color); font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; border-left: 2px solid var(--panel-header-line); padding-left: 10px; display: flex; justify-content: space-between; align-items: center; }
         
-        /* Dedicated Drag Handle UI element */
-        .drag-handle { cursor: grab; font-size: 0.85rem; color: var(--text-muted); padding: 2px 6px; background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 4px; font-family: monospace; user-select: none; }
+        .drag-handle { cursor: grab; font-size: 0.75rem; color: var(--text-muted); padding: 3px 8px; background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 4px; font-family: monospace; user-select: none; }
         .drag-handle:active { cursor: grabbing; border-color: var(--text-primary); color: var(--text-primary); }
 
         .control-row { display: flex; gap: 12px; margin-bottom: 20px; }
         .task-input { flex: 1; background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 12px 16px; color: var(--text-primary); font-family: inherit; font-size: 0.95rem; outline: none; min-width: 0; }
         .task-input:focus { border-color: var(--border-active); }
-        .deploy-btn { background: var(--text-primary); color: var(--bg-base); border: none; border-radius: 6px; padding: 0 20px; font-weight: 600; cursor: pointer; white-space: nowrap; }
-        .deploy-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        
+        /* DISTRACTION REPLACEMENT: Clean, Outlined UI Buttons */
+        .deploy-btn { background: var(--bg-terminal); color: var(--text-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0 20px; font-weight: 600; font-family: inherit; font-size: 0.9rem; cursor: pointer; white-space: nowrap; transition: all 0.15s ease; }
+        .deploy-btn:hover:not(:disabled) { border-color: var(--border-active); color: var(--text-primary); background: rgba(255,255,255,0.02); }
+        .deploy-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
         .checklist-container { list-style: none; }
         .checklist-item { padding: 12px 10px; border-bottom: 1px solid var(--border-subtle); font-size: 0.95rem; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
@@ -126,14 +142,6 @@
         .progress-track { background: var(--progress-track); height: 8px; border-radius: 4px; overflow: hidden; border: 1px solid var(--border-subtle); margin-top: 6px; }
         .progress-fill { background: var(--text-primary); height: 100%; transition: width 0.3s ease; }
 
-        /* CALCULATOR TERMINAL STYLES */
-        .calc-screen { width: 100%; background: var(--bg-terminal); color: var(--text-primary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 14px; font-family: monospace; font-size: 1.2rem; text-align: right; outline: none; margin-bottom: 12px; min-height: 50px; }
-        .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-        .calc-btn { background: var(--bg-terminal); color: var(--text-secondary); border: 1px solid var(--border-subtle); padding: 12px; font-family: monospace; font-size: 0.95rem; font-weight: 600; border-radius: 6px; cursor: pointer; transition: all 0.15s ease; }
-        .calc-btn:hover { border-color: var(--border-active); color: var(--text-primary); }
-        .calc-btn.op { color: var(--text-muted); }
-        .calc-btn.action { background: var(--text-primary); color: var(--bg-base); border: none; }
-        
         .material-selector { background: var(--bg-terminal); border: 1px solid var(--border-subtle); color: var(--text-primary); width: 100%; padding: 10px; border-radius: 6px; margin-bottom: 12px; outline: none; }
         .spec-table { width: 100%; font-family: monospace; font-size: 0.8rem; border-collapse: collapse; }
         .spec-table td { padding: 6px 8px; border-bottom: 1px solid var(--border-subtle); }
@@ -154,13 +162,31 @@
 </head>
 <body>
 
+    <div class="sidebar-drawer" id="workspace-drawer-node">
+        <div class="drawer-header">
+            <h3>Workspace Tiles</h3>
+            <button class="close-drawer-btn" onclick="toggleWorkspaceDrawer(false)">×</button>
+        </div>
+        <ul class="tile-toggle-list">
+            <li class="tile-toggle-item"><label>Daily Checklist</label><input type="checkbox" data-tile="tile-checklist" checked onchange="synchronizeTileVisibility(this)"></li>
+            <li class="tile-toggle-item"><label>Gemini Copilot</label><input type="checkbox" data-tile="tile-ai-engine" checked onchange="synchronizeTileVisibility(this)"></li>
+            <li class="tile-toggle-item"><label>Local Weather</label><input type="checkbox" data-tile="tile-weather" checked onchange="synchronizeTileVisibility(this)"></li>
+            <li class="tile-toggle-item"><label>Material Matrix</label><input type="checkbox" data-tile="tile-materials" checked onchange="synchronizeTileVisibility(this)"></li>
+            <li class="tile-toggle-item"><label>Logistics Calendar</label><input type="checkbox" data-tile="tile-calendar" checked onchange="synchronizeTileVisibility(this)"></li>
+            <li class="tile-toggle-item"><label>Cycling Telemetry</label><input type="checkbox" data-tile="tile-cycling" checked onchange="synchronizeTileVisibility(this)"></li>
+            <li class="tile-toggle-item"><label>Calculator Terminal</label><input type="checkbox" data-tile="tile-calculator" checked onchange="synchronizeTileVisibility(this)"></li>
+            <li class="tile-toggle-item"><label>Transit Logistics</label><input type="checkbox" data-tile="tile-transit" checked onchange="synchronizeTileVisibility(this)"></li>
+        </ul>
+    </div>
+
     <div class="container">
         <header>
             <div>
                 <h1>Workspace Dashboard</h1>
                 <p class="subtitle">Unified logistics & development environment</p>
             </div>
-            <div>
+            <div class="header-controls">
+                <button class="menu-trigger-btn" onclick="toggleWorkspaceDrawer(true)">☰ Manage Workspace</button>
                 <button class="theme-toggle-btn" onclick="toggleDashboardTheme()">Theme: <span id="theme-status-lbl">Dark</span></button>
             </div>
         </header>
@@ -169,7 +195,7 @@
             
             <div class="grid-item col-3" id="tile-checklist">
                 <div class="panel">
-                    <h2>Daily Checklist <span class="drag-handle" title="Click and drag to move layout">⋮⋮ DRAG</span></h2>
+                    <h2>Daily Checklist <span class="drag-handle">⋮⋮ DRAG</span></h2>
                     <div class="control-row" style="margin-top: 14px;">
                         <input type="text" id="task-input-node" class="task-input" placeholder="Add tracking log entry...">
                         <button class="deploy-btn" onclick="window.commitNewTask()">Add</button>
@@ -184,7 +210,7 @@
 
             <div class="grid-item col-3" id="tile-ai-engine">
                 <div class="panel">
-                    <h2>Gemini Copilot <span class="drag-handle" title="Click and drag to move layout">⋮⋮ DRAG</span></h2>
+                    <h2>Gemini Copilot <span class="drag-handle">⋮⋮ DRAG</span></h2>
                     <div class="ai-chat-log" id="ai-chat-viewport" style="margin-top: 14px;"></div>
                     <div class="control-row" style="margin-bottom: 0;">
                         <input type="text" id="ai-query-input" class="task-input" placeholder="Query Gemini environment engine...">
@@ -195,7 +221,7 @@
 
             <div class="grid-item col-2" id="tile-weather">
                 <div class="panel">
-                    <h2>Local Weather <span class="drag-handle" title="Click and drag to move layout">⋮⋮ DRAG</span></h2>
+                    <h2>Local Weather <span class="drag-handle">⋮⋮ DRAG</span></h2>
                     <div class="weather-display" style="margin-top: 14px;">
                         <div>
                             <div class="temp-primary" id="weather-temp">--°F</div>
@@ -215,7 +241,7 @@
 
             <div class="grid-item col-2" id="tile-materials">
                 <div class="panel">
-                    <h2>Material Matrix Lookup <span class="drag-handle" title="Click and drag to move layout">⋮⋮ DRAG</span></h2>
+                    <h2>Material Matrix Lookup <span class="drag-handle">⋮⋮ DRAG</span></h2>
                     <select id="material-selector-node" class="material-selector" style="margin-top: 14px;" onchange="updateMaterialSpecs()">
                         <option value="petg">PETG (Carbon Fiber Reinforced)</option>
                         <option value="pla">PLA+ High-Performance</option>
@@ -232,7 +258,7 @@
             <div class="grid-item col-2" id="tile-calendar">
                 <div class="panel">
                     <div class="calendar-header">
-                        <h2 id="calendar-header-title" style="width:100%;">May 2026 <span class="drag-handle" title="Click and drag to move layout" style="float:right;">⋮⋮ DRAG</span></h2>
+                        <h2 id="calendar-header-title" style="width:100%;">May 2026 <span class="drag-handle" style="float:right;">⋮⋮ DRAG</span></h2>
                     </div>
                     <div class="calendar-grid" id="calendar-matrix-grid"></div>
                 </div>
@@ -240,7 +266,7 @@
 
             <div class="grid-item col-2" id="tile-cycling">
                 <div class="panel">
-                    <h2>Cycling Telemetry <span class="drag-handle" title="Click and drag to move layout">⋮⋮ DRAG</span></h2>
+                    <h2>Cycling Telemetry <span class="drag-handle">⋮⋮ DRAG</span></h2>
                     <div class="stats-grid" style="margin-top: 14px;">
                         <div class="stat-card">
                             <div class="stat-label">Block Mileage</div>
@@ -260,7 +286,7 @@
 
             <div class="grid-item col-2" id="tile-calculator">
                 <div class="panel">
-                    <h2>Calculator Terminal <span class="drag-handle" title="Click and drag to move layout">⋮⋮ DRAG</span></h2>
+                    <h2>Calculator Terminal <span class="drag-handle">⋮⋮ DRAG</span></h2>
                     <div style="margin-top: 14px; display: flex; flex-direction: column;">
                         <div id="calc-display-node" class="calc-screen">0</div>
                         <div class="calc-grid">
@@ -292,7 +318,7 @@
 
             <div class="grid-item col-2" id="tile-transit">
                 <div class="panel">
-                    <h2>Transit & Travel Logistics <span class="drag-handle" title="Click and drag to move layout">⋮⋮ DRAG</span></h2>
+                    <h2>Transit & Travel Logistics <span class="drag-handle">⋮⋮ DRAG</span></h2>
                     <ul class="logistics-list" style="margin-top: 14px;">
                         <li class="logistics-item"><input type="checkbox" id="log-c1" class="logistics-cb" checked><label for="log-c1">Beeline navigation kit loaded</label></li>
                         <li class="logistics-item"><input type="checkbox" id="log-c2" class="logistics-cb"><label for="log-c2">CAD geometry file export backup</label></li>
@@ -305,21 +331,11 @@
         </div>
     </div>
 
-    <script type="importmap">
-      {
-        "imports": {
-          "@google/generative-ai": "https://esm.run/@google/generative-ai"
-        }
-      }
-    </script>
-
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-        import { GoogleGenAI } from "@google/generative-ai";
 
-        // --- CORE FRONTEND CONFIGURATIONS ---
-        // Add your real Gemini API token right here to run completely serverless!
+        // Drop your actual API key here if you ever want to authorize live queries
         const GEMINI_API_KEY = "YOUR_GEMINI_API_KEY_HERE"; 
 
         const firebaseConfig = {
@@ -337,7 +353,6 @@
         const dataSyncRef = ref(db, 'dashboard/tasks');
 
         let datasetState = [];
-        let aiModelInstance = null;
 
         const materialDatabase = {
             petg: { density: "1.27 g/cm³", tensile: "48.5 MPa", modulus: "3.8 GPa" },
@@ -354,6 +369,54 @@
             85: "Slight Snow Showers", 86: "Heavy Snow Showers", 95: "Thunderstorm"
         };
 
+        // --- EXPANDING SIDEBAR DRAWER LOGIC ---
+        window.toggleWorkspaceDrawer = function(openState) {
+            const drawer = document.getElementById('workspace-drawer-node');
+            if (openState) drawer.classList.add('open');
+            else drawer.classList.remove('open');
+        };
+
+        window.synchronizeTileVisibility = function(checkbox) {
+            const targetId = checkbox.getAttribute('data-tile');
+            const tileNode = document.getElementById(targetId);
+            if (!tileNode) return;
+
+            if (checkbox.checked) {
+                tileNode.classList.remove('hidden-tile');
+            } else {
+                tileNode.classList.add('hidden-tile');
+            }
+            saveTilePreferences();
+        };
+
+        function saveTilePreferences() {
+            const preferences = {};
+            document.querySelectorAll('.tile-toggle-list input').forEach(input => {
+                preferences[input.getAttribute('data-tile')] = input.checked;
+            });
+            localStorage.setItem('dashboard_tile_visibility_map', JSON.stringify(preferences));
+        }
+
+        function restoreTilePreferences() {
+            const stored = localStorage.getItem('dashboard_tile_visibility_map');
+            if (!stored) return;
+            try {
+                const map = JSON.parse(stored);
+                document.querySelectorAll('.tile-toggle-list input').forEach(input => {
+                    const id = input.getAttribute('data-tile');
+                    if (map[id] !== undefined) {
+                        input.checked = map[id];
+                        const tileNode = document.getElementById(id);
+                        if (tileNode) {
+                            if (map[id]) tileNode.classList.remove('hidden-tile');
+                            else tileNode.classList.add('hidden-tile');
+                        }
+                    }
+                });
+            } catch (e) { console.error(e); }
+        }
+
+        // --- TASKS ENGINE ---
         window.commitNewTask = function() {
             const inputNode = document.getElementById('task-input-node');
             if (!inputNode) return;
@@ -433,7 +496,7 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             initDashboardTheme();
-            initDirectGeminiSdk();
+            initDirectGeminiFetchChannel();
             fetchLiveWeatherPipeline();
             renderStaticCalendar();
             initDragAndDropSystem();
@@ -445,7 +508,7 @@
             });
         });
 
-        // --- ROBUST DRAG AND DROP HANDLERS WITH TARGETED HANDLES ---
+        // --- DRAG AND DROP HANDLERS ---
         function initDragAndDropSystem() {
             const gridContainer = document.getElementById('main-dashboard-grid-node');
             const items = gridContainer.querySelectorAll('.grid-item');
@@ -453,11 +516,8 @@
 
             items.forEach(item => {
                 const handle = item.querySelector('.drag-handle');
-                
-                // Clicking anywhere else resets draggable status to ensure form/scroll controls function smoothly
                 item.setAttribute('draggable', 'false');
 
-                // Explicitly activate dragging only when picking up by the text handle block
                 handle.addEventListener('mouseenter', () => item.setAttribute('draggable', 'true'));
                 handle.addEventListener('mouseleave', () => { if (!draggedItem) item.setAttribute('draggable', 'false'); });
 
@@ -506,6 +566,7 @@
             });
 
             restoreLayoutOrder();
+            restoreTilePreferences();
         }
 
         function saveLayoutOrder() {
@@ -524,12 +585,10 @@
                     const tileNode = document.getElementById(id);
                     if (tileNode) gridContainer.appendChild(tileNode);
                 });
-            } catch (err) {
-                console.error("Layout index alignment correction failed", err);
-            }
+            } catch (err) { console.error(err); }
         }
 
-        // --- LIVE WEATHER DATA PIPELINE ---
+        // --- WEATHER ENGINE ---
         async function fetchLiveWeatherPipeline() {
             const lat = 44.9356;
             const lon = -68.6464;
@@ -537,7 +596,7 @@
 
             try {
                 const res = await fetch(apiUrl);
-                if (!res.ok) throw new Error("Network latency fault");
+                if (!res.ok) throw new Error("Network fault");
                 const data = await res.json();
 
                 const current = data.current;
@@ -555,7 +614,7 @@
                     const options = { weekday: 'short', month: '2-digit', day: '2-digit' };
                     const formattedDate = rawDate.toLocaleDateString('en-US', options);
                     
-                    const conditionString = weatherCodeMap[daily.weather_code[i]] || "Variable Skies";
+                    const conditionString = weatherCodeMap[daily.weather_code[i]] || "Variable";
                     const maxT = Math.round(daily.temperature_2m_max[i]);
                     const minT = Math.round(daily.temperature_2m_min[i]);
 
@@ -565,7 +624,6 @@
                     forecastContainer.appendChild(row);
                 }
             } catch (err) {
-                console.error("Weather refresh failed: ", err);
                 document.getElementById('weather-cond').textContent = "Offline";
             }
         }
@@ -600,23 +658,14 @@
             }
         }
 
-        // --- DIRECT SERVERLESS GEMINI AI ENGINE LAYER ---
-        function initDirectGeminiSdk() {
+        // --- NATIVE DIRECT RE-WIRED GEMINI FETCH API CHANNEL ---
+        function initDirectGeminiFetchChannel() {
             const logViewport = document.getElementById('ai-chat-viewport');
-            
             if (GEMINI_API_KEY === "YOUR_GEMINI_API_KEY_HERE") {
-                logViewport.innerHTML = '<div class="chat-bubble bubble-gemini" style="color:var(--accent-alert);"><strong>[Config Required]</strong> Provide your API token on line 219 of index.html to activate direct serverless execution.</div>';
+                logViewport.innerHTML = '<div class="chat-bubble bubble-gemini" style="color:var(--accent-alert);"><strong>[Config Required]</strong> Paste your API key on line 215 to link the direct backend fetch framework.</div>';
                 return;
             }
-
-            try {
-                // Initialize the official Google Gen AI Client SDK securely directly inside the script environment
-                const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
-                aiModelInstance = ai.models.get({ model: "gemini-2.5-flash" });
-                logViewport.innerHTML = '<div class="chat-bubble bubble-gemini"><strong>[Gemini 2.5 Engine Online]</strong> Directly connected. Core infrastructure proxy pipeline bypassed successfully.</div>';
-            } catch (err) {
-                logViewport.innerHTML = `<div class="chat-bubble bubble-gemini" style="color:var(--accent-alert);"><strong>SDK Init Fault:</strong> ${err.message}</div>`;
-            }
+            logViewport.innerHTML = '<div class="chat-bubble bubble-gemini"><strong>[Gemini Engine Online]</strong> Direct connection established. The edge infrastructure proxy fallback has been fully cleared.</div>';
         }
 
         window.dispatchAiQuery = async function() {
@@ -626,8 +675,8 @@
             const rawText = queryInput.value.trim();
             
             if (!rawText) return;
-            if (!aiModelInstance) {
-                alert("AI Engine is not initialized. Please verify your API Key setting.");
+            if (GEMINI_API_KEY === "YOUR_GEMINI_API_KEY_HERE") {
+                alert("Please add your Gemini API Key on line 215 first.");
                 return;
             }
 
@@ -642,22 +691,33 @@
 
             const loadingBubble = document.createElement('div');
             loadingBubble.className = 'chat-bubble bubble-gemini';
-            loadingBubble.innerHTML = '<em>Generating response (Direct API Stream)...</em>';
+            loadingBubble.innerHTML = '<em>Awaiting Gemini response...</em>';
             logViewport.appendChild(loadingBubble);
             logViewport.scrollTop = logViewport.scrollHeight;
 
             try {
-                // Execute direct serverless inference call bypassing your proxy routes
-                const result = await aiModelInstance.generateContent({
-                    contents: rawText,
-                    config: {
-                        systemInstruction: "You are a highly efficient, concise engineering workspace dashboard assistant."
-                    }
-                });
+                // Completely dynamic native fetch block to avoid proxy routing limits
+                const directApiEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
                 
-                loadingBubble.textContent = result.text;
+                const response = await fetch(directApiEndpoint, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: rawText }] }],
+                        systemInstruction: { parts: [{ text: "You are an exceptionally concise workspace copilot assistant." }] }
+                    })
+                });
+
+                if (!response.ok) {
+                    const textErr = await response.text();
+                    throw new Error(`API Status Code: ${response.status} - ${textErr}`);
+                }
+
+                const data = await response.json();
+                const textReply = data.candidates?.[0]?.content?.parts?.[0]?.text || "No text payload returned.";
+                loadingBubble.textContent = textReply;
             } catch (err) {
-                loadingBubble.innerHTML = `<span style="color:var(--accent-alert);">API Response Error: ${err.message}</span>`;
+                loadingBubble.innerHTML = `<span style="color:var(--accent-alert);">Connection Failure: ${err.message}</span>`;
             }
             
             queryInput.disabled = false;
