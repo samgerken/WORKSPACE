@@ -7,7 +7,6 @@
     <style>
         /* CSS VARIABLE TOKEN MATRIX - INDUSTRIAL HIGH-CONTRAST MODE */
         :root {
-            /* Dark Mode Defaults */
             --bg-base: #0b0b0d;
             --bg-surface: rgba(255, 255, 255, 0.01);
             --bg-terminal: #000000;
@@ -31,7 +30,6 @@
             --progress-track: #18181b;
         }
 
-        /* Light Mode Overrides */
         [data-theme="light"] {
             --bg-base: #f4f4f5;
             --bg-surface: #ffffff;
@@ -135,7 +133,6 @@
             color: var(--text-primary);
         }
 
-        /* TIMELINE LAYOUT ARCHITECTURE */
         .top-row-container {
             display: grid;
             grid-template-columns: 1fr;
@@ -149,7 +146,6 @@
             }
         }
 
-        /* FIXED MASONRY COLUMN COMPRESSION LAYOUT GRID */
         .bottom-row-container {
             display: grid;
             grid-template-columns: 1fr;
@@ -309,7 +305,6 @@
         .purge-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; text-decoration: underline; font-family: inherit; }
         .purge-btn:hover { color: var(--accent-alert); }
 
-        /* ASSISTANT TERMINAL STYLES */
         .ai-chat-log {
             background: var(--bg-terminal);
             border: 1px solid var(--border-subtle);
@@ -321,23 +316,14 @@
             display: flex;
             flex-direction: column;
             gap: 16px;
-            scrollbar-width: thin;
-            scrollbar-color: var(--border-subtle) transparent;
         }
-
-        .ai-chat-log::-webkit-scrollbar { width: 4px; }
-        .ai-chat-log::-webkit-scrollbar-track { background: transparent; }
-        .ai-chat-log::-webkit-scrollbar-thumb { background: var(--border-subtle); border-radius: 10px; }
 
         .chat-bubble { font-size: 0.9rem; line-height: 1.5; max-width: 85%; }
         .bubble-user { color: var(--text-primary); align-self: flex-end; background: var(--chat-user-bg); padding: 10px 14px; border-radius: 12px 12px 2px 12px; font-weight: 500; }
         .bubble-gemini { color: var(--text-secondary); align-self: flex-start; background: var(--chat-gemini-bg); border: 1px solid var(--chat-gemini-border); padding: 12px 16px; border-radius: 12px 12px 12px 2px; }
         .bubble-gemini code { font-family: monospace; background: var(--code-bg); padding: 2px 6px; border-radius: 4px; color: #f43f5e; font-size: 0.85rem;}
         .bubble-gemini pre { background: var(--pre-bg); padding: 12px; border-radius: 6px; overflow-x: auto; margin: 10px 0; border: 1px solid var(--border-subtle); }
-        .bubble-gemini p { margin-bottom: 8px; }
-        .bubble-gemini p:last-child { margin-bottom: 0; }
 
-        /* WEATHER CONDITIONS */
         .weather-display { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: center; margin-bottom: 16px; }
         .temp-primary { font-size: 2.4rem; font-weight: 700; color: var(--text-primary); line-height: 1; }
         .weather-meta { font-size: 0.85rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 4px; }
@@ -352,7 +338,6 @@
         .forecast-temp .high { color: var(--text-primary); font-weight: 600; }
         .forecast-temp .low { color: var(--text-dark); margin-left: 6px; }
 
-        /* TEMPORAL MATRICES */
         .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding: 0 4px; }
         .calendar-month-year { font-size: 0.95rem; font-weight: 600; color: var(--text-primary); }
         .calendar-nav-buttons { display: flex; gap: 16px; }
@@ -364,10 +349,8 @@
         .calendar-cell { color: var(--text-secondary); font-size: 0.85rem; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border: 1px solid transparent; border-radius: 4px; }
         .calendar-cell.muted { color: var(--text-dark); }
         .calendar-cell:not(.muted):hover { background: rgba(255, 255, 255, 0.04); cursor: default; }
-        [data-theme="light"] .calendar-cell:not(.muted):hover { background: rgba(0, 0, 0, 0.03); }
         .calendar-cell.today { border: 1px solid var(--text-primary); color: var(--text-primary); font-weight: 700; background: rgba(255, 255, 255, 0.03); }
 
-        /* LIVE FEEDS */
         .news-stack { display: flex; flex-direction: column; gap: 14px; }
         .news-item { border-bottom: 1px solid var(--border-subtle); padding-bottom: 12px; }
         .news-item:last-child { border-bottom: none; padding-bottom: 0; }
@@ -375,7 +358,6 @@
         .news-title { font-size: 0.9rem; font-weight: 600; color: var(--text-primary); line-height: 1.4; }
         .news-source { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; }
 
-        /* METRICS PANELS */
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
         .stat-card { background: var(--bg-terminal); border: 1px solid var(--border-subtle); padding: 12px; border-radius: 6px; }
         .stat-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
@@ -387,21 +369,16 @@
         .progress-fill { background: var(--text-primary); height: 100%; transition: width 0.3s ease; }
 
         .scratchpad-area { background: var(--bg-terminal); color: var(--text-primary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 14px; font-family: monospace; font-size: 0.85rem; line-height: 1.4; resize: vertical; min-height: 110px; outline: none; width: 100%; }
-        .scratchpad-area:focus { border-color: var(--border-active); }
-
         .material-selector { background: var(--bg-terminal); border: 1px solid var(--border-subtle); color: var(--text-primary); width: 100%; padding: 10px; border-radius: 6px; font-family: inherit; font-size: 0.9rem; outline: none; margin-bottom: 12px; }
         .spec-table { width: 100%; font-family: monospace; font-size: 0.8rem; border-collapse: collapse; }
         .spec-table td { padding: 6px 8px; border-bottom: 1px solid var(--border-subtle); }
         .spec-table td:last-child { text-align: right; color: var(--text-primary); font-weight: 600; }
-        .spec-table tr:last-child td { border-bottom: none; }
     </style>
     
     <script type="importmap">
       {
         "imports": {
-          "@google/genai": "https://esm.run/@google/genai",
-          "firebase/app": "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js",
-          "firebase/database": "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js"
+          "@google/genai": "https://esm.run/@google/genai"
         }
       }
     </script>
@@ -430,7 +407,7 @@
                     <h2>Daily Tasks</h2>
                 </div>
                 <div class="control-row">
-                    <input type="text" id="task-input-node" class="task-input" placeholder="Add a task or tracking tag..." autocomplete="off" aria-label="New task content field">
+                    <input type="text" id="task-input-node" class="task-input" placeholder="Add a task or tracking tag..." autocomplete="off">
                     <button class="deploy-btn" onclick="commitNewTask()">Add</button>
                 </div>
                 <ul class="checklist-container" id="checklist-render-node"></ul>
@@ -444,9 +421,9 @@
                 <div class="panel-title-container">
                     <h2>Gemini Assistant Console</h2>
                 </div>
-                <div class="ai-chat-log" id="ai-chat-viewport" role="log"></div>
+                <div class="ai-chat-log" id="ai-chat-viewport"></div>
                 <div class="control-row" style="margin-bottom: 0;">
-                    <input type="text" id="ai-query-input" class="task-input" placeholder="Checking terminal credentials..." autocomplete="off" aria-label="Assistant query entry field">
+                    <input type="text" id="ai-query-input" class="task-input" placeholder="Ask Gemini a question...">
                     <button class="deploy-btn" id="ai-submit-btn" onclick="dispatchAiQuery()">Query</button>
                 </div>
             </div>
@@ -475,7 +452,6 @@
                         <div class="forecast-row"><span class="forecast-day">Tue 05/19</span><span class="forecast-cond">AM Showers</span><span class="forecast-temp"><span class="high">55°</span><span class="low">40°</span></span></div>
                         <div class="forecast-row"><span class="forecast-day">Wed 05/20</span><span class="forecast-cond">Clear Skies</span><span class="forecast-temp"><span class="high">66°</span><span class="low">42°</span></span></div>
                         <div class="forecast-row"><span class="forecast-day">Thu 05/21</span><span class="forecast-cond">Mostly Sunny</span><span class="forecast-temp"><span class="high">68°</span><span class="low">48°</span></span></div>
-                        <div class="forecast-row"><span class="forecast-day">Fri 05/22</span><span class="forecast-cond">Partly Cloudy</span><span class="forecast-temp"><span class="high">70°</span><span class="low">51°</span></span></div>
                     </div>
                 </div>
 
@@ -516,11 +492,11 @@
                 <div class="panel">
                     <div class="panel-title-container">
                         <h2>Cycling Telemetry</h2>
-                        <div class="panel-meta-tracker">Strava Sync Active</div>
+                        <div class="panel-meta-tracker">Beeline Sync Active</div>
                     </div>
                     <div class="stats-grid">
                         <div class="stat-card">
-                            <div class="stat-label">Total Commute</div>
+                            <div class="stat-label">Total Block Mileage</div>
                             <div class="stat-value">76.0 mi</div>
                         </div>
                         <div class="stat-card">
@@ -530,7 +506,7 @@
                     </div>
                     <div class="progress-container">
                         <div class="progress-bar-label-row">
-                            <span>Target Block Milestone</span>
+                            <span>Target Century Milestone</span>
                             <strong>76% (76 / 100 mi)</strong>
                         </div>
                         <div class="progress-track">
@@ -551,35 +527,15 @@
                             <div class="news-title">Advanced Additive Manufacturing Facilities Complete Trials on High-Load Structural Composites</div>
                             <div class="news-source">14 mins ago — Industrial Wire Report</div>
                         </div>
-                        <div class="news-item">
-                            <span class="news-tag">Infrastructure</span>
-                            <div class="news-title">Regional Transit Corridors Map Out Fast-Track Fleet Electrification & Optimization Matrix</div>
-                            <div class="news-source">1 hour ago — Municipal Transport Log</div>
-                        </div>
                     </div>
                 </div>
 
                 <div class="panel">
                     <div class="panel-title-container">
                         <h2>Scratchpad Terminal</h2>
-                        <div class="panel-meta-tracker">Auto-Save Matrix</div>
+                        <div class="panel-meta-tracker">Local Optimization</div>
                     </div>
-                    <textarea id="scratchpad-text-node" class="scratchpad-area" placeholder="Stage transient parameters, raw text blocks, or code parts references..." spellcheck="false" aria-label="Transient scratchpad text terminal"></textarea>
-                </div>
-
-                <div class="panel">
-                    <div class="panel-title-container">
-                        <h2>System Diagnostics</h2>
-                        <div class="panel-meta-tracker">Local Client</div>
-                    </div>
-                    <div class="progress-container" style="margin-bottom: 10px;">
-                        <div class="progress-bar-label-row"><span>Local Thread Optimization</span><strong>Active</strong></div>
-                        <div class="progress-track"><div class="progress-fill" style="width: 92%;"></div></div>
-                    </div>
-                    <div class="progress-container">
-                        <div class="progress-bar-label-row"><span>Cache Budget Allocation</span><strong>24.1 MB</strong></div>
-                        <div class="progress-track"><div class="progress-fill" style="width: 14%;"></div></div>
-                    </div>
+                    <textarea id="scratchpad-text-node" class="scratchpad-area" placeholder="Stage transient parameters, raw text blocks, or code parts references..." spellcheck="false"></textarea>
                 </div>
             </div>
 
@@ -587,25 +543,25 @@
     </div>
 
     <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
         import { GoogleGenAI } from "@google/genai";
-        import { initializeApp } from "firebase/app";
-        import { getDatabase, ref, set, onValue } from "firebase/database";
 
-        // Your specific web app's Firebase cloud configurations
         const firebaseConfig = {
-            apiKey: "AIzaSyACQZ-5RfnQg7gt1_V2PuxG4nA6uRm28uM",
+            apiKey: "AIzaSyACQZ-5RfnQg7gT1_V2PuxG4nA6uRm28uM",
             authDomain: "my-workspace-dashboard.firebaseapp.com",
             databaseURL: "https://my-workspace-dashboard-default-rtdb.firebaseio.com",
             projectId: "my-workspace-dashboard",
             storageBucket: "my-workspace-dashboard.firebasestorage.app",
             messagingSenderId: "584369640657",
-            appId: "1:584369640657:web:160328fd21b1b4993ce1f0"
+            appId: "1:584369640657:web:160320fd21b1b4993ce1f0"
         };
 
-        // Initialize App Instances
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
+        const tasksRef = ref(db, 'workspace_daily_checklist');
 
+        const TARGET_PIPELINE_KEY = 'AIzaSyAM5FFmnoIt6284nAky_30KAAQJB3sq36o';
         let aiClient = null;
         let activeChatSession = null;
 
@@ -622,12 +578,10 @@
 
         window.addEventListener('DOMContentLoaded', function() {
             initDashboardTheme();
+            loadInitialState();
             initializeAutomaticPipeline();
             renderWindowsCalendar();
-            
-            // Activate cloud sync listeners
-            syncTasksWithFirebase();
-            syncScratchpadWithFirebase();
+            initializeScratchpadEngine();
         });
 
         function initDashboardTheme() {
@@ -644,47 +598,12 @@
             document.getElementById('theme-status-lbl').textContent = targetTheme.toUpperCase();
         }
 
-        // Realtime Checklist Synchronization Hub
-        function syncTasksWithFirebase() {
-            const tasksRef = ref(db, 'dashboard/tasks');
-            onValue(tasksRef, (snapshot) => {
-                const data = snapshot.val();
-                if (data) {
-                    datasetState = data;
-                } else {
-                    // Fallback default checklist if database is currently empty
-                    datasetState = [
-                        { text: "Validate component design assembly bounds", completed: false },
-                        { text: "Refine layout structural script blocks", completed: false },
-                        { text: "Distribute updated technical project manifests", completed: false }
-                    ];
-                    set(tasksRef, datasetState);
-                }
-                synchronizeChecklist();
-            });
-        }
-
-        // Realtime Scratchpad Terminal Auto-Save Engine
-        function syncScratchpadWithFirebase() {
+        function initializeScratchpadEngine() {
             const node = document.getElementById('scratchpad-text-node');
             if (!node) return;
-            
-            const scratchRef = ref(db, 'dashboard/scratchpad');
-            
-            onValue(scratchRef, (snapshot) => {
-                const val = snapshot.val();
-                if (val !== null && document.activeElement !== node) {
-                    node.value = val;
-                }
-            });
-
-            let saveTimeout;
-            node.addEventListener('input', () => {
-                clearTimeout(saveTimeout);
-                saveTimeout = setTimeout(() => {
-                    set(scratchRef, node.value);
-                }, 300); // 300ms built-in debounce to optimize operations
-            });
+            const cachedNotes = localStorage.getItem('workspace_scratchpad_data');
+            if (cachedNotes) node.value = cachedNotes;
+            node.addEventListener('input', () => localStorage.setItem('workspace_scratchpad_data', node.value));
         }
 
         window.updateMaterialSpecs = function() {
@@ -710,35 +629,8 @@
         function initializeAutomaticPipeline() {
             const logViewport = document.getElementById('ai-chat-viewport');
             const queryInput = document.getElementById('ai-query-input');
-            const clientApiKey = localStorage.getItem('workspace_gemini_key');
-            
-            if (!clientApiKey) {
-                logViewport.innerHTML = `
-                    <div class="chat-bubble bubble-gemini">
-                        <strong>[System Prompt Required]:</strong> Let's connect your terminal interface to the AI layer.
-                        <div style="margin-top: 12px; display: flex; gap: 8px;">
-                            <input type="password" id="popup-api-key-field" class="task-input" style="padding: 6px 10px; font-size:0.8rem;" placeholder="Paste API Key (AIzaSy...)">
-                            <button class="deploy-btn" id="save-key-action-btn" style="padding: 0 12px; font-size:0.8rem;">Save</button>
-                        </div>
-                    </div>`;
-                queryInput.placeholder = "Awaiting secure API authorization configuration key...";
-                queryInput.disabled = true;
-                document.getElementById('ai-submit-btn').disabled = true;
-                
-                document.getElementById('save-key-action-btn').addEventListener('click', () => {
-                    const keyVal = document.getElementById('popup-api-key-field').value.trim();
-                    if(keyVal.startsWith('AIzaSy')) {
-                        localStorage.setItem('workspace_gemini_key', keyVal);
-                        location.reload();
-                    } else {
-                        alert('Invalid Key Format. Must begin with AIzaSy');
-                    }
-                });
-                return;
-            }
-
             try {
-                aiClient = new GoogleGenAI({ apiKey: clientApiKey });
+                aiClient = new GoogleGenAI({ apiKey: TARGET_PIPELINE_KEY });
                 activeChatSession = aiClient.chats.create({
                     model: 'gemini-2.5-flash',
                     config: { systemInstruction: "You are an intelligent terminal script assistant. Provide architectural layout guidance, answer queries, perform technical breakdowns, or write code block metrics. Maintain clarity, utility, and immediate conversational brevity." }
@@ -840,8 +732,25 @@
             renderWindowsCalendar();
         }
 
+        function loadInitialState() {
+            onValue(tasksRef, (snapshot) => {
+                const data = snapshot.val();
+                datasetState = data || [
+                    { text: "Validate component design assembly bounds", completed: false },
+                    { text: "Refine layout structural script blocks", completed: false },
+                    { text: "Distribute updated technical project manifests to Rod", completed: false }
+                ];
+                synchronizeChecklist();
+            });
+        }
+
+        function saveCurrentState() { 
+            set(tasksRef, datasetState);
+        }
+
         function synchronizeChecklist() {
             const container = document.getElementById('checklist-render-node');
+            if (!container) return;
             container.innerHTML = '';
             let remCount = 0, compCount = 0;
 
@@ -854,8 +763,7 @@
                 datasetState.forEach((task, index) => {
                     task.completed ? compCount++ : remCount++;
                     const li = document.createElement('li');
-                    li.className = 'checklist-item';
-                    if (task.completed) li.classList.add('resolved');
+                    li.className = 'checklist-item' + (task.completed ? ' resolved' : '');
                     li.innerHTML = `
                         <div class="task-left-block">
                             <span class="status-box">${task.completed ? '[X]' : '[ ]'}</span>
@@ -866,7 +774,7 @@
                     li.addEventListener('click', function(e) {
                         if (e.target.classList.contains('clear-single-btn')) return;
                         datasetState[index].completed = !datasetState[index].completed;
-                        set(ref(db, 'dashboard/tasks'), datasetState);
+                        saveCurrentState();
                     });
                     li.querySelector('.clear-single-btn').addEventListener('click', function(e) {
                         e.stopPropagation();
@@ -884,20 +792,13 @@
             const val = inputNode.value.trim();
             if (!val) return;
             datasetState.push({ text: val, completed: false });
-            set(ref(db, 'dashboard/tasks'), datasetState);
+            saveCurrentState();
             inputNode.value = '';
             inputNode.focus();
         }
 
-        function deleteTargetTask(index) { 
-            datasetState.splice(index, 1); 
-            set(ref(db, 'dashboard/tasks'), datasetState);
-        }
-        
-        window.purgeCompletedTasks = function() { 
-            datasetState = datasetState.filter(t => !t.completed); 
-            set(ref(db, 'dashboard/tasks'), datasetState);
-        }
+        window.deleteTargetTask = function(index) { datasetState.splice(index, 1); saveCurrentState(); }
+        window.purgeCompletedTasks = function() { datasetState = datasetState.filter(t => !t.completed); saveCurrentState(); }
     </script>
 </body>
-</html> 
+</html>
