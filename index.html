@@ -590,7 +590,7 @@
     <script type="module">
         import { GoogleGenAI } from "@google/genai";
 
-        // Safe client initialization structure
+        // Secure baseline authentication configuration module
         let TARGET_PIPELINE_KEY = localStorage.getItem('workspace_gemini_key') || '';
         let aiClient = null;
         let activeChatSession = null;
@@ -668,12 +668,11 @@
             const queryInput = document.getElementById('ai-query-input');
             const submitBtn = document.getElementById('ai-submit-btn');
             
-            // Check if key is available before booting API client pipelines
             if (!TARGET_PIPELINE_KEY) {
                 logViewport.innerHTML = `
                     <div class="chat-bubble bubble-gemini">
                         <strong>[API Key Required]:</strong><br>
-                        Please enter your Gemini API key to activate the terminal. This profile data will be locked locally to this machine.
+                        Please enter your Gemini API key to activate the console terminal. This key will be locked locally to this machine.
                         <div style="margin-top: 12px; display: flex; gap: 8px;">
                             <input type="password" id="setup-key-input" class="task-input" style="padding: 8px 12px; font-size: 0.85rem;" placeholder="Paste your AIzaSy... key here">
                             <button class="deploy-btn" onclick="saveApiKey()">Save</button>
@@ -681,7 +680,7 @@
                     </div>`;
                 queryInput.placeholder = "Awaiting API baseline configurations...";
                 queryInput.disabled = true;
-                submitBtn.disabled = true;
+                if(submitBtn) submitBtn.disabled = true;
                 return;
             }
 
@@ -694,7 +693,7 @@
                 logViewport.innerHTML = '<div class="chat-bubble bubble-gemini"><strong>[Workspace Assistant Active]</strong><br>The console terminal is online. Ask code calculations, engineering logic, or general workspace operations.</div>';
                 queryInput.placeholder = "Ask Gemini a question...";
                 queryInput.disabled = false;
-                submitBtn.disabled = false;
+                if(submitBtn) submitBtn.disabled = false;
             } catch (err) {
                 logViewport.innerHTML = `<div class="chat-bubble bubble-gemini" style="color:var(--accent-alert);"><strong>[Auto-Connect Failed]:</strong> ${err.message}</div>`;
             }
