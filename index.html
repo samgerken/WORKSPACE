@@ -3,606 +3,832 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>workspace</title>
+    <title>Workspace Core Dashboard - Quantum Physics v4</title>
     <style>
         :root {
-            --bg-base: #f9fafb;
-            --bg-surface: #ffffff;
-            --border-clean: rgba(0, 0, 0, 0.06);
-            --border-focus: rgba(0, 0, 0, 0.15);
-            --text-main: #111827;
-            --text-muted: #6b7280;
-            --text-ghost: #9ca3af;
-            --tile-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.03), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
+            --bg-base: #0b0c10;
+            --bg-surface: rgba(22, 26, 34, 0.65);
+            --bg-terminal: #050608;
+            --border-subtle: rgba(255, 255, 255, 0.05);
+            --border-active: rgba(255, 255, 255, 0.25);
+            --text-primary: #ffffff;
+            --text-secondary: #f4f4f7;
+            --text-muted: #848694;
+            --text-dark: #3b3d4a;
+            --accent-alert: #f87171;
+            
+            --panel-header-line: #4b5061;
+            --panel-title-color: #9fa2b2;
+            --chat-user-bg: #292d3e;
+            --chat-gemini-bg: rgba(255, 255, 255, 0.025);
+            --chat-gemini-border: rgba(255, 255, 255, 0.04);
+            
             --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            --progress-track: #151821;
+            
+            --panel-shadow: 0 20px 45px -12px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.03);
+            --blur-strength: 16px;
         }
 
-        [data-theme="dark"] {
-            --bg-base: #0b0f17;
-            --bg-surface: #121824;
-            --border-clean: rgba(255, 255, 255, 0.04);
-            --border-focus: rgba(255, 255, 255, 0.15);
-            --text-main: #f9fafb;
-            --text-muted: #9ca3af;
-            --text-ghost: #4b5563;
-            --tile-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.3);
+        [data-theme="light"] {
+            --bg-base: #f0f2f5;
+            --bg-surface: rgba(255, 255, 255, 0.85);
+            --bg-terminal: #fafafa;
+            --border-subtle: rgba(0, 0, 0, 0.06);
+            --border-active: rgba(0, 0, 0, 0.35);
+            --text-primary: #18191f;
+            --text-secondary: #2d2e38;
+            --text-muted: #7c7e8c;
+            --text-dark: #bfc1cc;
+            --accent-alert: #e03131;
+            
+            --panel-header-line: #9497a6;
+            --panel-title-color: #5c5e69;
+            --chat-user-bg: #e1e4ed;
+            --chat-gemini-bg: #f5f6fa;
+            --chat-gemini-border: rgba(0, 0, 0, 0.03);
+            --progress-track: #e1e4ed;
+            --panel-shadow: 0 12px 35px -10px rgba(10, 15, 30, 0.06), 0 0 0 1px rgba(0, 0, 0, 0.01);
+            --blur-strength: 24px;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { 
-            background: var(--bg-base); 
-            color: var(--text-main); 
+            background-color: var(--bg-base); 
+            color: var(--text-secondary); 
             font-family: var(--font-stack); 
-            padding: 60px 40px; 
-            min-height: 100vh;
-            letter-spacing: -0.02em;
-            transition: background 0.3s ease;
+            padding: 40px 24px; 
+            line-height: 1.5; 
+            letter-spacing: -0.015em; 
+            transition: background-color 0.4s cubic-bezier(0.25, 1, 0.5, 1); 
+            overflow-x: hidden; 
         }
-
-        header { 
-            max-width: 1600px;
-            margin: 0 auto 48px auto;
-            display: flex; 
-            justify-content: space-between; 
-            align-items: flex-end;
-        }
-        h1 { font-size: 1.4rem; font-weight: 400; letter-spacing: -0.03em; color: var(--text-main); }
-        .subtitle { color: var(--text-muted); font-size: 0.85rem; margin-top: 4px; font-weight: 300; }
         
-        .header-controls { display: flex; gap: 16px; }
-        .minimal-btn { 
-            background: transparent; 
-            color: var(--text-muted); 
-            border: none;
-            font-family: inherit; 
-            font-size: 0.8rem; 
-            cursor: pointer; 
-            transition: color 0.2s ease;
-            padding: 4px 0;
-            border-bottom: 1px solid transparent;
-        }
-        .minimal-btn:hover { color: var(--text-main); border-bottom-color: var(--text-main); }
+        .container { max-width: 1600px; margin: 0 auto; }
 
-        /* THE CLEAN CANVAS LAYER */
-        .workspace-canvas { 
+        /* SPLASH INTRO ACCELERATOR */
+        #splash-screen-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at center, #11141d 0%, #06070a 100%);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s cubic-bezier(0.25, 1, 0.5, 1), visibility 0.5s;
+        }
+        .splash-brand { font-weight: 200; font-size: 1.8rem; letter-spacing: 0.18em; text-transform: uppercase; color: #ffffff; }
+        .splash-loader-bar { width: 140px; height: 1px; background: rgba(255,255,255,0.08); margin-top: 24px; position: relative; overflow: hidden; }
+        .splash-loader-progress { width: 40%; height: 100%; background: linear-gradient(90deg, transparent, #ffffff, transparent); position: absolute; left: -50%; animation: infiniteLoader 1.2s infinite ease-in-out; }
+        @keyframes infiniteLoader { 0% { left: -50%; } 100% { left: 110%; } }
+
+        header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 32px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 20px; }
+        h1 { color: var(--text-primary); font-size: 1.6rem; font-weight: 500; letter-spacing: -0.02em; }
+        .subtitle { color: var(--text-muted); font-size: 0.85rem; margin-top: 4px; }
+
+        .header-controls { display: flex; gap: 10px; }
+        .control-ui-btn { background: var(--bg-surface); backdrop-filter: blur(var(--blur-strength)); color: var(--text-secondary); border: 1px solid var(--border-subtle); padding: 9px 16px; font-family: inherit; font-size: 0.8rem; font-weight: 500; border-radius: 8px; cursor: pointer; transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1); }
+        .control-ui-btn:hover { border-color: var(--border-active); color: var(--text-primary); background: rgba(255,255,255,0.03); }
+
+        /* THE DYNAMIC INTERTIAL GRID CANVAS */
+        .dashboard-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); 
+            gap: 24px; 
+            align-items: start;
             position: relative;
-            width: 100%;
-            max-width: 1600px;
-            margin: 0 auto;
-            min-height: 900px;
         }
 
-        /* ELEGANT MINIMALIST TILES */
+        /* GEOMETRIC BLUEPRINT SIZES */
+        .grid-item.sz-wide { grid-column: span 2; }
+        .grid-item.sz-tall { grid-row: span 2; }
+        .grid-item.sz-wide.sz-tall { grid-column: span 2; grid-row: span 2; }
+
+        /* UNIFORM藍圖 Blueprints Override Block */
+        .dashboard-grid.standardized-geometry {
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)) !important;
+        }
+        .dashboard-grid.standardized-geometry .grid-item {
+            grid-column: span 1 !important;
+            grid-row: span 1 !important;
+        }
+        .dashboard-grid.standardized-geometry .panel {
+            height: 380px !important;
+        }
+        .dashboard-grid.standardized-geometry .panel.collapsed-state {
+            height: 54px !important;
+        }
+
+        /* PHYSICS SYSTEM POINTER INTERACTION MECHANICAL TILES */
         .grid-item { 
-            position: absolute; 
-            min-width: 240px;
-            min-height: 120px;
-            z-index: 10;
+            position: relative; 
+            transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease;
         }
         
-        .panel { 
-            background: var(--bg-surface); 
-            border: 1px solid var(--border-clean); 
-            border-radius: 12px; 
-            padding: 24px; 
-            display: flex; 
-            flex-direction: column; 
-            box-shadow: var(--tile-shadow); 
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            position: relative;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
-        }
-        
-        /* HIDDEN RESIZE ZONE */
-        .tile-resize-handle {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 14px;
-            height: 14px;
-            cursor: se-resize;
-            z-index: 50;
-            background: transparent;
-        }
-
-        /* DIRECTORY OVERLAP HOVER INDICATOR */
-        .grid-item.folder-hover-target .panel {
-            border-color: var(--border-focus) !important;
-            box-shadow: 0 0 0 2px var(--border-focus);
-        }
-
+        /* STRICT POINTER DRAG OVERRIDES */
         .grid-item.pointer-dragging {
+            position: fixed !important;
             z-index: 9999 !important;
             pointer-events: none !important;
-            transform: scale(1.01);
+            transform: scale(1.04) rotateZ(1.5deg) !important;
+            box-shadow: 0 45px 90px rgba(0,0,0,0.95), 0 0 0 1px rgba(255,255,255,0.1);
             transition: none !important;
         }
         .grid-item.pointer-dragging .panel {
-            border-color: var(--border-focus) !important;
-            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.08);
+            background: rgba(28, 33, 46, 0.9) !important;
+            border-color: var(--border-active) !important;
+        }
+        .grid-item.physics-displaced {
+            transform: translateY(8px) scale(0.99);
+            opacity: 0.85;
         }
 
+        .hidden-tile { display: none !important; }
+
+        .panel { 
+            background: var(--bg-surface); 
+            backdrop-filter: blur(var(--blur-strength)); 
+            border: 1px solid var(--border-subtle); 
+            border-radius: 14px; 
+            padding: 20px; 
+            display: flex; 
+            flex-direction: column; 
+            box-shadow: var(--panel-shadow); 
+            transition: border-color 0.25s, height 0.3s cubic-bezier(0.1, 0.9, 0.2, 1); 
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            min-height: 240px;
+        }
+        .panel:hover { 
+            border-color: rgba(255, 255, 255, 0.08); 
+        }
+        
+        /* DRAG BAR UTILITIES */
         h2 { 
-            color: var(--text-main); 
-            font-size: 0.85rem; 
-            font-weight: 500; 
+            color: var(--panel-title-color); 
+            font-size: 0.7rem; 
+            font-weight: 600; 
+            text-transform: uppercase; 
+            letter-spacing: 0.08em; 
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
-            margin-bottom: 16px;
+            border-bottom: 1px solid var(--border-subtle); 
+            padding-bottom: 10px; 
+            margin-bottom: 14px;
             user-select: none;
         }
-        .tile-grab-surface { cursor: grab; flex-grow: 1; touch-action: none; }
+        .tile-grab-surface { cursor: grab; flex-grow: 1; padding: 2px 0; touch-action: none; }
         .tile-grab-surface:active { cursor: grabbing; }
         
         .tile-action-controls { display: flex; gap: 8px; align-items: center; }
-        .tile-control-trigger { background: none; border: none; color: var(--text-ghost); cursor: pointer; font-size: 0.85rem; padding: 2px; line-height: 1; transition: color 0.15s ease; }
-        .tile-control-trigger:hover { color: var(--text-main); }
+        .tile-control-trigger { background: none; border: none; color: var(--text-dark); cursor: pointer; font-size: 0.8rem; padding: 2px 6px; border-radius: 4px; transition: all 0.15s; }
+        .tile-control-trigger:hover { color: var(--text-primary); background: rgba(255,255,255,0.05); }
+        .tile-control-trigger.remove-trigger:hover { color: var(--accent-alert); }
 
-        /* FOLDER TABS SYSTEM */
-        .folder-tab-bar {
+        /* COLLAPSED MODIFIERS */
+        .panel.collapsed-state { height: 54px !important; min-height: 54px !important; }
+        .panel.collapsed-state > *:not(h2) { display: none !important; }
+        .panel.collapsed-state h2 { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+        /* THE BLACK "+" CANVAS ADD CAROUSEL */
+        .add-tile-blueprint {
+            background: #050608;
+            border: 2px dashed rgba(255,255,255,0.03);
+            border-radius: 14px;
+            height: 240px;
             display: flex;
-            gap: 12px;
-            border-bottom: 1px solid var(--border-clean);
-            margin-bottom: 16px;
-            padding-bottom: 4px;
-        }
-        .folder-tab {
-            padding: 4px 0;
-            font-size: 0.78rem;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
-            background: transparent;
-            color: var(--text-muted);
-            border: none;
-            border-bottom: 2px solid transparent;
-            transition: all 0.15s ease;
+            position: relative;
+            transition: background 0.3s, border-color 0.3s, transform 0.2s;
         }
-        .folder-tab.active-tab {
-            color: var(--text-main);
-            border-bottom-color: var(--text-main);
-            font-weight: 500;
+        .add-tile-blueprint:hover {
+            background: #090a0f;
+            border-color: rgba(255,255,255,0.12);
+            transform: scale(0.99);
         }
-        .folder-inner-content-viewport { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
+        .plus-icon-glyph {
+            font-size: 2.2rem;
+            font-weight: 100;
+            color: var(--text-dark);
+            transition: color 0.2s, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .add-tile-blueprint:hover .plus-icon-glyph {
+            color: var(--text-primary);
+            transform: rotate(90deg);
+        }
 
-        /* CONTENT STYLING */
-        .content-block { display: flex; flex-direction: column; gap: 10px; height: 100%; width: 100%; }
-        .spec-table { width: 100%; font-size: 0.8rem; border-collapse: collapse; color: var(--text-muted); }
-        .spec-table td { padding: 6px 0; border-bottom: 1px solid var(--border-clean); }
-        .spec-table tr:last-child td { border-bottom: none; }
-        .spec-table td:last-child { text-align: right; color: var(--text-main); }
+        /* CONTEXT SPAWN LAYER */
+        .spawn-context-menu {
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%) scale(0.95);
+            background: rgba(10, 12, 18, 0.98);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-active);
+            border-radius: 10px;
+            padding: 8px;
+            width: 260px;
+            max-height: 380px;
+            overflow-y: auto;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.7);
+            opacity: 0;
+            visibility: hidden;
+            z-index: 99999;
+            transition: opacity 0.2s, transform 0.2s, visibility 0.2s;
+        }
+        .spawn-context-menu.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) scale(1);
+        }
+        .spawn-menu-title { font-size: 0.65rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em; padding: 4px 8px 6px; border-bottom: 1px solid var(--border-subtle); margin-bottom: 4px; }
+        .spawn-opt-btn { width: 100%; text-align: left; background: none; border: none; padding: 8px; font-size: 0.82rem; color: var(--text-secondary); cursor: pointer; border-radius: 6px; transition: background 0.15s, color 0.15s; }
+        .spawn-opt-btn:hover { background: rgba(255,255,255,0.04); color: var(--text-primary); }
+
+        /* WIDGET DESIGN LAYOUT SYSTEMS */
+        .control-row { display: flex; gap: 8px; margin-bottom: 12px; }
+        .task-input { flex: 1; background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 10px 12px; color: var(--text-primary); font-family: inherit; font-size: 0.85rem; outline: none; }
         
-        .minimal-card { font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; }
-        .code-snippet { font-family: monospace; font-size: 0.75rem; color: var(--text-muted); background: var(--bg-base); padding: 12px; border-radius: 6px; white-space: pre-wrap; margin-top: auto; border: 1px solid var(--border-clean); }
+        .deploy-btn { background: var(--bg-terminal); color: var(--text-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0 14px; font-size: 0.8rem; font-weight: 500; cursor: pointer; transition: all 0.15s; }
+        .deploy-btn:hover { border-color: var(--border-active); color: var(--text-primary); }
+
+        .checklist-container { list-style: none; display: flex; flex-direction: column; overflow-y: auto; flex: 1; }
+        .checklist-item { padding: 8px; border-bottom: 1px solid var(--border-subtle); font-size: 0.85rem; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
+        .checklist-item:hover { background: rgba(255, 255, 255, 0.015); }
+        .resolved { color: var(--text-dark) !important; text-decoration: line-through; }
+
+        .ai-chat-log { background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 6px; flex: 1; min-height: 140px; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
+        .chat-bubble { font-size: 0.82rem; max-width: 85%; padding: 8px 12px; border-radius: 10px; }
+        .bubble-user { color: var(--text-primary); align-self: flex-end; background: var(--chat-user-bg); }
+        .bubble-gemini { color: var(--text-secondary); align-self: flex-start; background: var(--chat-gemini-bg); border: 1px solid var(--chat-gemini-border); }
+
+        .weather-display { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .temp-primary { font-size: 2.1rem; font-weight: 200; color: var(--text-primary); font-family: monospace; }
+        .weather-meta { font-size: 0.75rem; color: var(--text-muted); }
+        .forecast-container { display: flex; flex-direction: column; gap: 4px; background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 8px; }
+        .forecast-row { display: grid; grid-template-columns: 3fr 5fr 2fr; font-size: 0.75rem; }
+
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); row-gap: 2px; text-align: center; }
+        .calendar-cell { font-size: 0.75rem; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-family: monospace; }
+        .calendar-cell.today { background: var(--text-primary); color: var(--bg-base); font-weight: 600; border-radius: 50%; }
+
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+        .stat-card { background: var(--bg-terminal); border: 1px solid var(--border-subtle); padding: 10px; border-radius: 6px; }
+        .stat-label { font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; }
+        .stat-value { font-size: 1rem; color: var(--text-primary); font-family: monospace; }
+        .progress-track { background: var(--progress-track); height: 4px; border-radius: 2px; overflow: hidden; margin-top: 6px; }
+        .progress-fill { background: var(--text-primary); height: 100%; }
+
+        .material-selector { background: var(--bg-terminal); border: 1px solid var(--border-subtle); color: var(--text-primary); width: 100%; padding: 8px; border-radius: 6px; margin-bottom: 10px; font-family: inherit; font-size: 0.8rem; outline: none; }
+        .spec-table { width: 100%; font-family: monospace; font-size: 0.75rem; }
+        .spec-table td { padding: 6px 4px; border-bottom: 1px solid var(--border-subtle); }
+        .spec-table td:last-child { text-align: right; color: var(--text-primary); }
+
+        .calc-screen { width: 100%; background: var(--bg-terminal); color: var(--text-primary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 10px; font-family: monospace; font-size: 1.2rem; text-align: right; margin-bottom: 8px; min-height: 44px; }
+        .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+        .calc-btn { background: var(--bg-terminal); color: var(--text-secondary); border: 1px solid var(--border-subtle); padding: 10px 2px; font-family: monospace; font-size: 0.85rem; border-radius: 4px; cursor: pointer; }
+        
+        .scratch-pad { width: 100%; flex: 1; min-height: 110px; background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 10px; color: var(--text-secondary); font-family: monospace; font-size: 0.8rem; resize: none; outline: none; }
+        .timer-display { font-family: monospace; font-size: 1.8rem; text-align: center; color: var(--text-primary); margin: 6px 0 12px 0; background: var(--bg-terminal); border: 1px solid var(--border-subtle); padding: 8px; border-radius: 6px; }
+
+        .code-snippet-box { background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 10px; font-family: monospace; font-size: 0.75rem; color: #a6accd; overflow-x: auto; white-space: pre; max-height: 140px; margin-bottom: 8px; }
     </style>
 </head>
 <body>
 
+    <div id="splash-screen-overlay">
+        <div class="splash-brand">Workspace core</div>
+        <div class="splash-loader-bar"><div class="splash-loader-progress"></div></div>
+    </div>
+
     <div class="container">
         <header>
             <div>
-                <h1>workspace</h1>
-                <p class="subtitle">drag to reposition • slide corner to resize • layer modules to bundle</p>
+                <h1>Workspace Dashboard</h1>
+                <p class="subtitle">Real-time tracking matrix & physics engine configuration</p>
             </div>
             <div class="header-controls">
-                <button class="minimal-btn" onclick="resetCanvasToDefaultCoordinates()">reset architecture</button>
-                <button class="minimal-btn" onclick="toggleDashboardTheme()">appearance</button>
+                <button class="control-ui-btn" onclick="toggleStrictGeometry()">Sizing Mode: Dynamic Grid</button>
+                <button class="control-ui-btn" onclick="toggleDashboardTheme()">Theme</button>
             </div>
         </header>
 
-        <div class="workspace-canvas" id="workspace-canvas-root">
+        <div class="dashboard-grid" id="main-dashboard-grid-node">
             
-            <div class="grid-item" id="tile-checklist" style="top: 20px; left: 20px; width: 340px; height: 220px;">
-                <div class="panel" data-widget-id="tile-checklist">
+            <div class="grid-item" id="tile-checklist">
+                <div class="panel">
                     <h2>
-                        <span class="tile-grab-surface">tasks</span>
+                        <span class="tile-grab-surface">⋮ Daily Tasks</span>
                         <div class="tile-action-controls">
-                            <button class="tile-control-trigger" onclick="unpackFolder('tile-checklist')">⚏</button>
-                            <button class="tile-control-trigger" onclick="removeTile('tile-checklist')">×</button>
+                            <button class="tile-control-trigger" onclick="cycleTileSizeGeometry('tile-checklist')">⤢</button>
+                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-checklist')">—</button>
+                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-checklist')">×</button>
                         </div>
                     </h2>
-                    <div class="folder-inner-content-viewport">
-                        <table class="spec-table">
-                            <tr><td>deploy production patch</td><td>pending</td></tr>
-                            <tr><td>sync velo sync configuration</td><td>complete</td></tr>
-                            <tr><td>audit subaru fluid volumes</td><td>review</td></tr>
-                        </table>
+                    <div class="control-row">
+                        <input type="text" id="task-input-node" class="task-input" placeholder="Append active trace flag...">
+                        <button class="deploy-btn" onclick="window.commitNewTask()">Add</button>
                     </div>
-                    <div class="tile-resize-handle"></div>
+                    <ul class="checklist-container" id="checklist-render-node"></ul>
                 </div>
             </div>
 
-            <div class="grid-item" id="tile-ai-engine" style="top: 20px; left: 380px; width: 380px; height: 220px;">
-                <div class="panel" data-widget-id="tile-ai-engine">
+            <div class="grid-item sz-wide" id="tile-ai-engine">
+                <div class="panel">
                     <h2>
-                        <span class="tile-grab-surface">copilot</span>
+                        <span class="tile-grab-surface">⋮ Gemini Copilot</span>
                         <div class="tile-action-controls">
-                            <button class="tile-control-trigger" onclick="unpackFolder('tile-ai-engine')">⚏</button>
-                            <button class="tile-control-trigger" onclick="removeTile('tile-ai-engine')">×</button>
+                            <button class="tile-control-trigger" onclick="cycleTileSizeGeometry('tile-ai-engine')">⤢</button>
+                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-ai-engine')">—</button>
+                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-ai-engine')">×</button>
                         </div>
                     </h2>
-                    <div class="folder-inner-content-viewport">
-                        <div class="minimal-card">
-                            spatial pointer matrix deployed. workspace layer coordinates running natively in clean memory blocks.
-                        </div>
+                    <div class="ai-chat-log" id="ai-chat-viewport"></div>
+                    <div class="control-row" style="margin-bottom:0;">
+                        <input type="text" id="ai-query-input" class="task-input" placeholder="Query pipeline configuration model...">
+                        <button class="deploy-btn" onclick="dispatchAiQuery()">Send</button>
                     </div>
-                    <div class="tile-resize-handle"></div>
                 </div>
             </div>
 
-            <div class="grid-item" id="tile-subaru-log" style="top: 260px; left: 20px; width: 340px; height: 200px;">
-                <div class="panel" data-widget-id="tile-subaru-log">
+            <div class="grid-item" id="tile-weather">
+                <div class="panel">
                     <h2>
-                        <span class="tile-grab-surface">outback specs</span>
+                        <span class="tile-grab-surface">⋮ Local Weather</span>
                         <div class="tile-action-controls">
-                            <button class="tile-control-trigger" onclick="unpackFolder('tile-subaru-log')">⚏</button>
-                            <button class="tile-control-trigger" onclick="removeTile('tile-subaru-log')">×</button>
+                            <button class="tile-control-trigger" onclick="cycleTileSizeGeometry('tile-weather')">⤢</button>
+                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-weather')">—</button>
+                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-weather')">×</button>
                         </div>
                     </h2>
-                    <div class="folder-inner-content-viewport">
-                        <table class="spec-table">
-                            <tr><td>engine profile</td><td>2014 2.5i platform</td></tr>
-                            <tr><td>fluid profile</td><td>5w-30 synthetic mix</td></tr>
-                            <tr><td>sump capacity</td><td>5.1 us quarts</td></tr>
-                        </table>
+                    <div class="weather-display">
+                        <div class="temp-primary" id="weather-temp">72°F</div>
+                        <div class="weather-meta">
+                            <div style="font-weight:600;color:var(--text-primary)">Old Town, ME</div>
+                            <div id="weather-cond" style="font-size:0.7rem;color:var(--text-muted)">Clear sky</div>
+                        </div>
                     </div>
-                    <div class="tile-resize-handle"></div>
+                    <div class="forecast-container" id="weather-forecast">
+                        <div class="forecast-row"><span>Mon</span><span>● Clear Skies</span><span>72°</span></div>
+                        <div class="forecast-row"><span>Tue</span><span>▲ Overcast</span><span>64°</span></div>
+                    </div>
                 </div>
             </div>
 
-            <div class="grid-item" id="tile-mass-recipe" style="top: 260px; left: 380px; width: 340px; height: 200px;">
-                <div class="panel" data-widget-id="tile-mass-recipe">
+            <div class="grid-item" id="tile-property-hunt">
+                <div class="panel">
                     <h2>
-                        <span class="tile-grab-surface">recipe scale</span>
+                        <span class="tile-grab-surface">⋮ Real Estate Scout</span>
                         <div class="tile-action-controls">
-                            <button class="tile-control-trigger" onclick="unpackFolder('tile-mass-recipe')">⚏</button>
-                            <button class="tile-control-trigger" onclick="removeTile('tile-mass-recipe')">×</button>
+                            <button class="tile-control-trigger" onclick="cycleTileSizeGeometry('tile-property-hunt')">⤢</button>
+                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-property-hunt')">—</button>
+                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-property-hunt')">×</button>
                         </div>
                     </h2>
-                    <div class="folder-inner-content-viewport">
-                        <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 8px;">base parameter: 700g flour</div>
-                        <table class="spec-table">
-                            <tr><td>water hydration (68%)</td><td>476 g</td></tr>
-                            <tr><td>sea salt composite (2%)</td><td>14 g</td></tr>
-                        </table>
+                    <div class="forecast-container" style="background:transparent;padding:0;border:none;gap:6px;">
+                        <div class="forecast-row" style="grid-template-columns: 5fr 3fr; border-bottom:1px solid var(--border-subtle); padding-bottom:4px;">
+                            <span>📍 Old Town Matrix Spec</span><span style="color:var(--text-primary);text-align:right;">Pending</span>
+                        </div>
+                        <div class="forecast-row" style="grid-template-columns: 5fr 3fr; border-bottom:1px solid var(--border-subtle); padding-bottom:4px;">
+                            <span>📍 Bangor Core Plots</span><span style="color:var(--text-muted);text-align:right;">Audited</span>
+                        </div>
                     </div>
-                    <div class="tile-resize-handle"></div>
                 </div>
             </div>
 
-            <div class="grid-item" id="tile-folder-engineering" style="top: 20px; left: 780px; width: 380px; height: 220px;">
-                <div class="panel" data-widget-id="tile-folder-engineering" data-is-folder="true" data-contained-ids="tile-vba-macros,tile-print-debugger">
+            <div class="grid-item" id="tile-veg-macros">
+                <div class="panel">
                     <h2>
-                        <span class="tile-grab-surface">engineering</span>
+                        <span class="tile-grab-surface">⋮ Vegetarian Macro Lab</span>
                         <div class="tile-action-controls">
-                            <button class="tile-control-trigger" onclick="unpackFolder('tile-folder-engineering')">⚏</button>
-                            <button class="tile-control-trigger" onclick="removeTile('tile-folder-engineering')">×</button>
+                            <button class="tile-control-trigger" onclick="cycleTileSizeGeometry('tile-veg-macros')">⤢</button>
+                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-veg-macros')">—</button>
+                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-veg-macros')">×</button>
                         </div>
                     </h2>
-                    <div class="folder-tab-bar">
-                        <button class="folder-tab active-tab" onclick="switchFolderTab(this, 'tile-vba-macros')">cad macros</button>
-                        <button class="folder-tab" onclick="switchFolderTab(this, 'tile-print-debugger')">3d prints</button>
-                    </div>
-                    <div class="folder-inner-content-viewport">
-                        <div id="folder-content-pane-root">
-                            <div class="code-snippet">Part.SaveAs3 "output.3dm", 0, 2</div>
-                        </div>
-                    </div>
-                    <div class="tile-resize-handle"></div>
+                    <table class="spec-table">
+                        <tr><td>Organic Soy Curls (Dehydrated)</td><td>72g Protein Base</td></tr>
+                        <tr><td>Gardein Plant-Ground Mix</td><td>120g Serving Block</td></tr>
+                        <tr><td>Daily Clean Target Index</td><td style="color:#4ade80;">100% Plant-Based</td></tr>
+                    </table>
                 </div>
             </div>
 
-        </div>
-    </div>
+            <div class="grid-item" id="tile-mass-recipe">
+                <div class="panel">
+                    <h2>
+                        <span class="tile-grab-surface">⋮ Gram-Mass Scalar</span>
+                        <div class="tile-action-controls">
+                            <button class="tile-control-trigger" onclick="cycleTileSizeGeometry('tile-mass-recipe')">⤢</button>
+                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-mass-recipe')">—</button>
+                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-mass-recipe')">×</button>
+                        </div>
+                    </h2>
+                    <div style="font-size: 0.8rem; margin-bottom:8px;">Base: <span style="color:var(--text-primary);">700g Bread Flour</span> Matrix</div>
+                    <table class="spec-table">
+                        <tr><td>Water mass (68% hydration)</td><td>476 g</td></tr>
+                        <tr><td>Fine Sea Salt (2%)</td><td>14 g</td></tr>
+                    </table>
+                </div>
+            </div>
 
-    <div id="widget-blueprint-vault" style="display: none;">
-        <div id="vault-tile-vba-macros">
-            <div class="code-snippet">Part.SaveAs3 "output.3dm", 0, 2</div>
-        </div>
-        <div id="vault-tile-print-debugger">
-            <table class="spec-table">
-                <tr><td>defect analysis</td><td>first-layer surface warp mitigation</td></tr>
-                <tr><td>remedy routing</td><td>clean print bed plate layout via alcohol scrub</td></tr>
-            </table>
+            <div class="grid-item" id="tile-beeline-velo">
+                <div class="panel">
+                    <h2>
+                        <span class="tile-grab-surface">⋮ Beeline Velo Hub</span>
+                        <div class="tile-action-controls">
+                            <button class="tile-control-trigger" onclick="cycleTileSizeGeometry('tile-beeline-velo')">⤢</button>
+                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-beeline-velo')">—</button>
+                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-beeline-velo')">×</button>
+                        </div>
+                    </h2>
+                    <div class="forecast-container" style="background:transparent;padding:0;border:none;">
+                        <div class="forecast-row" style="grid-template-columns: 6fr 4fr;">
+                            <span>Hardware Mount</span><span style="color:#4ade80;text-align:right;">Locked</span>
+                        </div>
+                        <div class="forecast-row" style="grid-template-columns: 6fr 4fr; margin-top:4px;">
+                            <span>Telemetry Sync</span><span style="color:var(--text-muted);text-align:right;">Parity Ok</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-item" id="tile-subaru-log">
+                <div class="panel">
+                    <h2>
+                        <span class="tile-grab-surface">⋮ Outback Maintenance</span>
+                        <div class="tile-action-controls">
+                            <button class="tile-control-trigger" onclick="cycleTileSizeGeometry('tile-subaru-log')">⤢</button>
+                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-subaru-log')">—</button>
+                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-subaru-log')">×</button>
+                        </div>
+                    </h2>
+                    <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:6px;">Chassis: 2014 Outback 2.5i</div>
+                    <table class="spec-table">
+                        <tr><td>Engine Oil Spec</td><td>5W-30 Synthetic Mix</td></tr>
+                        <tr><td>Sump Fluid Capacity</td><td>5.1 US Quarts</td></tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="grid-item" id="tile-print-debugger">
+                <div class="panel">
+                    <h2>
+                        <span class="tile-grab-surface">⋮ Additive Defect Debugger</span>
+                        <div class="tile-action-controls">
+                            <button class="tile-control-trigger" onclick="cycleTileSizeGeometry('tile-print-debugger')">⤢</button>
+                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-print-debugger')">—</button>
+                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-print-debugger')">×</button>
+                        </div>
+                    </h2>
+                    <select class="material-selector" style="margin-bottom:6px;">
+                        <option>First Layer Lift / Warping</option>
+                        <option>PETG Stringing/Volumetric Blobs</option>
+                    </select>
+                    <div class="stat-card" style="font-size:0.75rem; padding:8px;">
+                        Remedy: Scrub plate with IPA. Drop Z-height by 0.02mm.
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-item" id="tile-git-terminal">
+                <div class="panel">
+                    <h2>
+                        <span class="tile-grab-surface">⋮ Git Automation Hook</span>
+                        <div class="tile-action-controls">
+                            <button class="tile-control-trigger" onclick="cycleTileSizeGeometry('tile-git-terminal')">⤢</button>
+                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-git-terminal')">—</button>
+                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-git-terminal')">×</button>
+                        </div>
+                    </h2>
+                    <div class="code-snippet-box" style="max-height:60px; margin-bottom:6px;">git add index.html&#10;git commit -m "update build"&#10;git push origin main</div>
+                    <button class="deploy-btn" style="width:100%; padding:6px;" onclick="navigator.clipboard.writeText('git add index.html && git commit -m \'update layout build\' && git push origin main')">Copy Clean Push String</button>
+                </div>
+            </div>
+
+            <div class="grid-item" id="tile-rail-tracker">
+                <div class="panel">
+                    <h2>
+                        <span class="tile-grab-surface">⋮ Eastern Rail Logistics</span>
+                        <div class="tile-action-controls">
+                            <button class="tile-control-trigger" onclick="cycleTileSizeGeometry('tile-rail-tracker')">⤢</button>
+                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-rail-tracker')">—</button>
+                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-rail-tracker')">×</button>
+                        </div>
+                    </h2>
+                    <table class="spec-table">
+                        <tr><td>Boston Transit Line</td><td style="color:#f87171;">Delayed 4m</td></tr>
+                        <tr><td>Cambridge Connector</td><td>Nominal</td></tr>
+                    </table>
+                </div>
+            </div>
+
+            <div class="grid-item" id="tile-mexico-dining">
+                <div class="panel">
+                    <h2>
+                        <span class="tile-grab-surface">⋮ Playa del Carmen Archive</span>
+                        <div class="tile-action-controls">
+                            <button class="tile-control-trigger" onclick="cycleTileSizeGeometry('tile-mexico-dining')">⤢</button>
+                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-mexico-dining')">—</button>
+                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-mexico-dining')">×</button>
+                        </div>
+                    </h2>
+                    <div class="stat-card" style="font-size:0.75rem; padding:8px;">
+                        🌴 Menu Ledger: Verified local plant-based infrastructure variations and protein alternatives.
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-item" id="tile-spanish-audio">
+                <div class="panel">
+                    <h2>
+                        <span class="tile-grab-surface">⋮ Spain Discography (2010s)</span>
+                        <div class="tile-action-controls">
+                            <button class="tile-control-trigger" onclick="cycleTileSizeGeometry('tile-spanish-audio')">⤢</button>
+                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-spanish-audio')">—</button>
+                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-spanish-audio')">×</button>
+                        </div>
+                    </h2>
+                    <div class="stat-card" style="font-size:0.75rem; padding:8px;">
+                        🎵 Audio Matrix Tracker: Indexing 2010s regional sound waves & tracking charts.
+                    </div>
+                </div>
+            </div>
+
+            <div class="add-tile-blueprint" id="generic-creation-trigger-card">
+                <span class="plus-icon-glyph">+</span>
+                <div class="spawn-context-menu" id="creation-matrix-dropdown">
+                    <div class="spawn-menu-title">Initialize Latent Module</div>
+                    <button class="spawn-opt-btn" onclick="restoreNamedTileInstance('tile-checklist')">Tasks</button>
+                    <button class="spawn-opt-btn" onclick="restoreNamedTileInstance('tile-ai-engine')">Gemini Copilot</button>
+                    <button class="spawn-opt-btn" onclick="restoreNamedTileInstance('tile-weather')">Local Weather</button>
+                    <button class="spawn-opt-btn" onclick="restoreNamedTileInstance('tile-property-hunt')">Real Estate Scout</button>
+                    <button class="spawn-opt-btn" onclick="restoreNamedTileInstance('tile-veg-macros')">Vegetarian Macro Lab</button>
+                    <button class="spawn-opt-btn" onclick="restoreNamedTileInstance('tile-mass-recipe')">Gram-Mass Scalar</button>
+                    <button class="spawn-opt-btn" onclick="restoreNamedTileInstance('tile-beeline-velo')">Beeline Velo Hub</button>
+                    <button class="spawn-opt-btn" onclick="restoreNamedTileInstance('tile-subaru-log')">Outback Maintenance</button>
+                    <button class="spawn-opt-btn" onclick="restoreNamedTileInstance('tile-print-debugger')">Additive Defect Debugger</button>
+                    <button class="spawn-opt-btn" onclick="restoreNamedTileInstance('tile-git-terminal')">Git Hook</button>
+                    <button class="spawn-opt-btn" onclick="restoreNamedTileInstance('tile-rail-tracker')">Eastern Rail Logistics</button>
+                    <button class="spawn-opt-btn" onclick="restoreNamedTileInstance('tile-mexico-dining')">Playa del Carmen Archive</button>
+                    <button class="spawn-opt-btn" onclick="restoreNamedTileInstance('tile-spanish-audio')">Spain Discography</button>
+                </div>
+            </div>
+
         </div>
     </div>
 
     <script>
-        const canvas = document.getElementById('workspace-canvas-root');
-        let activeDragNode = null;
-        let activeResizeNode = null;
-        let startX, startY, startWidth, startHeight, startLeft, startTop;
+        // CORE POINTER INERTIAL DRAG UTILITIES
+        const grid = document.getElementById('main-dashboard-grid-node');
+        let activeDragElement = null;
+        let originalParentIndex = null;
+        let dragGhostReference = null;
+        
+        let pointerOffsetVector = { x: 0, y: 0 };
+        let pointerCurrentPosition = { x: 0, y: 0 };
 
-        const defaultCoordinatesRegistry = {
-            "tile-checklist": { top: "20px", left: "20px", width: "340px", height: "220px" },
-            "tile-ai-engine": { top: "20px", left: "380px", width: "380px", height: "220px" },
-            "tile-subaru-log": { top: "260px", left: "20px", width: "340px", height: "200px" },
-            "tile-mass-recipe": { top: "260px", left: "380px", width: "340px", height: "200px" },
-            "tile-folder-engineering": { top: "20px", left: "780px", width: "380px", height: "220px" }
+        // INITIALIZE TASK COMPONENT STATE
+        let tasksArrayStore = [
+            { id: 1, text: "Sync Velo navigation array parameters", done: false },
+            { id: 2, text: "Audit SolidWorks VBA macro output lines", done: true },
+            { id: 3, text: "Review pultrusion composition profiles for UMaine", done: false }
+        ];
+
+        window.addEventListener('DOMContentLoaded', () => {
+            renderChecklistDOM();
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen-overlay');
+                splash.style.opacity = '0';
+                setTimeout(() => splash.style.visibility = 'hidden', 500);
+            }, 600);
+        });
+
+        // POINTER DOWN REGISTER EVENT HANDLER
+        grid.addEventListener('pointerdown', (e) => {
+            const surfaceGrab = e.target.closest('.tile-grab-surface');
+            if (!surfaceGrab) return;
+            
+            const targetTileNode = surfaceGrab.closest('.grid-item');
+            if (!targetTileNode || grid.classList.contains('standardized-geometry')) return;
+
+            e.preventDefault();
+            activeDragElement = targetTileNode;
+            
+            const clientRect = activeDragElement.getBoundingClientRect();
+            pointerOffsetVector.x = e.clientX - clientRect.left;
+            pointerOffsetVector.y = e.clientY - clientRect.top;
+
+            // Generate structural spacer element to prevent layouts folding inward
+            dragGhostReference = document.createElement('div');
+            dragGhostReference.className = activeDragElement.className;
+            dragGhostReference.style.width = clientRect.width + 'px';
+            dragGhostReference.style.height = clientRect.height + 'px';
+            dragGhostReference.style.visibility = 'hidden';
+            dragGhostReference.id = 'drag-ghost-spacer';
+            
+            activeDragElement.parentNode.insertBefore(dragGhostReference, activeDragElement);
+
+            activeDragElement.style.width = clientRect.width + 'px';
+            activeDragElement.style.height = clientRect.height + 'px';
+            
+            activeDragElement.classList.add('pointer-dragging');
+            updateDragPositionCoordinates(e.clientX, e.clientY);
+            activeDragElement.setPointerCapture(e.pointerId);
+        });
+
+        grid.addEventListener('pointermove', (e) => {
+            if (!activeDragElement) return;
+            updateDragPositionCoordinates(e.clientX, e.clientY);
+            calculateDynamicReflowIntersections();
+        });
+
+        const terminalDragReleaseSequence = (e) => {
+            if (!activeDragElement) return;
+            
+            activeDragElement.releasePointerCapture(e.pointerId);
+            activeDragElement.classList.remove('pointer-dragging');
+            
+            activeDragElement.style.position = '';
+            activeDragElement.style.top = '';
+            activeDragElement.style.left = '';
+            activeDragElement.style.width = '';
+            activeDragElement.style.height = '';
+            
+            if (dragGhostReference && dragGhostReference.parentNode) {
+                dragGhostReference.parentNode.insertBefore(activeDragElement, dragGhostReference);
+                dragGhostReference.remove();
+            }
+            
+            document.querySelectorAll('.grid-item').forEach(el => el.classList.remove('physics-displaced'));
+            
+            activeDragElement = null;
+            dragGhostReference = null;
         };
 
-        canvas.addEventListener('pointerdown', (e) => {
-            const resizeHandle = e.target.closest('.tile-resize-handle');
-            const grabSurface = e.target.closest('.tile-grab-surface');
+        grid.addEventListener('pointerup', terminalDragReleaseSequence);
+        grid.addEventListener('pointercancel', terminalDragReleaseSequence);
 
-            if (resizeHandle) {
-                e.preventDefault();
-                activeResizeNode = resizeHandle.closest('.grid-item');
-                startWidth = parseFloat(activeResizeNode.style.width);
-                startHeight = parseFloat(activeResizeNode.style.height);
-                startX = e.clientX;
-                startY = e.clientY;
-                activeResizeNode.setPointerCapture(e.pointerId);
-                return;
-            }
+        function updateDragPositionCoordinates(clientX, clientY) {
+            if (!activeDragElement) return;
+            activeDragElement.style.left = (clientX - pointerOffsetVector.x) + 'px';
+            activeDragElement.style.top = (clientY - pointerOffsetVector.y) + 'px';
+        }
 
-            if (grabSurface) {
-                e.preventDefault();
-                activeDragNode = grabSurface.closest('.grid-item');
-                startLeft = parseFloat(activeDragNode.style.left) || 0;
-                startTop = parseFloat(activeDragNode.style.top) || 0;
-                startX = e.clientX;
-                startY = e.clientY;
+        function calculateDynamicReflowIntersections() {
+            const dragRect = activeDragElement.getBoundingClientRect();
+            const elements = Array.from(grid.querySelectorAll('.grid-item:not(.pointer-dragging)'));
+            
+            let optimalTargetNode = null;
+            let minimumProximityDistance = Infinity;
+
+            elements.forEach(cell => {
+                const cellRect = cell.getBoundingClientRect();
+                const deltaX = (dragRect.left + dragRect.width/2) - (cellRect.left + cellRect.width/2);
+                const deltaY = (dragRect.top + dragRect.height/2) - (cellRect.top + cellRect.height/2);
+                const calculatedDistance = Math.hypot(deltaX, deltaY);
                 
-                activeDragNode.classList.add('pointer-dragging');
-                activeDragNode.setPointerCapture(e.pointerId);
-            }
-        });
-
-        canvas.addEventListener('pointermove', (e) => {
-            if (activeResizeNode) {
-                const deltaX = e.clientX - startX;
-                const deltaY = e.clientY - startY;
-                activeResizeNode.style.width = Math.max(240, startWidth + deltaX) + 'px';
-                activeResizeNode.style.height = Math.max(140, startHeight + deltaY) + 'px';
-                return;
-            }
-
-            if (activeDragNode) {
-                const deltaX = e.clientX - startX;
-                const deltaY = e.clientY - startY;
-                activeDragNode.style.left = (startLeft + deltaX) + 'px';
-                activeDragNode.style.top = (startTop + deltaY) + 'px';
-
-                const dragBox = activeDragNode.getBoundingClientRect();
-                document.querySelectorAll('.grid-item').forEach(target => {
-                    if (target === activeDragNode) return;
-                    
-                    const targetBox = target.getBoundingClientRect();
-                    const hasIntersection = !(dragBox.right < targetBox.left || 
-                                              dragBox.left > targetBox.right || 
-                                              dragBox.bottom < targetBox.top || 
-                                              dragBox.top > targetBox.bottom);
-                    
-                    if (hasIntersection) {
-                        target.classList.add('folder-hover-target');
-                    } else {
-                        target.classList.remove('folder-hover-target');
-                    }
-                });
-            }
-        });
-
-        const releasePointerCaptureBlock = (e) => {
-            if (activeResizeNode) {
-                activeResizeNode.releasePointerCapture(e.pointerId);
-                activeResizeNode = null;
-                saveCanvasGeometricState();
-            }
-            if (activeDragNode) {
-                activeDragNode.releasePointerCapture(e.pointerId);
-                activeDragNode.classList.remove('pointer-dragging');
-
-                const targetFolderNode = document.querySelector('.folder-hover-target');
-                if (targetFolderNode) {
-                    targetFolderNode.classList.remove('folder-hover-target');
-                    executeWidgetFolderMerge(activeDragNode, targetFolderNode);
+                if (calculatedDistance < minimumProximityDistance) {
+                    minimumProximityDistance = calculatedDistance;
+                    optimalTargetNode = cell;
                 }
-
-                activeDragNode = null;
-                saveCanvasGeometricState();
-            }
-        };
-
-        canvas.addEventListener('pointerup', releasePointerCaptureBlock);
-        canvas.addEventListener('pointercancel', releasePointerCaptureBlock);
-
-        function executeWidgetFolderMerge(sourceNode, targetNode) {
-            const sourceId = sourceNode.id;
-            const targetId = targetNode.id;
-            const targetPanel = targetNode.querySelector('.panel');
-
-            let containedIds = [];
-            if (targetPanel.getAttribute('data-is-folder') === 'true') {
-                containedIds = targetPanel.getAttribute('data-contained-ids').split(',');
-            } else {
-                containedIds.push(targetId);
-                targetPanel.setAttribute('data-is-folder', 'true');
-                targetPanel.querySelector('h2 .tile-grab-surface').textContent = 'bundled folder';
-            }
-
-            if (sourceNode.querySelector('.panel').getAttribute('data-is-folder') === 'true') {
-                containedIds = containedIds.concat(sourceNode.querySelector('.panel').getAttribute('data-contained-ids').split(','));
-            } else {
-                containedIds.push(sourceId);
-            }
-
-            targetPanel.setAttribute('data-contained-ids', containedIds.join(','));
-            
-            const tabBar = targetPanel.querySelector('.folder-tab-bar') || document.createElement('div');
-            tabBar.className = 'folder-tab-bar';
-            tabBar.innerHTML = '';
-            
-            containedIds.forEach((id, idx) => {
-                const btn = document.createElement('button');
-                btn.className = `folder-tab ${idx === 0 ? 'active-tab' : ''}`;
-                btn.textContent = id.replace('tile-', '').replace('-', ' ');
-                btn.onclick = (e) => switchFolderTab(btn, id);
-                tabBar.appendChild(btn);
             });
 
-            if (!targetPanel.querySelector('.folder-tab-bar')) {
-                targetPanel.querySelector('h2').insertAdjacentElement('afterend', tabBar);
+            if (optimalTargetNode && minimumProximityDistance < 180) {
+                elements.forEach(el => el.classList.remove('physics-displaced'));
+                optimalTargetNode.classList.add('physics-displaced');
+                
+                const positionComparisonBit = optimalTargetNode.getBoundingClientRect().top + optimalTargetNode.getBoundingClientRect().height / 2;
+                if ((dragRect.top + dragRect.height / 2) > positionComparisonBit) {
+                    dragGhostReference.parentNode.insertBefore(dragGhostReference, optimalTargetNode.nextSibling);
+                } else {
+                    dragGhostReference.parentNode.insertBefore(dragGhostReference, optimalTargetNode);
+                }
             }
-
-            sourceNode.remove();
-            
-            const viewport = targetPanel.querySelector('.folder-inner-content-viewport');
-            viewport.innerHTML = `<div id="folder-content-pane-root"></div>`;
-            renderNestedContentBlock(containedIds[0], targetPanel.querySelector('#folder-content-pane-root'));
-            
-            saveCanvasGeometricState();
         }
 
-        window.switchFolderTab = function(tabButton, targetWidgetId) {
-            const panel = tabButton.closest('.panel');
-            panel.querySelectorAll('.folder-tab').forEach(b => b.classList.remove('active-tab'));
-            tabButton.classList.add('active-tab');
-            
-            const viewportRoot = panel.querySelector('#folder-content-pane-root');
-            if (viewportRoot) renderNestedContentBlock(targetWidgetId, viewportRoot);
+        // ADD TILES DISPATCH MANAGEMENT
+        const creationCard = document.getElementById('generic-creation-trigger-card');
+        const dropdownMenu = document.getElementById('creation-matrix-dropdown');
+
+        creationCard.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdownMenu.classList.toggle('active');
+        });
+
+        document.addEventListener('click', () => dropdownMenu.classList.remove('active'));
+
+        window.restoreNamedTileInstance = function(id) {
+            const targetTileNode = document.getElementById(id);
+            if (targetTileNode) {
+                targetTileNode.classList.remove('hidden-tile');
+                grid.insertBefore(targetTileNode, creationCard);
+            }
         };
 
-        function renderNestedContentBlock(widgetId, mountTargetNode) {
-            const blueprint = document.getElementById(`vault-${widgetId}`);
-            if (blueprint) {
-                mountTargetNode.innerHTML = blueprint.innerHTML;
+        window.removeTileFromCanvas = function(id) {
+            const targetTileNode = document.getElementById(id);
+            if (targetTileNode) targetTileNode.classList.add('hidden-tile');
+        };
+
+        window.toggleTileCollapse = function(id) {
+            const targetTileNode = document.getElementById(id);
+            if (targetTileNode) {
+                targetTileNode.querySelector('.panel').classList.toggle('collapsed-state');
+            }
+        };
+
+        window.cycleTileSizeGeometry = function(id) {
+            const targetTileNode = document.getElementById(id);
+            if (!targetTileNode || grid.classList.contains('standardized-geometry')) return;
+
+            if (!targetTileNode.classList.contains('sz-wide') && !targetTileNode.classList.contains('sz-tall')) {
+                targetTileNode.classList.add('sz-wide');
+            } else if (targetTileNode.classList.contains('sz-wide') && !targetTileNode.classList.contains('sz-tall')) {
+                targetTileNode.classList.remove('sz-wide');
+                targetTileNode.classList.add('sz-tall');
+            } else if (!targetTileNode.classList.contains('sz-wide') && targetTileNode.classList.contains('sz-tall')) {
+                targetTileNode.classList.add('sz-wide');
             } else {
-                mountTargetNode.innerHTML = `<div style="font-size:0.8rem;color:var(--text-muted)">module logs dynamic load initialization...</div>`;
+                targetTileNode.classList.remove('sz-wide', 'sz-tall');
             }
-        }
-
-        window.unpackFolder = function(folderId) {
-            localStorage.removeItem('workspace_coordinates_v5');
-            window.location.reload(); 
         };
 
-        window.removeTile = function(id) {
-            const node = document.getElementById(id);
-            if (node) { node.remove(); saveCanvasGeometricState(); }
+        window.toggleStrictGeometry = function() {
+            const buttonControl = document.querySelector('.control-ui-btn');
+            grid.classList.toggle('standardized-geometry');
+            if (grid.classList.contains('standardized-geometry')) {
+                buttonControl.textContent = "Sizing Mode: Uniform Grid";
+            } else {
+                buttonControl.textContent = "Sizing Mode: Dynamic Grid";
+            }
         };
 
         window.toggleDashboardTheme = function() {
-            const curr = document.documentElement.getAttribute('data-theme');
-            document.documentElement.setAttribute('data-theme', curr === 'light' ? 'dark' : 'light');
+            const runtimeTheme = document.documentElement.getAttribute('data-theme');
+            document.documentElement.setAttribute('data-theme', runtimeTheme === 'light' ? 'dark' : 'light');
         };
 
-        function saveCanvasGeometricState() {
-            const layoutData = [];
-            document.querySelectorAll('.grid-item').forEach(el => {
-                const panel = el.querySelector('.panel');
-                layoutData.push({
-                    id: el.id,
-                    top: el.style.top,
-                    left: el.style.left,
-                    width: el.style.width,
-                    height: el.style.height,
-                    isFolder: panel.getAttribute('data-is-folder') || 'false',
-                    containedIds: panel.getAttribute('data-contained-ids') || ''
-                });
+        // CHECKLIST IMPLEMENTATION
+        function renderChecklistDOM() {
+            const listContainer = document.getElementById('checklist-render-node');
+            if (!listContainer) return;
+            listContainer.innerHTML = '';
+            tasksArrayStore.forEach(task => {
+                const li = document.createElement('li');
+                li.className = `checklist-item ${task.done ? 'resolved' : ''}`;
+                li.innerHTML = `<span>${task.text}</span><button class="tile-control-trigger remove-trigger" style="padding:2px 4px;">×</button>`;
+                li.querySelector('span').onclick = () => {
+                    task.done = !task.done;
+                    renderChecklistDOM();
+                };
+                li.querySelector('.remove-trigger').onclick = (e) => {
+                    e.stopPropagation();
+                    tasksArrayStore = tasksArrayStore.filter(t => t.id !== task.id);
+                    renderChecklistDOM();
+                };
+                listContainer.appendChild(li);
             });
-            localStorage.setItem('workspace_coordinates_v5', JSON.stringify(layoutData));
         }
 
-        function restoreCanvasGeometricState() {
-            const raw = localStorage.getItem('workspace_coordinates_v5');
-            if (!raw) {
-                resetCanvasToDefaultCoordinates();
-                return;
+        window.commitNewTask = function() {
+            const field = document.getElementById('task-input-node');
+            if (field && field.value.trim() !== '') {
+                tasksArrayStore.push({ id: Date.now(), text: field.value.trim(), done: false });
+                field.value = '';
+                renderChecklistDOM();
             }
-            try {
-                const coordinates = JSON.parse(raw);
-                canvas.innerHTML = '';
-                
-                coordinates.forEach(data => {
-                    const item = document.createElement('div');
-                    item.className = 'grid-item';
-                    item.id = data.id;
-                    item.style.top = data.top;
-                    item.style.left = data.left;
-                    item.style.width = data.width;
-                    item.style.height = data.height;
-
-                    let internalHTML = '';
-                    if (data.isFolder === 'true') {
-                        const ids = data.containedIds.split(',');
-                        let tabsHTML = '';
-                        ids.forEach((subId, idx) => {
-                            tabsHTML += `<button class="folder-tab ${idx === 0 ? 'active-tab' : ''}" onclick="switchFolderTab(this, '${subId}')">${subId.replace('tile-', '').replace('-', ' ')}</button>`;
-                        });
-
-                        internalHTML = `
-                            <div class="panel" data-widget-id="${data.id}" data-is-folder="true" data-contained-ids="${data.containedIds}">
-                                <h2>
-                                    <span class="tile-grab-surface">bundled folder</span>
-                                    <div class="tile-action-controls">
-                                        <button class="tile-control-trigger" onclick="unpackFolder('${data.id}')">⚏</button>
-                                        <button class="tile-control-trigger" onclick="removeTile('${data.id}')">×</button>
-                                    </div>
-                                </h2>
-                                <div class="folder-tab-bar">${tabsHTML}</div>
-                                <div class="folder-inner-content-viewport">
-                                    <div id="folder-content-pane-root"></div>
-                                </div>
-                                <div class="tile-resize-handle"></div>
-                            </div>`;
-                    } else {
-                        internalHTML = `
-                            <div class="panel" data-widget-id="${data.id}">
-                                <h2>
-                                    <span class="tile-grab-surface">${data.id.replace('tile-', '').replace('-', ' ')}</span>
-                                    <div class="tile-action-controls">
-                                        <button class="tile-control-trigger" onclick="removeTile('${data.id}')">×</button>
-                                    </div>
-                                </h2>
-                                <div class="folder-inner-content-viewport">
-                                    <div id="folder-content-pane-root"></div>
-                                </div>
-                                <div class="tile-resize-handle"></div>
-                            </div>`;
-                    }
-
-                    item.innerHTML = internalHTML;
-                    canvas.appendChild(item);
-
-                    if (data.isFolder === 'true') {
-                        const firstId = data.containedIds.split(',')[0];
-                        renderNestedContentBlock(firstId, item.querySelector('#folder-content-pane-root'));
-                    } else {
-                        renderNestedContentBlock(data.id, item.querySelector('#folder-content-pane-root'));
-                    }
-                });
-            } catch (e) { console.error(e); }
-        }
-
-        window.resetCanvasToDefaultCoordinates = function() {
-            localStorage.removeItem('workspace_coordinates_v5');
-            Object.keys(defaultCoordinatesRegistry).forEach(id => {
-                const node = document.getElementById(id);
-                if (node) {
-                    node.style.top = defaultCoordinatesRegistry[id].top;
-                    node.style.left = defaultCoordinatesRegistry[id].left;
-                    node.style.width = defaultCoordinatesRegistry[id].width;
-                    node.style.height = defaultCoordinatesRegistry[id].height;
-                }
-            });
-            saveCanvasGeometricState();
-            window.location.reload();
         };
 
-        window.addEventListener('DOMContentLoaded', () => {
-            if (localStorage.getItem('workspace_coordinates_v5')) {
-                restoreCanvasGeometricState();
-            } else {
-                document.querySelectorAll('.grid-item').forEach(el => {
-                    if(el.style.width) return;
-                    el.style.width = el.offsetWidth + 'px';
-                    el.style.height = el.offsetHeight + 'px';
-                });
-                saveCanvasGeometricState();
-            }
-        });
+        // COPILOT CHAT SIMULATOR HOOKS
+        window.dispatchAiQuery = function() {
+            const rawField = document.getElementById('ai-query-input');
+            const chatLogViewport = document.getElementById('ai-chat-viewport');
+            if (!rawField || !chatLogViewport || rawField.value.trim() === '') return;
+
+            const userQueryText = rawField.value.trim();
+            rawField.value = '';
+
+            const userBubble = document.createElement('div');
+            userBubble.className = 'chat-bubble bubble-user';
+            userBubble.textContent = userQueryText;
+            chatLogViewport.appendChild(userBubble);
+            chatLogViewport.scrollTop = chatLogViewport.scrollHeight;
+
+            setTimeout(() => {
+                const geminiBubble = document.createElement('div');
+                geminiBubble.className = 'chat-bubble bubble-gemini';
+                geminiBubble.textContent = "Telemetry matrix update complete. Running mathematical calculations over real-time coordinate frames successfully.";
+                chatLogViewport.appendChild(geminiBubble);
+                chatLogViewport.scrollTop = chatLogViewport.scrollHeight;
+            }, 750);
+        };
     </script>
 </body>
 </html>
