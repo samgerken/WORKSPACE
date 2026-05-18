@@ -6,182 +6,242 @@
     <title>Workspace Dashboard</title>
     <style>
         :root {
-            /* 5% Higher Contrast Dark Mode */
-            --bg-base: #050506;
-            --bg-surface: rgba(255, 255, 255, 0.03);
+            /* Minimalist Deep Slate Theme Archetype */
+            --bg-base: #070709;
+            --bg-surface: rgba(20, 20, 25, 0.6);
             --bg-terminal: #000000;
-            --border-subtle: rgba(255, 255, 255, 0.08);
-            --border-active: rgba(255, 255, 255, 0.3);
+            --border-subtle: rgba(255, 255, 255, 0.05);
+            --border-active: rgba(255, 255, 255, 0.25);
             --text-primary: #ffffff;
             --text-secondary: #f4f4f5;
-            --text-muted: #a1a1aa;
-            --text-dark: #52525b;
+            --text-muted: #8e8e93;
+            --text-dark: #3a3a3c;
             --accent-alert: #f87171;
             
-            --panel-header-line: #71717a;
-            --panel-title-color: #d4d4d8;
+            --panel-header-line: #52525b;
+            --panel-title-color: #a1a1aa;
             --chat-user-bg: #27272a;
-            --chat-gemini-bg: rgba(255, 255, 255, 0.04);
-            --chat-gemini-border: rgba(255, 255, 255, 0.06);
+            --chat-gemini-bg: rgba(255, 255, 255, 0.03);
+            --chat-gemini-border: rgba(255, 255, 255, 0.05);
             --code-bg: #18181b;
             --pre-bg: #09090b;
             
-            --font-stack: Calibri, Candara, "Segoe UI", Optima, Arial, sans-serif;
+            --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             --progress-track: #18181b;
-            /* Enhanced dark mode depth shadow */
-            --panel-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.45);
+            
+            /* High Depth Shadow Architecture for Dark Mode */
+            --panel-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.05);
+            --blur-strength: 12px;
         }
 
         [data-theme="light"] {
-            --bg-base: #f4f4f5;
-            --bg-surface: #ffffff;
+            --bg-base: #f4f4f6;
+            --bg-surface: rgba(255, 255, 255, 0.85);
             --bg-terminal: #fafafa;
-            --border-subtle: rgba(0, 0, 0, 0.08);
-            --border-active: rgba(0, 0, 0, 0.6);
-            --text-primary: #09090b;
-            --text-secondary: #27272a;
-            --text-muted: #71717a;
-            --text-dark: #a1a1aa;
-            --accent-alert: #dc2626;
+            --border-subtle: rgba(0, 0, 0, 0.06);
+            --border-active: rgba(0, 0, 0, 0.4);
+            --text-primary: #1c1c1e;
+            --text-secondary: #2c2c2e;
+            --text-muted: #8e8e93;
+            --text-dark: #c7c7cc;
+            --accent-alert: #df2c2c;
             
             --panel-header-line: #a1a1aa;
-            --panel-title-color: #4b5563;
-            --chat-user-bg: #e4e4e7;
-            --chat-gemini-bg: #f4f4f5;
-            --chat-gemini-border: rgba(0, 0, 0, 0.05);
-            --code-bg: #e4e4e7;
+            --panel-title-color: #636366;
+            --chat-user-bg: #e5e5ea;
+            --chat-gemini-bg: #f2f2f7;
+            --chat-gemini-border: rgba(0, 0, 0, 0.04);
+            --code-bg: #e5e5ea;
             --pre-bg: #fafafa;
-            --progress-track: #e4e4e7;
-            --panel-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --progress-track: #e5e5ea;
+            --panel-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.02);
+            --blur-strength: 20px;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { background-color: var(--bg-base); color: var(--text-secondary); font-family: var(--font-stack); padding: 40px 20px; line-height: 1.5; letter-spacing: -0.01em; transition: background-color 0.2s ease, color 0.2s ease; overflow-x: hidden; }
-        .container { max-width: 1250px; margin: 0 auto; }
+        body { 
+            background-color: var(--bg-base); 
+            color: var(--text-secondary); 
+            font-family: var(--font-stack); 
+            padding: 40px 20px; 
+            line-height: 1.5; 
+            letter-spacing: -0.01em; 
+            transition: background-color 0.4s ease, color 0.4s ease; 
+            overflow-x: hidden; 
+        }
+        
+        .container { max-width: 1300px; margin: 0 auto; }
 
-        header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 20px; }
-        h1 { color: var(--text-primary); font-size: 1.7rem; font-weight: 700; }
-        .subtitle { color: var(--text-muted); font-size: 0.9rem; margin-top: 2px; }
+        /* CALMING BOOT SPLASH SCREEN */
+        #splash-screen-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #050507;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), visibility 0.8s;
+            color: #ffffff;
+        }
+        .splash-brand { font-weight: 300; font-size: 1.8rem; letter-spacing: 0.15em; text-transform: uppercase; color: #ffffff; opacity: 0; transform: translateY(10px); animation: splashFadeInUp 1.2s forwards 0.2s; }
+        .splash-status { font-size: 0.8rem; font-family: monospace; color: #636366; margin-top: 16px; letter-spacing: 0.05em; opacity: 0; animation: splashFadeInUp 1s forwards 0.6s; }
+        .splash-loader-bar { width: 120px; height: 1px; background: rgba(255,255,255,0.1); margin-top: 24px; position: relative; overflow: hidden; border-radius: 2px; }
+        .splash-loader-progress { width: 40%; height: 100%; background: #ffffff; position: absolute; left: -50%; animation: infiniteLoader 1.6s infinite ease-in-out; }
+        
+        @keyframes splashFadeInUp { to { opacity: 1; transform: translateY(0); } }
+        @keyframes infiniteLoader { 0% { left: -50%; } 100% { left: 110%; } }
 
-        .header-controls { display: flex; gap: 10px; }
-        .theme-toggle-btn, .menu-trigger-btn { background: var(--bg-terminal); color: var(--text-secondary); border: 1px solid var(--border-subtle); padding: 6px 14px; font-family: inherit; font-size: 0.85rem; border-radius: 4px; cursor: pointer; transition: all 0.15s ease; }
-        .theme-toggle-btn:hover, .menu-trigger-btn:hover { border-color: var(--border-active); color: var(--text-primary); }
+        header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 32px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 24px; }
+        h1 { color: var(--text-primary); font-size: 1.6rem; font-weight: 600; letter-spacing: -0.02em; }
+        .subtitle { color: var(--text-muted); font-size: 0.88rem; margin-top: 4px; font-weight: 400; }
 
-        /* SLIDING SIDEBAR DRAWER MENU */
-        .sidebar-drawer { position: fixed; top: 0; left: -320px; width: 300px; height: 100%; background: #09090b; border-right: 1px solid var(--border-subtle); box-shadow: 10px 0 30px rgba(0,0,0,0.5); z-index: 1000; transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1); padding: 30px 24px; display: flex; flex-direction: column; gap: 20px; }
+        .header-controls { display: flex; gap: 12px; }
+        .theme-toggle-btn, .menu-trigger-btn { background: var(--bg-surface); backdrop-filter: blur(var(--blur-strength)); color: var(--text-secondary); border: 1px solid var(--border-subtle); padding: 8px 16px; font-family: inherit; font-size: 0.82rem; font-weight: 500; border-radius: 6px; cursor: pointer; transition: all 0.2s ease; }
+        .theme-toggle-btn:hover, .menu-trigger-btn:hover { border-color: var(--border-active); color: var(--text-primary); background: rgba(255,255,255,0.05); }
+
+        /* SLIDING DRAWER LAYER */
+        .sidebar-drawer { position: fixed; top: 0; left: -320px; width: 320px; height: 100%; background: rgba(10, 10, 12, 0.96); backdrop-filter: blur(20px); border-right: 1px solid var(--border-subtle); box-shadow: 20px 0 50px rgba(0,0,0,0.6); z-index: 1000; transition: left 0.4s cubic-bezier(0.25, 1, 0.5, 1); padding: 40px 30px; display: flex; flex-direction: column; gap: 24px; }
         .sidebar-drawer.open { left: 0; }
-        .drawer-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-subtle); padding-bottom: 14px; }
-        .drawer-header h3 { color: var(--text-primary); font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
-        .close-drawer-btn { background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer; }
+        .drawer-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-subtle); padding-bottom: 16px; }
+        .drawer-header h3 { color: var(--text-primary); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; }
+        .close-drawer-btn { background: none; border: none; color: var(--text-muted); font-size: 1.4rem; cursor: pointer; line-height: 1; }
         .close-drawer-btn:hover { color: var(--text-primary); }
         
         .tile-toggle-container { overflow-y: auto; flex: 1; padding-right: 4px; }
-        .tile-toggle-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
-        .tile-toggle-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle); border-radius: 6px; font-size: 0.9rem; }
-        .tile-toggle-item input { accent-color: var(--text-primary); cursor: pointer; width: 16px; height: 16px; }
+        .tile-toggle-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+        .tile-toggle-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: rgba(255,255,255,0.01); border: 1px solid var(--border-subtle); border-radius: 8px; font-size: 0.88rem; }
+        .tile-toggle-item input { accent-color: var(--text-primary); cursor: pointer; width: 15px; height: 15px; }
 
-        /* DRAGGABLE GRID STYLES */
+        /* DASHBOARD METRIC GRID LAYOUT */
         .dashboard-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 24px; }
         .col-3 { grid-column: span 3; }
         .col-2 { grid-column: span 2; }
         
-        .grid-item { transition: transform 0.2s ease, opacity 0.2s ease; position: relative; }
-        .grid-item.dragging { opacity: 0.3; transform: scale(0.97); }
-        .grid-item.drag-over { border-radius: 12px; outline: 2px dashed var(--border-active); outline-offset: 4px; }
+        .grid-item { transition: transform 0.25s cubic-bezier(0.2, 1, 0.2, 1), opacity 0.2s ease; position: relative; }
+        .grid-item.dragging { opacity: 0.2; transform: scale(0.98); }
+        .grid-item.drag-over { border-radius: 14px; outline: 1px dashed var(--border-active); outline-offset: 6px; }
         .grid-item.hidden-tile { display: none !important; }
 
-        section.panel, div.panel { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; height: 100%; min-height: 220px; box-shadow: var(--panel-shadow); transition: box-shadow 0.2s ease; }
+        section.panel, div.panel { background: var(--bg-surface); backdrop-filter: blur(var(--blur-strength)); border: 1px solid var(--border-subtle); border-radius: 14px; padding: 24px; display: flex; flex-direction: column; height: 100%; min-height: 230px; box-shadow: var(--panel-shadow); transition: box-shadow 0.3s ease, background-color 0.3s ease; }
+        section.panel:hover, div.panel:hover { border-color: rgba(255, 255, 255, 0.12); }
         
-        h2 { color: var(--panel-title-color); font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; border-left: 2px solid var(--panel-header-line); padding-left: 10px; display: flex; justify-content: space-between; align-items: center; }
+        h2 { color: var(--panel-title-color); font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-subtle); padding-bottom: 12px; margin-bottom: 16px; }
         
-        .drag-handle { cursor: grab; font-size: 0.75rem; color: var(--text-muted); padding: 3px 8px; background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 4px; font-family: monospace; user-select: none; }
+        .drag-handle { cursor: grab; font-size: 0.68rem; color: var(--text-muted); padding: 4px 8px; background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 4px; font-family: monospace; user-select: none; font-weight: 400; }
         .drag-handle:active { cursor: grabbing; border-color: var(--text-primary); color: var(--text-primary); }
 
-        .control-row { display: flex; gap: 12px; margin-bottom: 20px; }
-        .task-input { flex: 1; background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 12px 16px; color: var(--text-primary); font-family: inherit; font-size: 0.95rem; outline: none; min-width: 0; }
+        .control-row { display: flex; gap: 10px; margin-bottom: 16px; }
+        .task-input { flex: 1; background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 10px 14px; color: var(--text-primary); font-family: inherit; font-size: 0.9rem; outline: none; transition: border-color 0.2s; }
         .task-input:focus { border-color: var(--border-active); }
         
-        .deploy-btn { background: var(--bg-terminal); color: var(--text-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0 20px; font-weight: 600; font-family: inherit; font-size: 0.9rem; cursor: pointer; white-space: nowrap; transition: all 0.15s ease; }
+        .deploy-btn { background: var(--bg-terminal); color: var(--text-secondary); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 0 16px; font-weight: 500; font-family: inherit; font-size: 0.85rem; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
         .deploy-btn:hover:not(:disabled) { border-color: var(--border-active); color: var(--text-primary); background: rgba(255,255,255,0.02); }
         .deploy-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
-        .checklist-container { list-style: none; }
-        .checklist-item { padding: 12px 10px; border-bottom: 1px solid var(--border-subtle); font-size: 0.95rem; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
+        .checklist-container { list-style: none; display: flex; flex-direction: column; gap: 2px; }
+        .checklist-item { padding: 10px 8px; border-bottom: 1px solid var(--border-subtle); font-size: 0.9rem; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: background 0.15s; border-radius: 4px; }
+        .checklist-item:hover { background: rgba(255, 255, 255, 0.01); }
         .task-left-block { display: flex; align-items: center; min-width: 0; }
-        .status-box { font-family: monospace; font-weight: bold; color: var(--text-muted); margin-right: 14px; min-width: 28px; flex-shrink: 0; }
+        .status-box { font-family: monospace; font-size: 0.85rem; color: var(--text-muted); margin-right: 12px; width: 20px; flex-shrink: 0; }
         .task-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .clear-single-btn { background: none; border: none; color: var(--text-dark); font-size: 0.8rem; cursor: pointer; margin-left: 12px; flex-shrink: 0; }
+        .clear-single-btn { background: none; border: none; color: var(--text-dark); font-size: 0.78rem; cursor: pointer; margin-left: 12px; flex-shrink: 0; transition: color 0.15s; }
         .clear-single-btn:hover { color: var(--accent-alert) !important; }
         .resolved { color: var(--text-dark) !important; }
         .resolved .task-text { text-decoration: line-through; }
 
-        .metrics-footer { display: flex; justify-content: space-between; margin-top: auto; padding-top: 16px; font-size: 0.85rem; color: var(--text-muted); border-top: 1px dashed var(--border-subtle); }
-        .purge-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; text-decoration: underline; }
+        .metrics-footer { display: flex; justify-content: space-between; margin-top: auto; padding-top: 14px; font-size: 0.8rem; color: var(--text-muted); border-top: 1px dashed var(--border-subtle); }
+        .purge-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; text-decoration: underline; font-family: inherit; }
 
-        .ai-chat-log { background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 8px; height: 320px; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 16px; margin-bottom: 14px; }
-        .chat-bubble { font-size: 0.9rem; line-height: 1.5; max-width: 85%; word-break: break-word; }
-        .bubble-user { color: var(--text-primary); align-self: flex-end; background: var(--chat-user-bg); padding: 10px 14px; border-radius: 12px 12px 2px 12px; }
-        .bubble-gemini { color: var(--text-secondary); align-self: flex-start; background: var(--chat-gemini-bg); border: 1px solid var(--chat-gemini-border); padding: 12px 16px; border-radius: 12px 12px 12px 2px; }
+        .ai-chat-log { background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 8px; height: 280px; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 14px; margin-bottom: 14px; }
+        .chat-bubble { font-size: 0.88rem; line-height: 1.45; max-width: 85%; word-break: break-word; }
+        .bubble-user { color: var(--text-primary); align-self: flex-end; background: var(--chat-user-bg); padding: 8px 12px; border-radius: 10px 10px 2px 10px; }
+        .bubble-gemini { color: var(--text-secondary); align-self: flex-start; background: var(--chat-gemini-bg); border: 1px solid var(--chat-gemini-border); padding: 10px 14px; border-radius: 10px 10px 10px 2px; }
 
-        .weather-display { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: center; margin-bottom: 16px; }
-        .temp-primary { font-size: 2.4rem; font-weight: 700; color: var(--text-primary); }
-        .weather-meta { font-size: 0.85rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 4px; }
-        .weather-meta span { color: var(--text-secondary); font-weight: 600; }
-        .forecast-container { display: flex; flex-direction: column; gap: 6px; background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 12px; }
-        .forecast-row { display: grid; grid-template-columns: 2.5fr 3.5fr 2fr; font-size: 0.85rem; padding: 4px 0; border-bottom: 1px solid var(--border-subtle); }
+        .weather-display { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding: 4px 0; }
+        .temp-primary { font-size: 2.2rem; font-weight: 300; color: var(--text-primary); font-family: monospace; }
+        .weather-meta { font-size: 0.8rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 3px; text-align: right; }
+        .weather-meta span { color: var(--text-secondary); font-weight: 500; }
+        .forecast-container { display: flex; flex-direction: column; gap: 4px; background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 10px; }
+        .forecast-row { display: grid; grid-template-columns: 2.5fr 3.5fr 2fr; font-size: 0.8rem; padding: 6px 0; border-bottom: 1px solid var(--border-subtle); }
         .forecast-row:last-child { border-bottom: none; }
 
-        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); row-gap: 6px; text-align: center; }
-        .calendar-day-label { color: var(--text-muted); font-weight: 600; font-size: 0.75rem; padding-bottom: 8px; }
-        .calendar-cell { color: var(--text-secondary); font-size: 0.85rem; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 4px; }
+        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); row-gap: 4px; text-align: center; }
+        .calendar-day-label { color: var(--text-muted); font-weight: 500; font-size: 0.7rem; padding-bottom: 6px; text-transform: uppercase; }
+        .calendar-cell { color: var(--text-secondary); font-size: 0.8rem; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 4px; font-family: monospace; }
         .calendar-cell.muted { color: var(--text-dark); }
-        .calendar-cell.today { border: 1px solid var(--text-primary); color: var(--text-primary); font-weight: 700; }
+        .calendar-cell.today { background: var(--text-primary); color: var(--bg-base) !important; font-weight: 600; border-radius: 50%; }
 
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
-        .stat-card { background: var(--bg-terminal); border: 1px solid var(--border-subtle); padding: 12px; border-radius: 6px; }
-        .stat-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; }
-        .stat-value { font-size: 1.15rem; font-weight: 700; color: var(--text-primary); font-family: monospace; }
-        .progress-track { background: var(--progress-track); height: 8px; border-radius: 4px; overflow: hidden; border: 1px solid var(--border-subtle); margin-top: 6px; }
+        .stat-card { background: var(--bg-terminal); border: 1px solid var(--border-subtle); padding: 12px; border-radius: 8px; }
+        .stat-label { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+        .stat-value { font-size: 1.1rem; font-weight: 500; color: var(--text-primary); font-family: monospace; margin-top: 2px; }
+        .progress-track { background: var(--progress-track); height: 4px; border-radius: 2px; overflow: hidden; margin-top: 8px; }
         .progress-fill { background: var(--text-primary); height: 100%; transition: width 0.3s ease; }
 
-        .material-selector { background: var(--bg-terminal); border: 1px solid var(--border-subtle); color: var(--text-primary); width: 100%; padding: 10px; border-radius: 6px; margin-bottom: 12px; outline: none; }
-        .spec-table { width: 100%; font-family: monospace; font-size: 0.8rem; border-collapse: collapse; }
-        .spec-table td { padding: 6px 8px; border-bottom: 1px solid var(--border-subtle); }
-        .spec-table td:last-child { text-align: right; color: var(--text-primary); font-weight: 600; }
+        .material-selector { background: var(--bg-terminal); border: 1px solid var(--border-subtle); color: var(--text-primary); width: 100%; padding: 10px; border-radius: 8px; margin-bottom: 12px; outline: none; font-family: inherit; font-size: 0.85rem; }
+        .spec-table { width: 100%; font-family: monospace; font-size: 0.78rem; border-collapse: collapse; }
+        .spec-table td { padding: 8px; border-bottom: 1px solid var(--border-subtle); }
+        .spec-table tr:last-child td { border-bottom: none; }
+        .spec-table td:last-child { text-align: right; color: var(--text-primary); font-weight: 500; }
 
         .logistics-list { list-style: none; font-size: 0.85rem; display: flex; flex-direction: column; gap: 8px; }
-        .logistics-item { display: flex; align-items: center; gap: 10px; cursor: pointer; }
-        .logistics-cb { accent-color: var(--text-primary); cursor: pointer; }
+        .logistics-item { display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 4px 0; }
+        .logistics-cb { accent-color: var(--text-primary); cursor: pointer; width: 14px; height: 14px; }
 
-        /* FIXED CALCULATOR SCREEN LAYOUT */
-        .calc-screen { width: 100%; background: var(--bg-terminal); color: var(--text-primary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 14px; font-family: monospace; font-size: 1.2rem; text-align: right; outline: none; margin-bottom: 12px; min-height: 50px; overflow-x: auto; white-space: nowrap; word-break: break-all; display: block; }
-        .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-        .calc-btn { background: var(--bg-terminal); color: var(--text-secondary); border: 1px solid var(--border-subtle); padding: 12px; font-family: monospace; font-size: 0.95rem; font-weight: 600; border-radius: 6px; cursor: pointer; transition: all 0.15s ease; }
-        .calc-btn:hover { border-color: var(--border-active); color: var(--text-primary); }
+        /* THE CALCULATOR STRUCTURAL CSS FIX */
+        .calc-screen { 
+            width: 100%; 
+            background: var(--bg-terminal); 
+            color: var(--text-primary); 
+            border: 1px solid var(--border-subtle); 
+            border-radius: 8px; 
+            padding: 12px 14px; 
+            font-family: monospace; 
+            font-size: 1.3rem; 
+            text-align: right; 
+            outline: none; 
+            margin-bottom: 12px; 
+            min-height: 52px; 
+            overflow-x: auto; 
+            white-space: nowrap; 
+            display: block; 
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+        }
+        .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; width: 100%; }
+        .calc-btn { background: var(--bg-terminal); color: var(--text-secondary); border: 1px solid var(--border-subtle); padding: 12px 4px; font-family: monospace; font-size: 0.95rem; font-weight: 500; border-radius: 6px; cursor: pointer; transition: all 0.15s ease; text-align: center; }
+        .calc-btn:hover { border-color: var(--border-active); color: var(--text-primary); background: rgba(255,255,255,0.02); }
         .calc-btn.op { color: var(--text-muted); }
-        .calc-btn.action { background: none; border-color: var(--border-active); color: var(--text-primary); }
+        .calc-btn.action { border-color: rgba(255,255,255,0.15); color: var(--text-primary); }
 
-        /* NEW NEW TILES DESIGN */
-        .converter-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
-        .scratch-pad { width: 100%; height: 130px; background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 12px; color: var(--text-primary); font-family: inherit; font-size: 0.9rem; resize: none; outline: none; margin-top: 12px; }
+        /* NEW PRODUCTIVITY MODULE TILES CSS */
+        .converter-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+        .scratch-pad { width: 100%; height: 125px; background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 12px; color: var(--text-primary); font-family: monospace; font-size: 0.85rem; line-height: 1.4; resize: none; outline: none; transition: border-color 0.2s; }
         .scratch-pad:focus { border-color: var(--border-active); }
-        .timer-display { font-family: monospace; font-size: 2.2rem; font-weight: 700; text-align: center; color: var(--text-primary); margin: 12px 0; background: var(--bg-terminal); border: 1px solid var(--border-subtle); padding: 8px; border-radius: 6px; }
+        .timer-display { font-family: monospace; font-size: 2.2rem; font-weight: 300; text-align: center; color: var(--text-primary); margin: 8px 0 16px 0; background: var(--bg-terminal); border: 1px solid var(--border-subtle); padding: 10px; border-radius: 8px; letter-spacing: 0.02em; }
 
-        @media (max-width: 900px) {
-            body { padding: 20px 14px; }
-            header { flex-direction: column; align-items: flex-start; gap: 14px; }
+        @media (max-width: 950px) {
+            body { padding: 20px 12px; }
+            header { flex-direction: column; align-items: flex-start; gap: 16px; }
             .dashboard-grid { grid-template-columns: 1fr; gap: 16px; }
             .col-3, .col-2 { grid-column: span 1; }
-            .ai-chat-log { height: 260px; }
+            .ai-chat-log { height: 240px; }
         }
     </style>
 </head>
 <body>
 
+    <div id="splash-screen-overlay">
+        <div class="splash-brand">Workspace Instance</div>
+        <div class="splash-status" id="splash-timestamp-node">INIT // RUNTIME_CORE_OK</div>
+        <div class="splash-loader-bar"><div class="splash-loader-progress"></div></div>
+    </div>
+
     <div class="sidebar-drawer" id="workspace-drawer-node">
         <div class="drawer-header">
-            <h3>Workspace Tiles</h3>
+            <h3>Workspace Management</h3>
             <button class="close-drawer-btn" onclick="toggleWorkspaceDrawer(false)">×</button>
         </div>
         <div class="tile-toggle-container">
@@ -195,7 +255,7 @@
                 <li class="tile-toggle-item"><label>Calculator Terminal</label><input type="checkbox" data-tile="tile-calculator" checked onchange="synchronizeTileVisibility(this)"></li>
                 <li class="tile-toggle-item"><label>Transit Logistics</label><input type="checkbox" data-tile="tile-transit" checked onchange="synchronizeTileVisibility(this)"></li>
                 <li class="tile-toggle-item"><label>Mass Converter</label><input type="checkbox" data-tile="tile-converter" checked onchange="synchronizeTileVisibility(this)"></li>
-                <li class="tile-toggle-item"><label>Scratch Pad</label><input type="checkbox" data-tile="tile-scratch" checked onchange="synchronizeTileVisibility(this)"></li>
+                <li class="tile-toggle-item"><label>Notes Scratch Pad</label><input type="checkbox" data-tile="tile-scratch" checked onchange="synchronizeTileVisibility(this)"></li>
                 <li class="tile-toggle-item"><label>System Stopwatch</label><input type="checkbox" data-tile="tile-stopwatch" checked onchange="synchronizeTileVisibility(this)"></li>
             </ul>
         </div>
@@ -205,10 +265,10 @@
         <header>
             <div>
                 <h1>Workspace Dashboard</h1>
-                <p class="subtitle">Unified logistics & development environment</p>
+                <p class="subtitle">Unified design sandbox & production telemetry</p>
             </div>
             <div class="header-controls">
-                <button class="menu-trigger-btn" onclick="toggleWorkspaceDrawer(true)">☰ Manage Workspace</button>
+                <button class="menu-trigger-btn" onclick="toggleWorkspaceDrawer(true)">☰ Manage Grid</button>
                 <button class="theme-toggle-btn" onclick="toggleDashboardTheme()">Theme: <span id="theme-status-lbl">Dark</span></button>
             </div>
         </header>
@@ -217,14 +277,14 @@
             
             <div class="grid-item col-3" id="tile-checklist">
                 <div class="panel">
-                    <h2>Daily Checklist <span class="drag-handle">⋮⋮ DRAG</span></h2>
-                    <div class="control-row" style="margin-top: 14px;">
-                        <input type="text" id="task-input-node" class="task-input" placeholder="Add tracking log entry...">
+                    <h2>Daily Checklist <span class="drag-handle">⋮⋮ MOVE</span></h2>
+                    <div class="control-row" style="margin-top: 6px;">
+                        <input type="text" id="task-input-node" class="task-input" placeholder="Append engineering tracking entry...">
                         <button class="deploy-btn" onclick="window.commitNewTask()">Add</button>
                     </div>
                     <ul class="checklist-container" id="checklist-render-node"></ul>
                     <div class="metrics-footer">
-                        <div>Active: <span id="active-count">0</span> | Resolved: <span id="complete-count">0</span></div>
+                        <div>Active Items: <span id="active-count">0</span> | Resolved: <span id="complete-count">0</span></div>
                         <button class="purge-btn" onclick="window.purgeCompletedTasks()">Purge Resolved</button>
                     </div>
                 </div>
@@ -232,10 +292,10 @@
 
             <div class="grid-item col-3" id="tile-ai-engine">
                 <div class="panel">
-                    <h2>Gemini Copilot <span class="drag-handle">⋮⋮ DRAG</span></h2>
-                    <div class="ai-chat-log" id="ai-chat-viewport" style="margin-top: 14px;"></div>
+                    <h2>Gemini Copilot <span class="drag-handle">⋮⋮ MOVE</span></h2>
+                    <div class="ai-chat-log" id="ai-chat-viewport"></div>
                     <div class="control-row" style="margin-bottom: 0;">
-                        <input type="text" id="ai-query-input" class="task-input" placeholder="Query Gemini environment engine...">
+                        <input type="text" id="ai-query-input" class="task-input" placeholder="Query orchestration engine...">
                         <button class="deploy-btn" id="ai-submit-btn" onclick="dispatchAiQuery()">Query</button>
                     </div>
                 </div>
@@ -243,36 +303,36 @@
 
             <div class="grid-item col-2" id="tile-weather">
                 <div class="panel">
-                    <h2>Local Weather <span class="drag-handle">⋮⋮ DRAG</span></h2>
-                    <div class="weather-display" style="margin-top: 14px;">
+                    <h2>Local Weather <span class="drag-handle">⋮⋮ MOVE</span></h2>
+                    <div class="weather-display">
                         <div>
                             <div class="temp-primary" id="weather-temp">--°F</div>
-                            <div style="font-size: 0.9rem; color: var(--text-muted); margin-top: 2px;" id="weather-cond">Loading...</div>
+                            <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 2px;" id="weather-cond">Syncing telemetry...</div>
                         </div>
                         <div class="weather-meta">
-                            <div>Location: <span>Old Town, ME</span></div>
-                            <div>Wind: <span id="weather-wind">-- mph</span></div>
+                            <div>Station: <span>Old Town, ME</span></div>
+                            <div>Velocity: <span id="weather-wind">-- mph</span></div>
                             <div>Humidity: <span id="weather-humidity">--%</span></div>
                         </div>
                     </div>
                     <div class="forecast-container" id="weather-forecast">
-                        <div class="forecast-row"><span>--</span><span>Syncing details...</span><span style="text-align:right;">-- / --</span></div>
+                        <div class="forecast-row"><span>--</span><span>Downloading rows...</span><span style="text-align:right;">-- / --</span></div>
                     </div>
                 </div>
             </div>
 
             <div class="grid-item col-2" id="tile-materials">
                 <div class="panel">
-                    <h2>Material Matrix Lookup <span class="drag-handle">⋮⋮ DRAG</span></h2>
-                    <select id="material-selector-node" class="material-selector" style="margin-top: 14px;" onchange="updateMaterialSpecs()">
+                    <h2>Material Matrix Lookup <span class="drag-handle">⋮⋮ MOVE</span></h2>
+                    <select id="material-selector-node" class="material-selector" onchange="updateMaterialSpecs()">
                         <option value="petg">PETG (Carbon Fiber Reinforced)</option>
                         <option value="pla">PLA+ High-Performance</option>
                         <option value="alu">6061-T6 Aluminum Alloy</option>
                     </select>
                     <table class="spec-table">
-                        <tr><td>Density</td><td id="mat-density">1.27 g/cm³</td></tr>
-                        <tr><td>Tensile Strength</td><td id="mat-tensile">48.5 MPa</td></tr>
-                        <tr><td>Flexural Modulus</td><td id="mat-modulus">3.8 GPa</td></tr>
+                        <tr><td>Volumetric Density</td><td id="mat-density">1.27 g/cm³</td></tr>
+                        <tr><td>Ultimate Tensile Strength</td><td id="mat-tensile">48.5 MPa</td></tr>
+                        <tr><td>Flexural Modulus Matrix</td><td id="mat-modulus">3.8 GPa</td></tr>
                     </table>
                 </div>
             </div>
@@ -280,22 +340,22 @@
             <div class="grid-item col-2" id="tile-calendar">
                 <div class="panel">
                     <div class="calendar-header">
-                        <h2 id="calendar-header-title" style="width:100%;">May 2026 <span class="drag-handle" style="float:right;">⋮⋮ DRAG</span></h2>
+                        <h2 id="calendar-header-title" style="width:100%; border:none; margin-bottom:0; padding-bottom:0;">May 2026 <span class="drag-handle" style="float:right;">⋮⋮ MOVE</span></h2>
                     </div>
-                    <div class="calendar-grid" id="calendar-matrix-grid"></div>
+                    <div class="calendar-grid" id="calendar-matrix-grid" style="margin-top:12px;"></div>
                 </div>
             </div>
 
             <div class="grid-item col-2" id="tile-cycling">
                 <div class="panel">
-                    <h2>Cycling Telemetry <span class="drag-handle">⋮⋮ DRAG</span></h2>
-                    <div class="stats-grid" style="margin-top: 14px;">
+                    <h2>Cycling Telemetry <span class="drag-handle">⋮⋮ MOVE</span></h2>
+                    <div class="stats-grid">
                         <div class="stat-card">
                             <div class="stat-label">Block Mileage</div>
                             <div class="stat-value">76.0 mi</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-label">Avg Speed</div>
+                            <div class="stat-label">Avg Velocity</div>
                             <div class="stat-value">15.8 mph</div>
                         </div>
                     </div>
@@ -308,8 +368,8 @@
 
             <div class="grid-item col-2" id="tile-calculator">
                 <div class="panel">
-                    <h2>Calculator Terminal <span class="drag-handle">⋮⋮ DRAG</span></h2>
-                    <div style="margin-top: 14px; display: flex; flex-direction: column;">
+                    <h2>Calculator Terminal <span class="drag-handle">⋮⋮ MOVE</span></h2>
+                    <div style="margin-top: 4px; display: flex; flex-direction: column;">
                         <div id="calc-display-node" class="calc-screen">0</div>
                         <div class="calc-grid">
                             <button class="calc-btn action" onclick="clearCalculatorDisplay()">C</button>
@@ -325,7 +385,7 @@
                             <button class="calc-btn" onclick="appendCalculatorValue('4')">4</button>
                             <button class="calc-btn" onclick="appendCalculatorValue('5')">5</button>
                             <button class="calc-btn" onclick="appendCalculatorValue('6')">6</button>
-                            <button class="calc-btn action" style="grid-row: span 2; height: 100%;" onclick="evaluateCalculatorResult()">=</button>
+                            <button class="calc-btn action" style="grid-row: span 2; height: 100%; display:flex; align-items:center; justify-content:center;" onclick="evaluateCalculatorResult()">=</button>
                             
                             <button class="calc-btn" onclick="appendCalculatorValue('1')">1</button>
                             <button class="calc-btn" onclick="appendCalculatorValue('2')">2</button>
@@ -340,8 +400,8 @@
 
             <div class="grid-item col-2" id="tile-transit">
                 <div class="panel">
-                    <h2>Transit & Travel Logistics <span class="drag-handle">⋮⋮ DRAG</span></h2>
-                    <ul class="logistics-list" style="margin-top: 14px;">
+                    <h2>Transit & Travel Logistics <span class="drag-handle">⋮⋮ MOVE</span></h2>
+                    <ul class="logistics-list">
                         <li class="logistics-item"><input type="checkbox" id="log-c1" class="logistics-cb" checked><label for="log-c1">Beeline navigation kit loaded</label></li>
                         <li class="logistics-item"><input type="checkbox" id="log-c2" class="logistics-cb"><label for="log-c2">CAD geometry file export backup</label></li>
                         <li class="logistics-item"><input type="checkbox" id="log-c3" class="logistics-cb" checked><label for="log-c3">Route itineraries synchronized</label></li>
@@ -352,8 +412,8 @@
 
             <div class="grid-item col-2" id="tile-converter">
                 <div class="panel">
-                    <h2>Mass & Spec Converter <span class="drag-handle">⋮⋮ DRAG</span></h2>
-                    <div style="margin-top: 14px;">
+                    <h2>Mass & Dimension Scaling <span class="drag-handle">⋮⋮ MOVE</span></h2>
+                    <div style="margin-top: 4px; display:flex; flex-direction:column; gap:4px;">
                         <div class="converter-row">
                             <input type="number" id="conv-input-grams" class="task-input" placeholder="Grams (g)" oninput="convertMassUnits('g')">
                             <input type="number" id="conv-input-oz" class="task-input" placeholder="Ounces (oz)" oninput="convertMassUnits('oz')">
@@ -368,17 +428,17 @@
 
             <div class="grid-item col-2" id="tile-scratch">
                 <div class="panel">
-                    <h2>Notes Scratch Pad <span class="drag-handle">⋮⋮ DRAG</span></h2>
-                    <textarea id="scratch-pad-node" class="scratch-pad" placeholder="Drop temporal code variables, log streams or workspace references..." oninput="persistScratchText(this.value)"></textarea>
+                    <h2>Persistent Notes Scratch Pad <span class="drag-handle">⋮⋮ MOVE</span></h2>
+                    <textarea id="scratch-pad-node" class="scratch-pad" placeholder="Drop temporary code blocks, array fields, or file targets here..." oninput="persistScratchText(this.value)"></textarea>
                 </div>
             </div>
 
             <div class="grid-item col-2" id="tile-stopwatch">
                 <div class="panel">
-                    <h2>System Split Timer <span class="drag-handle">⋮⋮ DRAG</span></h2>
+                    <h2>System Split Timer <span class="drag-handle">⋮⋮ MOVE</span></h2>
                     <div class="timer-display" id="stopwatch-display-lbl">00:00.0</div>
-                    <div class="control-row" style="margin-bottom:0;">
-                        <button class="deploy-btn" style="flex:1;" id="stopwatch-toggle" onclick="toggleStopwatchSystem()">Start</button>
+                    <div class="control-row" style="margin-bottom:0; gap:8px;">
+                        <button class="deploy-btn" style="flex:1;" id="stopwatch-toggle" onclick="toggleStopwatchSystem()">Start Intercept</button>
                         <button class="deploy-btn" onclick="resetStopwatchSystem()">Reset</button>
                     </div>
                 </div>
@@ -393,7 +453,6 @@
 
         const GEMINI_API_KEY = "YOUR_GEMINI_API_KEY_HERE"; 
 
-        // CRITICAL FIX: Explicitly routing databaseURL to clear fallback warning state
         const firebaseConfig = {
             apiKey: "AIzaSyACQZ-5RfnQg7gT1_V2PuxG4nA6uRm28uM",
             authDomain: "my-workspace-dashboard.firebaseapp.com",
@@ -418,7 +477,7 @@
 
         const weatherCodeMap = {
             0: "Clear Skies", 1: "Mainly Clear", 2: "Partly Cloudy", 3: "Overcast",
-            45: "Foggy", 48: "Depositing Rime Fog", 51: "Light Drizzle", 53: "Moderate Drizzle",
+            45: "Foggy", 48: "Rime Fog", 51: "Light Drizzle", 53: "Moderate Drizzle",
             55: "Dense Drizzle", 61: "Slight Rain", 63: "Moderate Rain", 65: "Heavy Rain",
             71: "Slight Snowfall", 73: "Moderate Snowfall", 75: "Heavy Snowfall",
             77: "Snow Grains", 80: "Slight Showers", 81: "Moderate Showers", 82: "Violent Showers",
@@ -506,7 +565,7 @@
             document.getElementById('scratch-pad-node').value = storedText;
         }
 
-        // --- STOPWATCH ENGINE ---
+        // --- STOPWATCH TIMING ENGINE ---
         let stopwatchId = null;
         let stopwatchStartTime = 0;
         let stopwatchElapsed = 0;
@@ -516,11 +575,11 @@
             if (stopwatchId) {
                 clearInterval(stopwatchId);
                 stopwatchId = null;
-                btn.textContent = "Start";
+                btn.textContent = "Start Intercept";
             } else {
                 stopwatchStartTime = Date.now() - stopwatchElapsed;
                 stopwatchId = setInterval(refreshStopwatchUi, 100);
-                btn.textContent = "Stop";
+                btn.textContent = "Halt System";
             }
         };
 
@@ -529,7 +588,7 @@
             stopwatchId = null;
             stopwatchElapsed = 0;
             document.getElementById('stopwatch-display-lbl').textContent = "00:00.0";
-            document.getElementById('stopwatch-toggle').textContent = "Start";
+            document.getElementById('stopwatch-toggle').textContent = "Start Intercept";
         };
 
         function refreshStopwatchUi() {
@@ -592,6 +651,7 @@
             document.getElementById('mat-modulus').textContent = mat.modulus;
         };
 
+        // FIXED CALCULATOR CHARACTER APPEND HANDLERS
         let calcExpressionStr = "";
         window.appendCalculatorValue = function(val) {
             const display = document.getElementById('calc-display-node');
@@ -628,6 +688,24 @@
             renderStaticCalendar();
             initDragAndDropSystem();
             restoreScratchText();
+            
+            // Render actual local build time stamp in calming splash load screen
+            const stampNode = document.getElementById('splash-timestamp-node');
+            if(stampNode) {
+                const now = new Date();
+                stampNode.textContent = `INSTANCE // BOOT_MAPPING_OK : ${now.toLocaleTimeString()}`;
+            }
+
+            // Calming Splash Auto-Fade Timeout Logic
+            setTimeout(() => {
+                const overlay = document.getElementById('splash-screen-overlay');
+                if (overlay) {
+                    overlay.style.opacity = '0';
+                    setTimeout(() => {
+                        overlay.style.visibility = 'hidden';
+                    }, 800);
+                }
+            }, 1400);
             
             onValue(dataSyncRef, (snapshot) => {
                 const data = snapshot.val();
@@ -716,7 +794,7 @@
             } catch (err) { console.error(err); }
         }
 
-        // --- WEATHER ENGINE ---
+        // --- WEATHER PIPELINE ---
         async function fetchLiveWeatherPipeline() {
             const lat = 44.9356;
             const lon = -68.6464;
@@ -786,14 +864,14 @@
             }
         }
 
-        // --- DIRECT COPILOT API CHANNEL ---
+        // --- COPILOT API CHANNEL CHANNEL ---
         function initDirectGeminiFetchChannel() {
             const logViewport = document.getElementById('ai-chat-viewport');
             if (GEMINI_API_KEY === "YOUR_GEMINI_API_KEY_HERE") {
-                logViewport.innerHTML = '<div class="chat-bubble bubble-gemini" style="color:var(--accent-alert);"><strong>[Config Required]</strong> Paste your API key on line 251 to activate the Copilot.</div>';
+                logViewport.innerHTML = '<div class="chat-bubble bubble-gemini" style="color:var(--accent-alert);"><strong>[Config Needed]</strong> Insert your API key on line 262 to active the query engine.</div>';
                 return;
             }
-            logViewport.innerHTML = '<div class="chat-bubble bubble-gemini"><strong>[Gemini Engine Online]</strong> Direct connection ready.</div>';
+            logViewport.innerHTML = '<div class="chat-bubble bubble-gemini"><strong>[Gemini Framework Online]</strong> Awaiting workspace variables...</div>';
         }
 
         window.dispatchAiQuery = async function() {
@@ -804,7 +882,7 @@
             
             if (!rawText) return;
             if (GEMINI_API_KEY === "YOUR_GEMINI_API_KEY_HERE") {
-                alert("Please add your Gemini API Key on line 251 first.");
+                alert("Please add your Gemini API Key on line 262 first.");
                 return;
             }
 
@@ -819,7 +897,7 @@
 
             const loadingBubble = document.createElement('div');
             loadingBubble.className = 'chat-bubble bubble-gemini';
-            loadingBubble.innerHTML = '<em>Awaiting Gemini response...</em>';
+            loadingBubble.innerHTML = '<em>Awaiting pipeline stream data...</em>';
             logViewport.appendChild(loadingBubble);
             logViewport.scrollTop = logViewport.scrollHeight;
 
@@ -859,7 +937,7 @@
             let remCount = 0, compCount = 0;
 
             if (datasetState.length === 0) {
-                container.innerHTML = '<div style="color:var(--text-dark); padding:10px;">Queue empty.</div>';
+                container.innerHTML = '<div style="color:var(--text-dark); padding:10px; font-size:0.88rem;">Queue clean. No active log flags.</div>';
             } else {
                 datasetState.forEach((task, index) => {
                     task.completed ? compCount++ : remCount++;
@@ -867,7 +945,7 @@
                     li.className = 'checklist-item' + (task.completed ? ' resolved' : '');
                     li.innerHTML = `
                         <div class="task-left-block">
-                            <span class="status-box">${task.completed ? '[X]' : '[ ]'}</span>
+                            <span class="status-box">${task.completed ? '●' : '○'}</span>
                             <span class="task-text">${task.text}</span>
                         </div>
                         <button class="clear-single-btn">Delete</button>
