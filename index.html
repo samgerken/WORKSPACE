@@ -163,14 +163,12 @@
             }
         }
 
-        /* AUTO-PACK STACK CHANNELS */
         .dashboard-column {
             display: flex;
             flex-direction: column;
             gap: 24px;
         }
 
-        /* SEMANTIC INDUSTRIAL PANEL SEGMENTS */
         section.panel, div.panel {
             background: var(--bg-surface);
             border: 1px solid var(--border-subtle);
@@ -339,7 +337,7 @@
         .bubble-gemini p { margin-bottom: 8px; }
         .bubble-gemini p:last-child { margin-bottom: 0; }
 
-        /* WEATHER WIDGET CONDITIONS */
+        /* WEATHER CONDITIONS */
         .weather-display { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: center; margin-bottom: 16px; }
         .temp-primary { font-size: 2.4rem; font-weight: 700; color: var(--text-primary); line-height: 1; }
         .weather-meta { font-size: 0.85rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 4px; }
@@ -377,7 +375,7 @@
         .news-title { font-size: 0.9rem; font-weight: 600; color: var(--text-primary); line-height: 1.4; }
         .news-source { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; }
 
-        /* METRICS PANELS & UTILITY OVERLAYS */
+        /* METRICS PANELS */
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
         .stat-card { background: var(--bg-terminal); border: 1px solid var(--border-subtle); padding: 12px; border-radius: 6px; }
         .stat-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
@@ -391,7 +389,6 @@
         .scratchpad-area { background: var(--bg-terminal); color: var(--text-primary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 14px; font-family: monospace; font-size: 0.85rem; line-height: 1.4; resize: vertical; min-height: 110px; outline: none; width: 100%; }
         .scratchpad-area:focus { border-color: var(--border-active); }
 
-        /* MATERIAL SELECTOR REFERENCES */
         .material-selector { background: var(--bg-terminal); border: 1px solid var(--border-subtle); color: var(--text-primary); width: 100%; padding: 10px; border-radius: 6px; font-family: inherit; font-size: 0.9rem; outline: none; margin-bottom: 12px; }
         .spec-table { width: 100%; font-family: monospace; font-size: 0.8rem; border-collapse: collapse; }
         .spec-table td { padding: 6px 8px; border-bottom: 1px solid var(--border-subtle); }
@@ -402,7 +399,9 @@
     <script type="importmap">
       {
         "imports": {
-          "@google/genai": "https://esm.run/@google/genai"
+          "@google/genai": "https://esm.run/@google/genai",
+          "firebase/app": "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js",
+          "firebase/database": "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js"
         }
       }
     </script>
@@ -420,7 +419,7 @@
                     Theme: <span id="theme-status-lbl">Dark</span>
                 </button>
                 <div style="font-size: 0.9rem; color: var(--text-muted);">
-                    <span style="color: var(--text-primary); font-weight: 600;">Sunday, May 17, 2026</span>
+                    <span style="color: var(--text-primary); font-weight: 600;">Monday, May 18, 2026</span>
                 </div>
             </div>
         </header>
@@ -447,7 +446,7 @@
                 </div>
                 <div class="ai-chat-log" id="ai-chat-viewport" role="log"></div>
                 <div class="control-row" style="margin-bottom: 0;">
-                    <input type="text" id="ai-query-input" class="task-input" placeholder="Initializing baseline configuration pipeline..." autocomplete="off" aria-label="Assistant query entry field">
+                    <input type="text" id="ai-query-input" class="task-input" placeholder="Checking terminal credentials..." autocomplete="off" aria-label="Assistant query entry field">
                     <button class="deploy-btn" id="ai-submit-btn" onclick="dispatchAiQuery()">Query</button>
                 </div>
             </div>
@@ -466,17 +465,17 @@
                             <div style="font-size: 0.9rem; color: var(--text-muted); margin-top: 2px;">Overcast / Clear Intervals</div>
                         </div>
                         <div class="weather-meta">
-                            <div>Location: <span>Orono / Bangor, ME</span></div>
+                            <div>Location: <span>Old Town, ME</span></div>
                             <div>Wind: <span>WNW at 9 mph</span></div>
                             <div>Humidity: <span>42%</span></div>
                             <div>Precipitation: <span>0%</span></div>
                         </div>
                     </div>
                     <div class="forecast-container">
-                        <div class="forecast-row"><span class="forecast-day">Mon 05/18</span><span class="forecast-cond">Scattered Clouds</span><span class="forecast-temp"><span class="high">62°</span><span class="low">44°</span></span></div>
                         <div class="forecast-row"><span class="forecast-day">Tue 05/19</span><span class="forecast-cond">AM Showers</span><span class="forecast-temp"><span class="high">55°</span><span class="low">40°</span></span></div>
                         <div class="forecast-row"><span class="forecast-day">Wed 05/20</span><span class="forecast-cond">Clear Skies</span><span class="forecast-temp"><span class="high">66°</span><span class="low">42°</span></span></div>
                         <div class="forecast-row"><span class="forecast-day">Thu 05/21</span><span class="forecast-cond">Mostly Sunny</span><span class="forecast-temp"><span class="high">68°</span><span class="low">48°</span></span></div>
+                        <div class="forecast-row"><span class="forecast-day">Fri 05/22</span><span class="forecast-cond">Partly Cloudy</span><span class="forecast-temp"><span class="high">70°</span><span class="low">51°</span></span></div>
                     </div>
                 </div>
 
@@ -589,22 +588,31 @@
 
     <script type="module">
         import { GoogleGenAI } from "@google/genai";
+        import { initializeApp } from "firebase/app";
+        import { getDatabase, ref, set, onValue } from "firebase/database";
 
-        // Secure baseline authentication configuration module
-        let TARGET_PIPELINE_KEY = localStorage.getItem('workspace_gemini_key') || '';
+        // Your specific web app's Firebase cloud configurations
+        const firebaseConfig = {
+            apiKey: "AIzaSyACQZ-5RfnQg7gt1_V2PuxG4nA6uRm28uM",
+            authDomain: "my-workspace-dashboard.firebaseapp.com",
+            databaseURL: "https://my-workspace-dashboard-default-rtdb.firebaseio.com",
+            projectId: "my-workspace-dashboard",
+            storageBucket: "my-workspace-dashboard.firebasestorage.app",
+            messagingSenderId: "584369640657",
+            appId: "1:584369640657:web:160328fd21b1b4993ce1f0"
+        };
+
+        // Initialize App Instances
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
         let aiClient = null;
         let activeChatSession = null;
 
-        const realCurrentDate = new Date(2026, 4, 17);
+        const realCurrentDate = new Date(2026, 4, 18);
         let displayingYear = 2026;
         let displayingMonth = 4; 
         let datasetState = [];
-
-        const fallbackTasks = [
-            "Validate component design assembly bounds",
-            "Refine layout structural script blocks",
-            "Distribute updated technical project manifests to Rod"
-        ];
 
         const materialDatabase = {
             petg: { density: "1.27 g/cm³", tensile: "48.5 MPa", modulus: "3.8 GPa", thermal: "78°C" },
@@ -614,11 +622,12 @@
 
         window.addEventListener('DOMContentLoaded', function() {
             initDashboardTheme();
-            loadInitialState();
-            synchronizeChecklist();
             initializeAutomaticPipeline();
             renderWindowsCalendar();
-            initializeScratchpadEngine();
+            
+            // Activate cloud sync listeners
+            syncTasksWithFirebase();
+            syncScratchpadWithFirebase();
         });
 
         function initDashboardTheme() {
@@ -635,12 +644,47 @@
             document.getElementById('theme-status-lbl').textContent = targetTheme.toUpperCase();
         }
 
-        function initializeScratchpadEngine() {
+        // Realtime Checklist Synchronization Hub
+        function syncTasksWithFirebase() {
+            const tasksRef = ref(db, 'dashboard/tasks');
+            onValue(tasksRef, (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    datasetState = data;
+                } else {
+                    // Fallback default checklist if database is currently empty
+                    datasetState = [
+                        { text: "Validate component design assembly bounds", completed: false },
+                        { text: "Refine layout structural script blocks", completed: false },
+                        { text: "Distribute updated technical project manifests", completed: false }
+                    ];
+                    set(tasksRef, datasetState);
+                }
+                synchronizeChecklist();
+            });
+        }
+
+        // Realtime Scratchpad Terminal Auto-Save Engine
+        function syncScratchpadWithFirebase() {
             const node = document.getElementById('scratchpad-text-node');
             if (!node) return;
-            const cachedNotes = localStorage.getItem('workspace_scratchpad_data');
-            if (cachedNotes) node.value = cachedNotes;
-            node.addEventListener('input', () => localStorage.setItem('workspace_scratchpad_data', node.value));
+            
+            const scratchRef = ref(db, 'dashboard/scratchpad');
+            
+            onValue(scratchRef, (snapshot) => {
+                const val = snapshot.val();
+                if (val !== null && document.activeElement !== node) {
+                    node.value = val;
+                }
+            });
+
+            let saveTimeout;
+            node.addEventListener('input', () => {
+                clearTimeout(saveTimeout);
+                saveTimeout = setTimeout(() => {
+                    set(scratchRef, node.value);
+                }, 300); // 300ms built-in debounce to optimize operations
+            });
         }
 
         window.updateMaterialSpecs = function() {
@@ -666,46 +710,43 @@
         function initializeAutomaticPipeline() {
             const logViewport = document.getElementById('ai-chat-viewport');
             const queryInput = document.getElementById('ai-query-input');
-            const submitBtn = document.getElementById('ai-submit-btn');
+            const clientApiKey = localStorage.getItem('workspace_gemini_key');
             
-            if (!TARGET_PIPELINE_KEY) {
+            if (!clientApiKey) {
                 logViewport.innerHTML = `
                     <div class="chat-bubble bubble-gemini">
-                        <strong>[API Key Required]:</strong><br>
-                        Please enter your Gemini API key to activate the console terminal. This key will be locked locally to this machine.
+                        <strong>[System Prompt Required]:</strong> Let's connect your terminal interface to the AI layer.
                         <div style="margin-top: 12px; display: flex; gap: 8px;">
-                            <input type="password" id="setup-key-input" class="task-input" style="padding: 8px 12px; font-size: 0.85rem;" placeholder="Paste your AIzaSy... key here">
-                            <button class="deploy-btn" onclick="saveApiKey()">Save</button>
+                            <input type="password" id="popup-api-key-field" class="task-input" style="padding: 6px 10px; font-size:0.8rem;" placeholder="Paste API Key (AIzaSy...)">
+                            <button class="deploy-btn" id="save-key-action-btn" style="padding: 0 12px; font-size:0.8rem;">Save</button>
                         </div>
                     </div>`;
-                queryInput.placeholder = "Awaiting API baseline configurations...";
+                queryInput.placeholder = "Awaiting secure API authorization configuration key...";
                 queryInput.disabled = true;
-                if(submitBtn) submitBtn.disabled = true;
+                document.getElementById('ai-submit-btn').disabled = true;
+                
+                document.getElementById('save-key-action-btn').addEventListener('click', () => {
+                    const keyVal = document.getElementById('popup-api-key-field').value.trim();
+                    if(keyVal.startsWith('AIzaSy')) {
+                        localStorage.setItem('workspace_gemini_key', keyVal);
+                        location.reload();
+                    } else {
+                        alert('Invalid Key Format. Must begin with AIzaSy');
+                    }
+                });
                 return;
             }
 
             try {
-                aiClient = new GoogleGenAI({ apiKey: TARGET_PIPELINE_KEY });
+                aiClient = new GoogleGenAI({ apiKey: clientApiKey });
                 activeChatSession = aiClient.chats.create({
                     model: 'gemini-2.5-flash',
                     config: { systemInstruction: "You are an intelligent terminal script assistant. Provide architectural layout guidance, answer queries, perform technical breakdowns, or write code block metrics. Maintain clarity, utility, and immediate conversational brevity." }
                 });
                 logViewport.innerHTML = '<div class="chat-bubble bubble-gemini"><strong>[Workspace Assistant Active]</strong><br>The console terminal is online. Ask code calculations, engineering logic, or general workspace operations.</div>';
                 queryInput.placeholder = "Ask Gemini a question...";
-                queryInput.disabled = false;
-                if(submitBtn) submitBtn.disabled = false;
             } catch (err) {
                 logViewport.innerHTML = `<div class="chat-bubble bubble-gemini" style="color:var(--accent-alert);"><strong>[Auto-Connect Failed]:</strong> ${err.message}</div>`;
-            }
-        }
-
-        window.saveApiKey = function() {
-            const input = document.getElementById('setup-key-input');
-            if (input && input.value.trim()) {
-                const userKey = input.value.trim();
-                localStorage.setItem('workspace_gemini_key', userKey);
-                TARGET_PIPELINE_KEY = userKey;
-                initializeAutomaticPipeline();
             }
         }
 
@@ -799,14 +840,6 @@
             renderWindowsCalendar();
         }
 
-        function loadInitialState() {
-            const cachedData = localStorage.getItem('workspace_daily_checklist');
-            if (cachedData) { datasetState = JSON.parse(cachedData); }
-            else { datasetState = fallbackTasks.map(t => ({ text: t, completed: false })); saveCurrentState(); }
-        }
-
-        function saveCurrentState() { localStorage.setItem('workspace_daily_checklist', JSON.stringify(datasetState)); }
-
         function synchronizeChecklist() {
             const container = document.getElementById('checklist-render-node');
             container.innerHTML = '';
@@ -833,8 +866,7 @@
                     li.addEventListener('click', function(e) {
                         if (e.target.classList.contains('clear-single-btn')) return;
                         datasetState[index].completed = !datasetState[index].completed;
-                        saveCurrentState();
-                        synchronizeChecklist();
+                        set(ref(db, 'dashboard/tasks'), datasetState);
                     });
                     li.querySelector('.clear-single-btn').addEventListener('click', function(e) {
                         e.stopPropagation();
@@ -852,14 +884,20 @@
             const val = inputNode.value.trim();
             if (!val) return;
             datasetState.push({ text: val, completed: false });
-            saveCurrentState();
-            synchronizeChecklist();
+            set(ref(db, 'dashboard/tasks'), datasetState);
             inputNode.value = '';
             inputNode.focus();
         }
 
-        function deleteTargetTask(index) { datasetState.splice(index, 1); saveCurrentState(); synchronizeChecklist(); }
-        window.purgeCompletedTasks = function() { datasetState = datasetState.filter(t => !t.completed); saveCurrentState(); synchronizeChecklist(); }
+        function deleteTargetTask(index) { 
+            datasetState.splice(index, 1); 
+            set(ref(db, 'dashboard/tasks'), datasetState);
+        }
+        
+        window.purgeCompletedTasks = function() { 
+            datasetState = datasetState.filter(t => !t.completed); 
+            set(ref(db, 'dashboard/tasks'), datasetState);
+        }
     </script>
 </body>
-</html>
+</html> 
