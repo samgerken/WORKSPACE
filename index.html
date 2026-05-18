@@ -76,6 +76,7 @@
         .task-input { flex: 1; background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 12px 16px; color: var(--text-primary); font-family: inherit; font-size: 0.95rem; outline: none; min-width: 0; }
         .task-input:focus { border-color: var(--border-active); }
         .deploy-btn { background: var(--text-primary); color: var(--bg-base); border: none; border-radius: 6px; padding: 0 20px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+        .deploy-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
         .checklist-container { list-style: none; }
         .checklist-item { padding: 12px 10px; border-bottom: 1px solid var(--border-subtle); font-size: 0.95rem; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
@@ -144,7 +145,7 @@
     </style>
     
     <script type="importmap">
-      { "imports": { "@google/genai": "https://esm.run/@google/genai" } }
+      { "imports": { "@mlc-ai/web-llm": "https://esm.run/@mlc-ai/web-llm" } }
     </script>
 </head>
 <body>
@@ -178,11 +179,11 @@
 
             <div class="col-3">
                 <div class="panel">
-                    <h2>Gemini Assistant Console</h2>
+                    <h2>Local Engine Assistant</h2>
                     <div class="ai-chat-log" id="ai-chat-viewport" style="margin-top: 14px;"></div>
                     <div class="control-row" style="margin-bottom: 0;">
-                        <input type="text" id="ai-query-input" class="task-input" placeholder="Query model coordinates...">
-                        <button class="deploy-btn" id="ai-submit-btn" onclick="dispatchAiQuery()">Query</button>
+                        <input type="text" id="ai-query-input" class="task-input" placeholder="Loading local engine runtime layers..." disabled>
+                        <button class="deploy-btn" id="ai-submit-btn" onclick="dispatchAiQuery()" disabled>Query</button>
                     </div>
                 </div>
             </div>
@@ -192,18 +193,17 @@
                     <h2>Local Weather</h2>
                     <div class="weather-display" style="margin-top: 14px;">
                         <div>
-                            <div class="temp-primary">58°F</div>
-                            <div style="font-size: 0.9rem; color: var(--text-muted); margin-top: 2px;">Overcast</div>
+                            <div class="temp-primary" id="weather-temp">--°F</div>
+                            <div style="font-size: 0.9rem; color: var(--text-muted); margin-top: 2px;" id="weather-cond">Loading...</div>
                         </div>
                         <div class="weather-meta">
                             <div>Location: <span>Old Town, ME</span></div>
-                            <div>Wind: <span>WNW 9 mph</span></div>
-                            <div>Humidity: <span>42%</span></div>
+                            <div>Wind: <span id="weather-wind">-- mph</span></div>
+                            <div>Humidity: <span id="weather-humidity">--%</span></div>
                         </div>
                     </div>
-                    <div class="forecast-container">
-                        <div class="forecast-row"><span>Tue 05/19</span><span>AM Showers</span><span style="text-align:right;">55° / 40°</span></div>
-                        <div class="forecast-row"><span>Wed 05/20</span><span>Clear Skies</span><span style="text-align:right;">66° / 42°</span></div>
+                    <div class="forecast-container" id="weather-forecast">
+                        <div class="forecast-row"><span>--</span><span>Syncing details...</span><span style="text-align:right;">-- / --</span></div>
                     </div>
                 </div>
 
@@ -296,9 +296,8 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-        import { GoogleGenAI } from "@google/genai";
+        import * as webllm from "@mlc-ai/web-llm";
 
-        // VERIFIED CONFIGURATION BLOCK
         const firebaseConfig = {
             apiKey: "AIzaSyACQZ-5RfnQg7gT1_V2PuxG4nA6uRm28uM",
             authDomain: "my-workspace-dashboard.firebaseapp.com",
@@ -311,12 +310,11 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
-        
         const dataSyncRef = ref(db, 'dashboard/tasks');
 
-        let aiClient = null;
-        let activeChatSession = null;
+        let engineInstance = null;
         let datasetState = [];
+        const targetModelId = "Qwen2.5-1.5B-Instruct-q4f16_1-MLC";
 
         const materialDatabase = {
             petg: { density: "1.27 g/cm³", tensile: "48.5 MPa", modulus: "3.8 GPa" },
@@ -324,28 +322,27 @@
             alu: { density: "2.70 g/cm³", tensile: "310 MPa", modulus: "68.9 GPa" }
         };
 
-        // --- ATTACHED GLOBAL APP CONTROLS ---
+        // Mapping Open-Meteo WMO weather codes to human-readable text strings
+        const weatherCodeMap = {
+            0: "Clear Skies", 1: "Mainly Clear", 2: "Partly Cloudy", 3: "Overcast",
+            45: "Foggy", 48: "Depositing Rime Fog", 51: "Light Drizzle", 53: "Moderate Drizzle",
+            55: "Dense Drizzle", 61: "Slight Rain", 63: "Moderate Rain", 65: "Heavy Rain",
+            71: "Slight Snowfall", 73: "Moderate Snowfall", 75: "Heavy Snowfall",
+            77: "Snow Grains", 80: "Slight Showers", 81: "Moderate Showers", 82: "Violent Showers",
+            85: "Slight Snow Showers", 86: "Heavy Snow Showers", 95: "Thunderstorm"
+        };
+
         window.commitNewTask = function() {
             const inputNode = document.getElementById('task-input-node');
             if (!inputNode) return;
-            
             const val = inputNode.value.trim();
             if (!val) return;
-            
-            if (!Array.isArray(datasetState)) {
-                datasetState = [];
-            }
-            
+            if (!Array.isArray(datasetState)) datasetState = [];
             datasetState.push({ text: val, completed: false });
-            
-            set(ref(db, 'dashboard/tasks'), datasetState)
-                .then(() => {
-                    inputNode.value = '';
-                    inputNode.focus();
-                })
-                .catch((err) => {
-                    console.error("Write error: ", err);
-                });
+            set(ref(db, 'dashboard/tasks'), datasetState).then(() => {
+                inputNode.value = '';
+                inputNode.focus();
+            });
         };
 
         window.toggleTaskCompleted = function(index) {
@@ -383,7 +380,6 @@
             document.getElementById('mat-modulus').textContent = mat.modulus;
         };
 
-        // --- CALCULATOR SYSTEM CONTROLS ---
         let calcExpressionStr = "";
         window.appendCalculatorValue = function(val) {
             const display = document.getElementById('calc-display-node');
@@ -413,22 +409,63 @@
             }
         };
 
-        // --- DATA FLOW SUBSCRIPTIONS ---
         window.addEventListener('DOMContentLoaded', () => {
             initDashboardTheme();
-            initializeAutomaticPipeline();
+            initWebLlmEngine();
+            fetchLiveWeatherPipeline();
             renderStaticCalendar();
             
             onValue(dataSyncRef, (snapshot) => {
                 const data = snapshot.val();
-                if (data) {
-                    datasetState = Array.isArray(data) ? data : Object.values(data);
-                } else {
-                    datasetState = [];
-                }
+                datasetState = data ? (Array.isArray(data) ? data : Object.values(data)) : [];
                 synchronizeChecklist();
             });
         });
+
+        // --- LIVE WEATHER DATA SUBSCRIPTION ENGINE ---
+        async function fetchLiveWeatherPipeline() {
+            // Latitude & Longitude targeted coordinates for Old Town, ME area
+            const lat = 44.9356;
+            const lon = -68.6464;
+            const apiUrl = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=auto`;
+
+            try {
+                const res = await fetch(apiUrl);
+                if (!res.ok) throw new Error("Network latency fault");
+                const data = await res.json();
+
+                // 1. Process Current Metrics
+                const current = data.current;
+                document.getElementById('weather-temp').textContent = `${Math.round(current.temperature_2m)}°F`;
+                document.getElementById('weather-cond').textContent = weatherCodeMap[current.weather_code] || "Overcast";
+                document.getElementById('weather-wind').textContent = `${Math.round(current.wind_speed_10m)} mph`;
+                document.getElementById('weather-humidity').textContent = `${current.relative_humidity_2m}%`;
+
+                // 2. Process Two-Day Forecast Blocks
+                const daily = data.daily;
+                const forecastContainer = document.getElementById('weather-forecast');
+                forecastContainer.innerHTML = ''; // Wipe formatting placeholders
+
+                for (let i = 0; i < 2; i++) {
+                    const rawDate = new Date(daily.time[i] + 'T00:00:00');
+                    const options = { weekday: 'short', month: '2-digit', day: '2-digit' };
+                    const formattedDate = rawDate.toLocaleDateString('en-US', options);
+                    
+                    const conditionString = weatherCodeMap[daily.weather_code[i]] || "Variable Skies";
+                    const maxT = Math.round(daily.temperature_2m_max[i]);
+                    const minT = Math.round(daily.temperature_2m_min[i]);
+
+                    const row = document.createElement('div');
+                    row.className = 'forecast-row';
+                    row.innerHTML = `<span>${formattedDate}</span><span>${conditionString}</span><span style="text-align:right;">${maxT}° / ${minT}°</span>`;
+                    forecastContainer.appendChild(row);
+                }
+
+            } catch (err) {
+                console.error("Weather refresh failed: ", err);
+                document.getElementById('weather-cond').textContent = "Offline";
+            }
+        }
 
         function initDashboardTheme() {
             const preserved = localStorage.getItem('workspace_theme') || 'dark';
@@ -460,35 +497,29 @@
             }
         }
 
-        function parseMarkdown(text) {
-            return text.replace(/`([^`]+)`/g, '<code>$1</code>').replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-        }
-
-        function initializeAutomaticPipeline() {
+        async function initWebLlmEngine() {
             const logViewport = document.getElementById('ai-chat-viewport');
-            let activeApiKey = localStorage.getItem('workspace_gemini_key');
+            logViewport.innerHTML = '<div class="chat-bubble bubble-gemini"><strong>[System]</strong> Testing WebGPU initialization...</div>';
             
-            if (!activeApiKey) {
-                activeApiKey = prompt("Enter a valid Gemini API Key to initialize the console:");
-                if (activeApiKey) {
-                    localStorage.setItem('workspace_gemini_key', activeApiKey.trim());
-                }
-            }
-
-            if (!activeApiKey) {
-                logViewport.innerHTML = '<div class="chat-bubble bubble-gemini" style="color:var(--accent-alert);"><strong>[Console Offline]</strong> API Key required.</div>';
-                return;
-            }
-
             try {
-                aiClient = new GoogleGenAI({ apiKey: activeApiKey });
-                activeChatSession = aiClient.chats.create({
-                    model: 'gemini-2.5-flash',
-                    config: { systemInstruction: "You are a concise terminal assistant." }
+                engineInstance = new webllm.CreateMLCEngine();
+                engineInstance.setInitProgressCallback((report) => {
+                    logViewport.innerHTML = `<div class="chat-bubble bubble-gemini"><strong>[Local Engine Build]</strong><br>${report.text}</div>`;
+                    logViewport.scrollTop = logViewport.scrollHeight;
                 });
-                logViewport.innerHTML = '<div class="chat-bubble bubble-gemini"><strong>[Console Online]</strong> Secure local session active.</div>';
+
+                await engineInstance.reload(targetModelId, {
+                    temperature: 0.3,
+                    system_prompt: "You are a concise engineering dashboard copilot."
+                });
+
+                logViewport.innerHTML = '<div class="chat-bubble bubble-gemini"><strong>[Engine Online]</strong> WebGPU pipeline complete. Model compiled locally and ready with zero query caps.</div>';
+                
+                document.getElementById('ai-query-input').disabled = false;
+                document.getElementById('ai-submit-btn').disabled = false;
+                document.getElementById('ai-query-input').placeholder = "Query local runtime memory layer...";
             } catch (err) {
-                logViewport.innerHTML = `<div class="chat-bubble bubble-gemini" style="color:var(--accent-alert);">Initialization Error: ${err.message}</div>`;
+                logViewport.innerHTML = `<div class="chat-bubble bubble-gemini" style="color:var(--accent-alert);"><strong>WebGPU Init Fault:</strong> ${err.message}<br><br>Make sure your browser has WebGPU enabled (Chrome/Edge/Brave/Safari 18+).</div>`;
             }
         }
 
@@ -497,7 +528,7 @@
             const logViewport = document.getElementById('ai-chat-viewport');
             const submitBtn = document.getElementById('ai-submit-btn');
             const rawText = queryInput.value.trim();
-            if (!rawText || !activeChatSession) return;
+            if (!rawText || !engineInstance) return;
 
             queryInput.disabled = true;
             submitBtn.disabled = true;
@@ -510,20 +541,16 @@
 
             const loadingBubble = document.createElement('div');
             loadingBubble.className = 'chat-bubble bubble-gemini';
-            loadingBubble.innerHTML = '<em>Thinking...</em>';
+            loadingBubble.innerHTML = '<em>Thinking (Local GPU)...</em>';
             logViewport.appendChild(loadingBubble);
             logViewport.scrollTop = logViewport.scrollHeight;
 
             try {
-                let response = await activeChatSession.sendMessage({ message: rawText });
-                loadingBubble.innerHTML = parseMarkdown(response.text);
+                const messages = [{ role: "user", content: rawText }];
+                const reply = await engineInstance.chat.completions.create({ messages });
+                loadingBubble.textContent = reply.choices[0].message.content;
             } catch (err) {
-                if (err.message.includes("API_KEY_INVALID") || err.message.includes("403")) {
-                    loadingBubble.innerHTML = `<span style="color:var(--accent-alert);">Key rejected. Storage cleared. Refresh to retry.</span>`;
-                    localStorage.removeItem('workspace_gemini_key');
-                } else {
-                    loadingBubble.innerHTML = `<span>Error: ${err.message}</span>`;
-                }
+                loadingBubble.innerHTML = `<span style="color:var(--accent-alert);">Engine processing failure: ${err.message}</span>`;
             }
             
             queryInput.disabled = false;
@@ -537,7 +564,7 @@
             container.innerHTML = '';
             let remCount = 0, compCount = 0;
 
-            if (!datasetState || datasetState.length === 0) {
+            if (datasetState.length === 0) {
                 container.innerHTML = '<div style="color:var(--text-dark); padding:10px;">Queue empty.</div>';
             } else {
                 datasetState.forEach((task, index) => {
