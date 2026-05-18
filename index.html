@@ -453,8 +453,7 @@
 
                     li.querySelector('.clear-single-btn').addEventListener('click', (e) => {
                         e.stopPropagation();
-                        datasetState.splice(index, 1);
-                        set(dataSyncRef, datasetState);
+                        window.deleteTargetTask(index);
                     });
                     container.appendChild(li);
                 });
@@ -471,6 +470,11 @@
             set(dataSyncRef, datasetState);
             inputNode.value = '';
             inputNode.focus();
+        }
+
+        window.deleteTargetTask = function(index) {
+            datasetState.splice(index, 1);
+            set(dataSyncRef, datasetState);
         }
 
         window.purgeCompletedTasks = function() {
