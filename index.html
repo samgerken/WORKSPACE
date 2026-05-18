@@ -282,7 +282,7 @@
             alu: { density: "2.70 g/cm³", tensile: "310 MPa", modulus: "68.9 GPa" }
         };
 
-        // --- SCOPE PROTECTION BLOCK: BIND DIRECTLY AND IMMEDIATELY TO THE WINDOW OBJECT ---
+        // --- GLOBAL WINDOW ATTACHMENTS ---
         window.commitNewTask = function() {
             const inputNode = document.getElementById('task-input-node');
             if (!inputNode) return;
@@ -290,7 +290,10 @@
             const val = inputNode.value.trim();
             if (!val) return;
             
-            if (!datasetState) datasetState = [];
+            if (!datasetState || !Array.isArray(datasetState)) {
+                datasetState = [];
+            }
+            
             datasetState.push({ text: val, completed: false });
             
             set(ref(db, 'dashboard/tasks'), datasetState)
@@ -304,13 +307,13 @@
         };
 
         window.deleteTargetTask = function(index) {
-            if (!datasetState) return;
+            if (!datasetState || !Array.isArray(datasetState)) return;
             datasetState.splice(index, 1);
             set(ref(db, 'dashboard/tasks'), datasetState);
         };
 
         window.purgeCompletedTasks = function() {
-            if (!datasetState) return;
+            if (!datasetState || !Array.isArray(datasetState)) return;
             datasetState = datasetState.filter(t => !t.completed);
             set(ref(db, 'dashboard/tasks'), datasetState);
         };
@@ -332,16 +335,24 @@
             document.getElementById('mat-modulus').textContent = mat.modulus;
         };
 
-        // --- LIFECYCLE LISTENERS ---
+        // --- REAL-TIME DATABASE LIFECYCLE ---
         window.addEventListener('DOMContentLoaded', () => {
             initDashboardTheme();
             initializeAutomaticPipeline();
             renderStaticCalendar();
             initializeCloudScratchpad();
             
+            // Bulletproof data stream integration listener
             onValue(dataSyncRef, (snapshot) => {
                 const data = snapshot.val();
-                datasetState = data !== null ? data : [];
+                
+                if (data) {
+                    // Converts Firebase objects to strict arrays if data returns with key tracking indexing
+                    datasetState = Array.isArray(data) ? data : Object.values(data);
+                } else {
+                    datasetState = [];
+                }
+                
                 synchronizeChecklist();
             });
         });
