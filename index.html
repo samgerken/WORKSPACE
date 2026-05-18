@@ -28,6 +28,8 @@
             
             --font-stack: Calibri, Candara, "Segoe UI", Optima, Arial, sans-serif;
             --progress-track: #18181b;
+            /* Enhanced dark mode depth shadow */
+            --panel-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.45);
         }
 
         [data-theme="light"] {
@@ -50,6 +52,7 @@
             --code-bg: #e4e4e7;
             --pre-bg: #fafafa;
             --progress-track: #e4e4e7;
+            --panel-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -72,7 +75,8 @@
         .close-drawer-btn { background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer; }
         .close-drawer-btn:hover { color: var(--text-primary); }
         
-        .tile-toggle-list { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
+        .tile-toggle-container { overflow-y: auto; flex: 1; padding-right: 4px; }
+        .tile-toggle-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
         .tile-toggle-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-subtle); border-radius: 6px; font-size: 0.9rem; }
         .tile-toggle-item input { accent-color: var(--text-primary); cursor: pointer; width: 16px; height: 16px; }
 
@@ -86,7 +90,7 @@
         .grid-item.drag-over { border-radius: 12px; outline: 2px dashed var(--border-active); outline-offset: 4px; }
         .grid-item.hidden-tile { display: none !important; }
 
-        section.panel, div.panel { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; height: 100%; min-height: 220px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2); }
+        section.panel, div.panel { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; height: 100%; min-height: 220px; box-shadow: var(--panel-shadow); transition: box-shadow 0.2s ease; }
         
         h2 { color: var(--panel-title-color); font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; border-left: 2px solid var(--panel-header-line); padding-left: 10px; display: flex; justify-content: space-between; align-items: center; }
         
@@ -97,7 +101,6 @@
         .task-input { flex: 1; background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 12px 16px; color: var(--text-primary); font-family: inherit; font-size: 0.95rem; outline: none; min-width: 0; }
         .task-input:focus { border-color: var(--border-active); }
         
-        /* DISTRACTION REPLACEMENT: Clean, Outlined UI Buttons */
         .deploy-btn { background: var(--bg-terminal); color: var(--text-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0 20px; font-weight: 600; font-family: inherit; font-size: 0.9rem; cursor: pointer; white-space: nowrap; transition: all 0.15s ease; }
         .deploy-btn:hover:not(:disabled) { border-color: var(--border-active); color: var(--text-primary); background: rgba(255,255,255,0.02); }
         .deploy-btn:disabled { opacity: 0.3; cursor: not-allowed; }
@@ -151,6 +154,20 @@
         .logistics-item { display: flex; align-items: center; gap: 10px; cursor: pointer; }
         .logistics-cb { accent-color: var(--text-primary); cursor: pointer; }
 
+        /* FIXED CALCULATOR SCREEN LAYOUT */
+        .calc-screen { width: 100%; background: var(--bg-terminal); color: var(--text-primary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 14px; font-family: monospace; font-size: 1.2rem; text-align: right; outline: none; margin-bottom: 12px; min-height: 50px; overflow-x: auto; white-space: nowrap; word-break: break-all; display: block; }
+        .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+        .calc-btn { background: var(--bg-terminal); color: var(--text-secondary); border: 1px solid var(--border-subtle); padding: 12px; font-family: monospace; font-size: 0.95rem; font-weight: 600; border-radius: 6px; cursor: pointer; transition: all 0.15s ease; }
+        .calc-btn:hover { border-color: var(--border-active); color: var(--text-primary); }
+        .calc-btn.op { color: var(--text-muted); }
+        .calc-btn.action { background: none; border-color: var(--border-active); color: var(--text-primary); }
+
+        /* NEW NEW TILES DESIGN */
+        .converter-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+        .scratch-pad { width: 100%; height: 130px; background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 12px; color: var(--text-primary); font-family: inherit; font-size: 0.9rem; resize: none; outline: none; margin-top: 12px; }
+        .scratch-pad:focus { border-color: var(--border-active); }
+        .timer-display { font-family: monospace; font-size: 2.2rem; font-weight: 700; text-align: center; color: var(--text-primary); margin: 12px 0; background: var(--bg-terminal); border: 1px solid var(--border-subtle); padding: 8px; border-radius: 6px; }
+
         @media (max-width: 900px) {
             body { padding: 20px 14px; }
             header { flex-direction: column; align-items: flex-start; gap: 14px; }
@@ -167,16 +184,21 @@
             <h3>Workspace Tiles</h3>
             <button class="close-drawer-btn" onclick="toggleWorkspaceDrawer(false)">×</button>
         </div>
-        <ul class="tile-toggle-list">
-            <li class="tile-toggle-item"><label>Daily Checklist</label><input type="checkbox" data-tile="tile-checklist" checked onchange="synchronizeTileVisibility(this)"></li>
-            <li class="tile-toggle-item"><label>Gemini Copilot</label><input type="checkbox" data-tile="tile-ai-engine" checked onchange="synchronizeTileVisibility(this)"></li>
-            <li class="tile-toggle-item"><label>Local Weather</label><input type="checkbox" data-tile="tile-weather" checked onchange="synchronizeTileVisibility(this)"></li>
-            <li class="tile-toggle-item"><label>Material Matrix</label><input type="checkbox" data-tile="tile-materials" checked onchange="synchronizeTileVisibility(this)"></li>
-            <li class="tile-toggle-item"><label>Logistics Calendar</label><input type="checkbox" data-tile="tile-calendar" checked onchange="synchronizeTileVisibility(this)"></li>
-            <li class="tile-toggle-item"><label>Cycling Telemetry</label><input type="checkbox" data-tile="tile-cycling" checked onchange="synchronizeTileVisibility(this)"></li>
-            <li class="tile-toggle-item"><label>Calculator Terminal</label><input type="checkbox" data-tile="tile-calculator" checked onchange="synchronizeTileVisibility(this)"></li>
-            <li class="tile-toggle-item"><label>Transit Logistics</label><input type="checkbox" data-tile="tile-transit" checked onchange="synchronizeTileVisibility(this)"></li>
-        </ul>
+        <div class="tile-toggle-container">
+            <ul class="tile-toggle-list">
+                <li class="tile-toggle-item"><label>Daily Checklist</label><input type="checkbox" data-tile="tile-checklist" checked onchange="synchronizeTileVisibility(this)"></li>
+                <li class="tile-toggle-item"><label>Gemini Copilot</label><input type="checkbox" data-tile="tile-ai-engine" checked onchange="synchronizeTileVisibility(this)"></li>
+                <li class="tile-toggle-item"><label>Local Weather</label><input type="checkbox" data-tile="tile-weather" checked onchange="synchronizeTileVisibility(this)"></li>
+                <li class="tile-toggle-item"><label>Material Matrix</label><input type="checkbox" data-tile="tile-materials" checked onchange="synchronizeTileVisibility(this)"></li>
+                <li class="tile-toggle-item"><label>Logistics Calendar</label><input type="checkbox" data-tile="tile-calendar" checked onchange="synchronizeTileVisibility(this)"></li>
+                <li class="tile-toggle-item"><label>Cycling Telemetry</label><input type="checkbox" data-tile="tile-cycling" checked onchange="synchronizeTileVisibility(this)"></li>
+                <li class="tile-toggle-item"><label>Calculator Terminal</label><input type="checkbox" data-tile="tile-calculator" checked onchange="synchronizeTileVisibility(this)"></li>
+                <li class="tile-toggle-item"><label>Transit Logistics</label><input type="checkbox" data-tile="tile-transit" checked onchange="synchronizeTileVisibility(this)"></li>
+                <li class="tile-toggle-item"><label>Mass Converter</label><input type="checkbox" data-tile="tile-converter" checked onchange="synchronizeTileVisibility(this)"></li>
+                <li class="tile-toggle-item"><label>Scratch Pad</label><input type="checkbox" data-tile="tile-scratch" checked onchange="synchronizeTileVisibility(this)"></li>
+                <li class="tile-toggle-item"><label>System Stopwatch</label><input type="checkbox" data-tile="tile-stopwatch" checked onchange="synchronizeTileVisibility(this)"></li>
+            </ul>
+        </div>
     </div>
 
     <div class="container">
@@ -328,6 +350,40 @@
                 </div>
             </div>
 
+            <div class="grid-item col-2" id="tile-converter">
+                <div class="panel">
+                    <h2>Mass & Spec Converter <span class="drag-handle">⋮⋮ DRAG</span></h2>
+                    <div style="margin-top: 14px;">
+                        <div class="converter-row">
+                            <input type="number" id="conv-input-grams" class="task-input" placeholder="Grams (g)" oninput="convertMassUnits('g')">
+                            <input type="number" id="conv-input-oz" class="task-input" placeholder="Ounces (oz)" oninput="convertMassUnits('oz')">
+                        </div>
+                        <div class="converter-row">
+                            <input type="number" id="conv-input-mm" class="task-input" placeholder="Metric (mm)" oninput="convertDimensionUnits('mm')">
+                            <input type="number" id="conv-input-in" class="task-input" placeholder="Inches (in)" oninput="convertDimensionUnits('in')">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-item col-2" id="tile-scratch">
+                <div class="panel">
+                    <h2>Notes Scratch Pad <span class="drag-handle">⋮⋮ DRAG</span></h2>
+                    <textarea id="scratch-pad-node" class="scratch-pad" placeholder="Drop temporal code variables, log streams or workspace references..." oninput="persistScratchText(this.value)"></textarea>
+                </div>
+            </div>
+
+            <div class="grid-item col-2" id="tile-stopwatch">
+                <div class="panel">
+                    <h2>System Split Timer <span class="drag-handle">⋮⋮ DRAG</span></h2>
+                    <div class="timer-display" id="stopwatch-display-lbl">00:00.0</div>
+                    <div class="control-row" style="margin-bottom:0;">
+                        <button class="deploy-btn" style="flex:1;" id="stopwatch-toggle" onclick="toggleStopwatchSystem()">Start</button>
+                        <button class="deploy-btn" onclick="resetStopwatchSystem()">Reset</button>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -335,9 +391,9 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        // Drop your actual API key here if you ever want to authorize live queries
         const GEMINI_API_KEY = "YOUR_GEMINI_API_KEY_HERE"; 
 
+        // CRITICAL FIX: Explicitly routing databaseURL to clear fallback warning state
         const firebaseConfig = {
             apiKey: "AIzaSyACQZ-5RfnQg7gT1_V2PuxG4nA6uRm28uM",
             authDomain: "my-workspace-dashboard.firebaseapp.com",
@@ -399,9 +455,8 @@
 
         function restoreTilePreferences() {
             const stored = localStorage.getItem('dashboard_tile_visibility_map');
-            if (!stored) return;
             try {
-                const map = JSON.parse(stored);
+                const map = stored ? JSON.parse(stored) : {};
                 document.querySelectorAll('.tile-toggle-list input').forEach(input => {
                     const id = input.getAttribute('data-tile');
                     if (map[id] !== undefined) {
@@ -414,6 +469,78 @@
                     }
                 });
             } catch (e) { console.error(e); }
+        }
+
+        // --- MASS CONVERTER CODES ---
+        window.convertMassUnits = function(origin) {
+            const gNode = document.getElementById('conv-input-grams');
+            const ozNode = document.getElementById('conv-input-oz');
+            if (origin === 'g') {
+                const gVal = parseFloat(gNode.value);
+                ozNode.value = !isNaN(gVal) ? (gVal * 0.035274).toFixed(3) : '';
+            } else {
+                const ozVal = parseFloat(ozNode.value);
+                gNode.value = !isNaN(ozVal) ? (ozVal * 28.3495).toFixed(1) : '';
+            }
+        };
+
+        window.convertDimensionUnits = function(origin) {
+            const mmNode = document.getElementById('conv-input-mm');
+            const inNode = document.getElementById('conv-input-in');
+            if (origin === 'mm') {
+                const mmVal = parseFloat(mmNode.value);
+                inNode.value = !isNaN(mmVal) ? (mmVal / 25.4).toFixed(4) : '';
+            } else {
+                const inVal = parseFloat(inNode.value);
+                mmNode.value = !isNaN(inVal) ? (inVal * 25.4).toFixed(2) : '';
+            }
+        };
+
+        // --- SCRATCH PAD LOCALSTORAGE STORAGE ---
+        window.persistScratchText = function(text) {
+            localStorage.setItem('workspace_scratchpad_data', text);
+        };
+
+        function restoreScratchText() {
+            const storedText = localStorage.getItem('workspace_scratchpad_data') || '';
+            document.getElementById('scratch-pad-node').value = storedText;
+        }
+
+        // --- STOPWATCH ENGINE ---
+        let stopwatchId = null;
+        let stopwatchStartTime = 0;
+        let stopwatchElapsed = 0;
+
+        window.toggleStopwatchSystem = function() {
+            const btn = document.getElementById('stopwatch-toggle');
+            if (stopwatchId) {
+                clearInterval(stopwatchId);
+                stopwatchId = null;
+                btn.textContent = "Start";
+            } else {
+                stopwatchStartTime = Date.now() - stopwatchElapsed;
+                stopwatchId = setInterval(refreshStopwatchUi, 100);
+                btn.textContent = "Stop";
+            }
+        };
+
+        window.resetStopwatchSystem = function() {
+            clearInterval(stopwatchId);
+            stopwatchId = null;
+            stopwatchElapsed = 0;
+            document.getElementById('stopwatch-display-lbl').textContent = "00:00.0";
+            document.getElementById('stopwatch-toggle').textContent = "Start";
+        };
+
+        function refreshStopwatchUi() {
+            stopwatchElapsed = Date.now() - stopwatchStartTime;
+            const totalSecs = Math.floor(stopwatchElapsed / 1000);
+            const mins = Math.floor(totalSecs / 60);
+            const secs = totalSecs % 60;
+            const tenths = Math.floor((stopwatchElapsed % 1000) / 100);
+            
+            document.getElementById('stopwatch-display-lbl').textContent = 
+                `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}.${tenths}`;
         }
 
         // --- TASKS ENGINE ---
@@ -500,6 +627,7 @@
             fetchLiveWeatherPipeline();
             renderStaticCalendar();
             initDragAndDropSystem();
+            restoreScratchText();
             
             onValue(dataSyncRef, (snapshot) => {
                 const data = snapshot.val();
@@ -658,14 +786,14 @@
             }
         }
 
-        // --- NATIVE DIRECT RE-WIRED GEMINI FETCH API CHANNEL ---
+        // --- DIRECT COPILOT API CHANNEL ---
         function initDirectGeminiFetchChannel() {
             const logViewport = document.getElementById('ai-chat-viewport');
             if (GEMINI_API_KEY === "YOUR_GEMINI_API_KEY_HERE") {
-                logViewport.innerHTML = '<div class="chat-bubble bubble-gemini" style="color:var(--accent-alert);"><strong>[Config Required]</strong> Paste your API key on line 215 to link the direct backend fetch framework.</div>';
+                logViewport.innerHTML = '<div class="chat-bubble bubble-gemini" style="color:var(--accent-alert);"><strong>[Config Required]</strong> Paste your API key on line 251 to activate the Copilot.</div>';
                 return;
             }
-            logViewport.innerHTML = '<div class="chat-bubble bubble-gemini"><strong>[Gemini Engine Online]</strong> Direct connection established. The edge infrastructure proxy fallback has been fully cleared.</div>';
+            logViewport.innerHTML = '<div class="chat-bubble bubble-gemini"><strong>[Gemini Engine Online]</strong> Direct connection ready.</div>';
         }
 
         window.dispatchAiQuery = async function() {
@@ -676,7 +804,7 @@
             
             if (!rawText) return;
             if (GEMINI_API_KEY === "YOUR_GEMINI_API_KEY_HERE") {
-                alert("Please add your Gemini API Key on line 215 first.");
+                alert("Please add your Gemini API Key on line 251 first.");
                 return;
             }
 
@@ -696,7 +824,6 @@
             logViewport.scrollTop = logViewport.scrollHeight;
 
             try {
-                // Completely dynamic native fetch block to avoid proxy routing limits
                 const directApiEndpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
                 
                 const response = await fetch(directApiEndpoint, {
