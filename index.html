@@ -125,7 +125,6 @@
         .spec-table td { padding: 6px 8px; border-bottom: 1px solid var(--border-subtle); }
         .spec-table td:last-child { text-align: right; color: var(--text-primary); font-weight: 600; }
 
-        /* Logistics Toggles Layout */
         .logistics-list { list-style: none; font-size: 0.85rem; display: flex; flex-direction: column; gap: 8px; }
         .logistics-item { display: flex; align-items: center; gap: 10px; cursor: pointer; }
         .logistics-cb { accent-color: var(--text-primary); cursor: pointer; }
@@ -290,9 +289,6 @@
         let activeChatSession = null;
         let datasetState = [];
         let scratchpadDebounceTimer = null;
-        
-        // CRITICAL REFRESH GUARD FLAG:
-        let isInitialLoadDone = false;
 
         const materialDatabase = {
             petg: { density: "1.27 g/cm³", tensile: "48.5 MPa", modulus: "3.8 GPa" },
@@ -300,17 +296,15 @@
             alu: { density: "2.70 g/cm³", tensile: "310 MPa", modulus: "68.9 GPa" }
         };
 
-        // --- ATTACH DIRECTLY TO WINDOW OBJECT ---
+        // --- EXPLICIT USER ACTIONS (PUSHES DIRECTLY TO DATABASE) ---
         window.commitNewTask = function() {
-            if (!isInitialLoadDone) return; // Freeze writing out if cloud load isn't finished
-            
             const inputNode = document.getElementById('task-input-node');
             if (!inputNode) return;
             
             const val = inputNode.value.trim();
             if (!val) return;
             
-            if (!datasetState || !Array.isArray(datasetState)) {
+            if (!Array.isArray(datasetState)) {
                 datasetState = [];
             }
             
@@ -322,18 +316,24 @@
                     inputNode.focus();
                 })
                 .catch((err) => {
-                    console.error("Write execution error: ", err);
+                    console.error("Write error: ", err);
                 });
         };
 
+        window.toggleTaskCompleted = function(index) {
+            if (!Array.isArray(datasetState) || !datasetState[index]) return;
+            datasetState[index].completed = !datasetState[index].completed;
+            set(ref(db, 'dashboard/tasks'), datasetState);
+        };
+
         window.deleteTargetTask = function(index) {
-            if (!isInitialLoadDone || !datasetState || !Array.isArray(datasetState)) return;
+            if (!Array.isArray(datasetState)) return;
             datasetState.splice(index, 1);
             set(ref(db, 'dashboard/tasks'), datasetState);
         };
 
         window.purgeCompletedTasks = function() {
-            if (!isInitialLoadDone || !datasetState || !Array.isArray(datasetState)) return;
+            if (!Array.isArray(datasetState)) return;
             datasetState = datasetState.filter(t => !t.completed);
             set(ref(db, 'dashboard/tasks'), datasetState);
         };
@@ -355,25 +355,21 @@
             document.getElementById('mat-modulus').textContent = mat.modulus;
         };
 
-        // --- LIFECYCLE HANDLERS ---
+        // --- LIFECYCLE LISTENERS (DOWNLOAD ONLY) ---
         window.addEventListener('DOMContentLoaded', () => {
             initDashboardTheme();
             initializeAutomaticPipeline();
             renderStaticCalendar();
             initializeCloudScratchpad();
             
-            // Listen down from cloud real-time endpoint
+            // This listener strictly DOWNLOADS data. It never writes back to the server automatically.
             onValue(dataSyncRef, (snapshot) => {
                 const data = snapshot.val();
-                
                 if (data) {
                     datasetState = Array.isArray(data) ? data : Object.values(data);
                 } else {
                     datasetState = [];
                 }
-                
-                // Unlocks writing once initial cloud sync passes through successfully
-                isInitialLoadDone = true; 
                 synchronizeChecklist();
             });
         });
@@ -527,8 +523,7 @@
                     
                     li.addEventListener('click', (e) => {
                         if (e.target.classList.contains('clear-single-btn')) return;
-                        datasetState[index].completed = !datasetState[index].completed;
-                        set(ref(db, 'dashboard/tasks'), datasetState);
+                        window.toggleTaskCompleted(index);
                     });
 
                     li.querySelector('.clear-single-btn').addEventListener('click', (e) => {
