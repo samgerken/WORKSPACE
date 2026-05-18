@@ -275,7 +275,7 @@
         let activeChatSession = null;
         let datasetState = [];
         let scratchpadDebounceTimer = null;
-        let isInitialLoadDone = false; // Prevent race conditions on empty states
+        let isInitialLoadDone = false;
 
         const materialDatabase = {
             petg: { density: "1.27 g/cm³", tensile: "48.5 MPa", modulus: "3.8 GPa" },
@@ -291,7 +291,6 @@
             
             onValue(dataSyncRef, (snapshot) => {
                 const data = snapshot.val();
-                // Gracefully preserve cloud data arrays or fall back to local array strictly after connection
                 datasetState = data !== null ? data : [];
                 isInitialLoadDone = true; 
                 synchronizeChecklist();
@@ -465,7 +464,7 @@
                     li.addEventListener('click', (e) => {
                         if (e.target.classList.contains('clear-single-btn')) return;
                         datasetState[index].completed = !datasetState[index].completed;
-                        set(dataSyncRef, datasetState);
+                        set(ref(db, 'dashboard/tasks'), datasetState);
                     });
 
                     li.querySelector('.clear-single-btn').addEventListener('click', (e) => {
@@ -480,28 +479,36 @@
         }
 
         window.commitNewTask = function() {
-            if (!isInitialLoadDone) return; // Prevent writing before sync
+            if (!isInitialLoadDone) return;
             const inputNode = document.getElementById('task-input-node');
+            if (!inputNode) return;
+            
             const val = inputNode.value.trim();
             if (!val) return;
             
             if (!datasetState) datasetState = [];
             datasetState.push({ text: val, completed: false });
-            set(dataSyncRef, datasetState);
-            inputNode.value = '';
-            inputNode.focus();
+            
+            set(ref(db, 'dashboard/tasks'), datasetState)
+                .then(() => {
+                    inputNode.value = '';
+                    inputNode.focus();
+                })
+                .catch((err) => {
+                    console.error("Write execution error: ", err);
+                });
         }
 
         window.deleteTargetTask = function(index) {
             if (!isInitialLoadDone || !datasetState) return;
             datasetState.splice(index, 1);
-            set(dataSyncRef, datasetState);
+            set(ref(db, 'dashboard/tasks'), datasetState);
         }
 
         window.purgeCompletedTasks = function() {
             if (!isInitialLoadDone || !datasetState) return;
             datasetState = datasetState.filter(t => !t.completed);
-            set(dataSyncRef, datasetState);
+            set(ref(db, 'dashboard/tasks'), datasetState);
         }
     </script>
 </body>
