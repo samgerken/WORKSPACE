@@ -269,11 +269,11 @@
         import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
         import { GoogleGenAI } from "@google/genai";
 
-        // FIXED CONFIGURATION: Pointing straight to your exact project database instance URL
+        // VERIFIED CONFIGURATION BLOCK
         const firebaseConfig = {
             apiKey: "AIzaSyACQZ-5RfnQg7gT1_V2PuxG4nA6uRm28uM",
             authDomain: "my-workspace-dashboard.firebaseapp.com",
-            databaseURL: "https://my-workspace-dashboard.firebaseio.com", 
+            databaseURL: "https://my-workspace-dashboard-default-rtdb.firebaseio.com/", 
             projectId: "my-workspace-dashboard",
             storageBucket: "my-workspace-dashboard.firebasestorage.app",
             messagingSenderId: "584369640657",
