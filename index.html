@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Workspace Dashboard</title>
     <style>
-        /* CSS VARIABLE TOKEN MATRIX - INDUSTRIAL HIGH-CONTRAST MODE */
         :root {
             --bg-base: #0b0b0d;
             --bg-surface: rgba(255, 255, 255, 0.01);
@@ -17,7 +16,6 @@
             --text-muted: #71717a;
             --text-dark: #3f3f3f;
             --accent-alert: #f87171;
-            
             --panel-header-line: #52525b;
             --panel-title-color: #a1a1aa;
             --chat-user-bg: #27272a;
@@ -25,7 +23,6 @@
             --chat-gemini-border: rgba(255, 255, 255, 0.04);
             --code-bg: #18181b;
             --pre-bg: #09090b;
-            
             --font-stack: Calibri, Candara, "Segoe UI", Optima, Arial, sans-serif;
             --progress-track: #18181b;
         }
@@ -41,7 +38,6 @@
             --text-muted: #71717a;
             --text-dark: #a1a1aa;
             --accent-alert: #dc2626;
-            
             --panel-header-line: #a1a1aa;
             --panel-title-color: #4b5563;
             --chat-user-bg: #e4e4e7;
@@ -52,327 +48,49 @@
             --progress-track: #e4e4e7;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background-color: var(--bg-base); color: var(--text-secondary); font-family: var(--font-stack); padding: 40px 20px; line-height: 1.5; }
+        .container { max-width: 1250px; margin: 0 auto; }
+        
+        header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 20px; }
+        h1 { color: var(--text-primary); font-size: 1.7rem; font-weight: 700; }
+        .subtitle { color: var(--text-muted); font-size: 0.9rem; margin-top: 2px; }
 
-        body {
-            background-color: var(--bg-base);
-            color: var(--text-secondary);
-            font-family: var(--font-stack);
-            padding: 40px 20px;
-            line-height: 1.5;
-            letter-spacing: -0.01em;
-            transition: background-color 0.2s ease, color 0.2s ease;
-        }
-
-        .container {
-            max-width: 1250px;
-            margin: 0 auto;
-        }
-
-        header {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            gap: 16px;
-            margin-bottom: 24px;
-            border-bottom: 1px solid var(--border-subtle);
-            padding-bottom: 20px;
-        }
-
-        @media (min-width: 768px) {
-            header {
-                flex-direction: row;
-                align-items: flex-end;
-            }
-        }
-
-        h1 {
-            color: var(--text-primary);
-            font-size: 1.7rem;
-            font-weight: 700;
-        }
-
-        .subtitle {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            margin-top: 2px;
-        }
-
-        .header-controls {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 8px;
-        }
-        @media (min-width: 768px) {
-            .header-controls {
-                align-items: flex-end;
-                text-align: right;
-            }
-        }
-
-        .theme-toggle-btn {
-            background: var(--bg-terminal);
-            color: var(--text-secondary);
-            border: 1px solid var(--border-subtle);
-            padding: 6px 12px;
-            font-family: monospace;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .theme-toggle-btn:hover {
-            border-color: var(--border-active);
-            color: var(--text-primary);
-        }
-
-        .top-row-container {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 24px;
-            margin-bottom: 24px;
-        }
-
-        @media (min-width: 850px) {
-            .top-row-container {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-
-        .bottom-row-container {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 24px;
-        }
-
-        @media (min-width: 1100px) {
-            .bottom-row-container {
-                grid-template-columns: repeat(3, 1fr);
-                align-items: start;
-            }
-        }
-
-        .dashboard-column {
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
-
-        section.panel, div.panel {
-            background: var(--bg-surface);
-            border: 1px solid var(--border-subtle);
-            border-radius: 12px;
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
-            transition: background-color 0.2s ease, border-color 0.2s ease;
-        }
-
-        .panel-title-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 16px;
-        }
-
-        h2 {
-            color: var(--panel-title-color);
-            font-size: 0.78rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            border-left: 2px solid var(--panel-header-line);
-            padding-left: 10px;
-            margin-bottom: 0;
-        }
-
-        .panel-meta-tracker {
-            font-family: monospace;
-            font-size: 0.65rem;
-            color: var(--text-dark);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            padding-top: 2px;
-        }
-
-        .control-row {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-
-        .task-input {
-            flex: 1;
-            background: var(--bg-terminal);
-            border: 1px solid var(--border-subtle);
-            border-radius: 6px;
-            padding: 12px 16px;
-            color: var(--text-primary);
-            font-family: inherit;
-            font-size: 0.95rem;
-            outline: none;
-        }
-
-        .task-input:focus {
-            border-color: var(--border-active);
-        }
-
-        .deploy-btn {
-            background: var(--text-primary);
-            color: var(--bg-base);
-            border: none;
-            border-radius: 6px;
-            padding: 0 20px;
-            font-family: inherit;
-            font-weight: 600;
-            font-size: 0.9rem;
-            cursor: pointer;
-        }
-
-        .deploy-btn:disabled {
-            background: var(--border-subtle);
-            color: var(--text-dark);
-            cursor: not-allowed;
-        }
-
+        .theme-toggle-btn { background: var(--bg-terminal); color: var(--text-secondary); border: 1px solid var(--border-subtle); padding: 6px 12px; font-family: monospace; font-size: 0.75rem; text-transform: uppercase; border-radius: 4px; cursor: pointer; }
+        
+        .top-row-container { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; }
+        section.panel, div.panel { background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 24px; display: flex; flex-direction: column; }
+        
+        h2 { color: var(--panel-title-color); font-size: 0.78rem; font-weight: 700; text-transform: uppercase; border-left: 2px solid var(--panel-header-line); padding-left: 10px; }
+        .control-row { display: flex; gap: 12px; margin-top: 16px; margin-bottom: 20px; }
+        
+        .task-input { flex: 1; background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 12px 16px; color: var(--text-primary); font-family: inherit; font-size: 0.95rem; outline: none; }
+        .task-input:focus { border-color: var(--border-active); }
+        
+        .deploy-btn { background: var(--text-primary); color: var(--bg-base); border: none; border-radius: 6px; padding: 0 20px; font-weight: 600; cursor: pointer; }
         .checklist-container { list-style: none; }
         
-        .checklist-item {
-            padding: 12px 10px;
-            border-bottom: 1px solid var(--border-subtle);
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            cursor: pointer;
-            user-select: none;
-            border-radius: 4px;
-        }
-
+        .checklist-item { padding: 12px 10px; border-bottom: 1px solid var(--border-subtle); font-size: 0.95rem; display: flex; align-items: center; justify-content: space-between; cursor: pointer; border-radius: 4px; }
         .checklist-item:hover { background: rgba(255, 255, 255, 0.02); }
-        [data-theme="light"] .checklist-item:hover { background: rgba(0, 0, 0, 0.02); }
-        
         .task-left-block { display: flex; align-items: center; }
+        .status-box { font-family: monospace; font-weight: bold; color: var(--text-muted); margin-right: 14px; min-width: 28px; }
         
-        .status-box {
-            font-family: monospace;
-            font-weight: bold;
-            color: var(--text-muted);
-            margin-right: 14px;
-            min-width: 28px;
-        }
-
-        .clear-single-btn {
-            background: none;
-            border: none;
-            color: var(--text-dark);
-            font-size: 0.8rem;
-            cursor: pointer;
-        }
-
+        .clear-single-btn { background: none; border: none; color: var(--text-dark); font-size: 0.8rem; cursor: pointer; }
         .checklist-item:hover .clear-single-btn { color: var(--text-muted); }
         .clear-single-btn:hover { color: var(--accent-alert) !important; }
-
+        
         .resolved { color: var(--text-dark) !important; }
         .resolved .task-text { text-decoration: line-through; }
-        .resolved .status-box { color: var(--text-dark); }
-
-        .empty-state {
-            color: var(--text-dark);
-            text-align: center;
-            font-style: italic;
-            font-size: 0.9rem;
-            padding: 20px 0;
-        }
-
-        .metrics-footer {
-            display: flex;
-            justify-content: space-between;
-            margin-top: auto;
-            padding-top: 16px;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            border-top: 1px dashed var(--border-subtle);
-        }
-
+        
+        .metrics-footer { display: flex; justify-content: space-between; margin-top: auto; padding-top: 16px; font-size: 0.85rem; color: var(--text-muted); border-top: 1px dashed var(--border-subtle); }
         .purge-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; text-decoration: underline; font-family: inherit; }
-        .purge-btn:hover { color: var(--accent-alert); }
 
-        .ai-chat-log {
-            background: var(--bg-terminal);
-            border: 1px solid var(--border-subtle);
-            border-radius: 8px;
-            height: 320px;
-            overflow-y: auto;
-            padding: 16px;
-            margin-bottom: 14px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
+        .ai-chat-log { background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 8px; height: 320px; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 16px; }
         .chat-bubble { font-size: 0.9rem; line-height: 1.5; max-width: 85%; }
-        .bubble-user { color: var(--text-primary); align-self: flex-end; background: var(--chat-user-bg); padding: 10px 14px; border-radius: 12px 12px 2px 12px; font-weight: 500; }
+        .bubble-user { color: var(--text-primary); align-self: flex-end; background: var(--chat-user-bg); padding: 10px 14px; border-radius: 12px 12px 2px 12px; }
         .bubble-gemini { color: var(--text-secondary); align-self: flex-start; background: var(--chat-gemini-bg); border: 1px solid var(--chat-gemini-border); padding: 12px 16px; border-radius: 12px 12px 12px 2px; }
-        .bubble-gemini code { font-family: monospace; background: var(--code-bg); padding: 2px 6px; border-radius: 4px; color: #f43f5e; font-size: 0.85rem;}
+        .bubble-gemini code { font-family: monospace; background: var(--code-bg); padding: 2px 6px; border-radius: 4px; color: #f43f5e; }
         .bubble-gemini pre { background: var(--pre-bg); padding: 12px; border-radius: 6px; overflow-x: auto; margin: 10px 0; border: 1px solid var(--border-subtle); }
-
-        .weather-display { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: center; margin-bottom: 16px; }
-        .temp-primary { font-size: 2.4rem; font-weight: 700; color: var(--text-primary); line-height: 1; }
-        .weather-meta { font-size: 0.85rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 4px; }
-        .weather-meta span { color: var(--text-secondary); font-weight: 600; }
-        
-        .forecast-container { display: flex; flex-direction: column; gap: 6px; background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 12px; }
-        .forecast-row { display: grid; grid-template-columns: 2.5fr 3.5fr 2fr; align-items: center; font-size: 0.85rem; padding: 4px 0; border-bottom: 1px solid var(--border-subtle); }
-        .forecast-row:last-child { border-bottom: none; }
-        .forecast-day { color: var(--text-primary); font-weight: 600; }
-        .forecast-cond { color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.03em; }
-        .forecast-temp { text-align: right; font-family: monospace; }
-        .forecast-temp .high { color: var(--text-primary); font-weight: 600; }
-        .forecast-temp .low { color: var(--text-dark); margin-left: 6px; }
-
-        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding: 0 4px; }
-        .calendar-month-year { font-size: 0.95rem; font-weight: 600; color: var(--text-primary); }
-        .calendar-nav-buttons { display: flex; gap: 16px; }
-        .calendar-nav-btn { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.85rem; font-weight: bold; }
-        .calendar-nav-btn:hover { color: var(--text-primary); }
-        
-        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); row-gap: 6px; column-gap: 2px; text-align: center; }
-        .calendar-day-label { color: var(--text-muted); font-weight: 600; font-size: 0.75rem; padding-bottom: 8px; }
-        .calendar-cell { color: var(--text-secondary); font-size: 0.85rem; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border: 1px solid transparent; border-radius: 4px; }
-        .calendar-cell.muted { color: var(--text-dark); }
-        .calendar-cell:not(.muted):hover { background: rgba(255, 255, 255, 0.04); cursor: default; }
-        .calendar-cell.today { border: 1px solid var(--text-primary); color: var(--text-primary); font-weight: 700; background: rgba(255, 255, 255, 0.03); }
-
-        .news-stack { display: flex; flex-direction: column; gap: 14px; }
-        .news-item { border-bottom: 1px solid var(--border-subtle); padding-bottom: 12px; }
-        .news-item:last-child { border-bottom: none; padding-bottom: 0; }
-        .news-tag { font-family: monospace; font-size: 0.7rem; text-transform: uppercase; color: var(--text-muted); background: var(--bg-terminal); border: 1px solid var(--border-subtle); padding: 2px 6px; border-radius: 4px; display: inline-block; margin-bottom: 6px; }
-        .news-title { font-size: 0.9rem; font-weight: 600; color: var(--text-primary); line-height: 1.4; }
-        .news-source { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; }
-
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
-        .stat-card { background: var(--bg-terminal); border: 1px solid var(--border-subtle); padding: 12px; border-radius: 6px; }
-        .stat-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
-        .stat-value { font-size: 1.15rem; font-weight: 700; color: var(--text-primary); margin-top: 2px; font-family: monospace; }
-        
-        .progress-container { margin-top: 2px; }
-        .progress-bar-label-row { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 6px; }
-        .progress-track { background: var(--progress-track); height: 8px; border-radius: 4px; overflow: hidden; width: 100%; border: 1px solid var(--border-subtle); }
-        .progress-fill { background: var(--text-primary); height: 100%; transition: width 0.3s ease; }
-
-        .scratchpad-area { background: var(--bg-terminal); color: var(--text-primary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 14px; font-family: monospace; font-size: 0.85rem; line-height: 1.4; resize: vertical; min-height: 110px; outline: none; width: 100%; }
-        .material-selector { background: var(--bg-terminal); border: 1px solid var(--border-subtle); color: var(--text-primary); width: 100%; padding: 10px; border-radius: 6px; font-family: inherit; font-size: 0.9rem; outline: none; margin-bottom: 12px; }
-        .spec-table { width: 100%; font-family: monospace; font-size: 0.8rem; border-collapse: collapse; }
-        .spec-table td { padding: 6px 8px; border-bottom: 1px solid var(--border-subtle); }
-        .spec-table td:last-child { text-align: right; color: var(--text-primary); font-weight: 600; }
     </style>
     
     <script type="importmap">
@@ -388,157 +106,37 @@
     <div class="container">
         <header>
             <div>
-                <h1>Workspace</h1>
-                <p class="subtitle">Daily task log and reference metrics</p>
+                <h1>Workspace Dashboard</h1>
+                <p class="subtitle">Daily log sync pipeline</p>
             </div>
-            <div class="header-controls">
-                <button class="theme-toggle-btn" onclick="toggleDashboardTheme()">
-                    Theme: <span id="theme-status-lbl">Dark</span>
-                </button>
-                <div style="font-size: 0.9rem; color: var(--text-muted);">
-                    <span style="color: var(--text-primary); font-weight: 600;">Monday, May 18, 2026</span>
-                </div>
+            <div>
+                <button class="theme-toggle-btn" onclick="toggleDashboardTheme()">Theme: <span id="theme-status-lbl">Dark</span></button>
             </div>
         </header>
 
         <div class="top-row-container">
             <div class="panel">
-                <div class="panel-title-container">
-                    <h2>Daily Tasks</h2>
-                </div>
+                <h2>Daily Checklist</h2>
                 <div class="control-row">
-                    <input type="text" id="task-input-node" class="task-input" placeholder="Add a task or tracking tag..." autocomplete="off">
+                    <input type="text" id="task-input-node" class="task-input" placeholder="Add structural tasks...">
                     <button class="deploy-btn" onclick="commitNewTask()">Add</button>
                 </div>
                 <ul class="checklist-container" id="checklist-render-node"></ul>
                 <div class="metrics-footer">
-                    <div>Remaining: <span id="active-count" style="color:var(--text-primary); font-weight:600;">0</span> | Completed: <span id="complete-count" style="color:var(--text-primary); font-weight:600;">0</span></div>
-                    <button class="purge-btn" onclick="purgeCompletedTasks()">Clear Completed</button>
+                    <div>Active: <span id="active-count">0</span> | Resolved: <span id="complete-count">0</span></div>
+                    <button class="purge-btn" onclick="purgeCompletedTasks()">Purge Resolved</button>
                 </div>
             </div>
 
             <div class="panel">
-                <div class="panel-title-container">
-                    <h2>Gemini Assistant Console</h2>
-                </div>
+                <h2>Gemini Assistant Console</h2>
+                <div class="control-row"></div>
                 <div class="ai-chat-log" id="ai-chat-viewport"></div>
                 <div class="control-row" style="margin-bottom: 0;">
-                    <input type="text" id="ai-query-input" class="task-input" placeholder="Ask Gemini a question...">
+                    <input type="text" id="ai-query-input" class="task-input" placeholder="Query interface parameters...">
                     <button class="deploy-btn" id="ai-submit-btn" onclick="dispatchAiQuery()">Query</button>
                 </div>
             </div>
-        </div>
-
-        <div class="bottom-row-container">
-            
-            <div class="dashboard-column">
-                <div class="panel">
-                    <div class="panel-title-container">
-                        <h2>Local Weather</h2>
-                    </div>
-                    <div class="weather-display">
-                        <div>
-                            <div class="temp-primary">58°F</div>
-                            <div style="font-size: 0.9rem; color: var(--text-muted); margin-top: 2px;">Overcast / Clear Intervals</div>
-                        </div>
-                        <div class="weather-meta">
-                            <div>Location: <span>Old Town, ME</span></div>
-                            <div>Wind: <span>WNW at 9 mph</span></div>
-                            <div>Humidity: <span>42%</span></div>
-                            <div>Precipitation: <span>0%</span></div>
-                        </div>
-                    </div>
-                    <div class="forecast-container">
-                        <div class="forecast-row"><span class="forecast-day">Tue 05/19</span><span class="forecast-cond">AM Showers</span><span class="forecast-temp"><span class="high">55°</span><span class="low">40°</span></span></div>
-                        <div class="forecast-row"><span class="forecast-day">Wed 05/20</span><span class="forecast-cond">Clear Skies</span><span class="forecast-temp"><span class="high">66°</span><span class="low">42°</span></span></div>
-                        <div class="forecast-row"><span class="forecast-day">Thu 05/21</span><span class="forecast-cond">Mostly Sunny</span><span class="forecast-temp"><span class="high">68°</span><span class="low">48°</span></span></div>
-                    </div>
-                </div>
-
-                <div class="panel">
-                    <div class="panel-title-container">
-                        <h2>Material Matrix Lookup</h2>
-                        <div class="panel-meta-tracker">Reference Specs</div>
-                    </div>
-                    <select id="material-selector-node" class="material-selector" onchange="updateMaterialSpecs()">
-                        <option value="petg">PETG (Carbon Fiber Reinforced)</option>
-                        <option value="pla">PLA+ High-Performance</option>
-                        <option value="alu">6061-T6 Aluminum Alloy</option>
-                    </select>
-                    <table class="spec-table">
-                        <tr><td>Density</td><td id="mat-density">1.27 g/cm³</td></tr>
-                        <tr><td>Tensile Strength</td><td id="mat-tensile">48.5 MPa</td></tr>
-                        <tr><td>Flexural Modulus</td><td id="mat-modulus">3.8 GPa</td></tr>
-                        <tr><td>Thermal Deflection</td><td id="mat-thermal">78°C</td></tr>
-                    </table>
-                </div>
-            </div>
-
-            <div class="dashboard-column">
-                <div class="panel">
-                    <div class="panel-title-container">
-                        <h2>Calendar</h2>
-                    </div>
-                    <div class="calendar-header">
-                        <div class="calendar-month-year" id="calendar-header-title">May 2026</div>
-                        <div class="calendar-nav-buttons">
-                            <button class="calendar-nav-btn" onclick="shiftCalendarMonth(-1)">▲</button>
-                            <button class="calendar-nav-btn" onclick="shiftCalendarMonth(1)">▼</button>
-                        </div>
-                    </div>
-                    <div class="calendar-grid" id="calendar-matrix-grid"></div>
-                </div>
-
-                <div class="panel">
-                    <div class="panel-title-container">
-                        <h2>Cycling Telemetry</h2>
-                        <div class="panel-meta-tracker">Beeline Sync Active</div>
-                    </div>
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-label">Total Block Mileage</div>
-                            <div class="stat-value">76.0 mi</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-label">Avg Speed</div>
-                            <div class="stat-value">15.8 mph</div>
-                        </div>
-                    </div>
-                    <div class="progress-container">
-                        <div class="progress-bar-label-row">
-                            <span>Target Century Milestone</span>
-                            <strong>76% (76 / 100 mi)</strong>
-                        </div>
-                        <div class="progress-track">
-                            <div class="progress-fill" style="width: 76%;"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="dashboard-column">
-                <div class="panel">
-                    <div class="panel-title-container">
-                        <h2>News Feed</h2>
-                    </div>
-                    <div class="news-stack">
-                        <div class="news-item">
-                            <span class="news-tag">Technology</span>
-                            <div class="news-title">Advanced Additive Manufacturing Facilities Complete Trials on High-Load Structural Composites</div>
-                            <div class="news-source">14 mins ago — Industrial Wire Report</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="panel">
-                    <div class="panel-title-container">
-                        <h2>Scratchpad Terminal</h2>
-                        <div class="panel-meta-tracker">Local Optimization</div>
-                    </div>
-                    <textarea id="scratchpad-text-node" class="scratchpad-area" placeholder="Stage transient parameters, raw text blocks, or code parts references..." spellcheck="false"></textarea>
-                </div>
-            </div>
-
         </div>
     </div>
 
@@ -547,6 +145,7 @@
         import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
         import { GoogleGenAI } from "@google/genai";
 
+        // Firebase Sync Initialization
         const firebaseConfig = {
             apiKey: "AIzaSyACQZ-5RfnQg7gT1_V2PuxG4nA6uRm28uM",
             authDomain: "my-workspace-dashboard.firebaseapp.com",
@@ -559,61 +158,36 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
-        const tasksRef = ref(db, 'workspace_daily_checklist');
+        const dataSyncRef = ref(db, 'dashboard/tasks'); // Matches active tree node path
 
         const TARGET_PIPELINE_KEY = 'AIzaSyAM5FFmnoIt6284nAky_30KAAQJB3sq36o';
         let aiClient = null;
         let activeChatSession = null;
-
-        const realCurrentDate = new Date(2026, 4, 18);
-        let displayingYear = 2026;
-        let displayingMonth = 4; 
         let datasetState = [];
 
-        const materialDatabase = {
-            petg: { density: "1.27 g/cm³", tensile: "48.5 MPa", modulus: "3.8 GPa", thermal: "78°C" },
-            pla: { density: "1.24 g/cm³", tensile: "65.0 MPa", modulus: "4.1 GPa", thermal: "55°C" },
-            alu: { density: "2.70 g/cm³", tensile: "310 MPa", modulus: "68.9 GPa", thermal: "582°C" }
-        };
-
-        window.addEventListener('DOMContentLoaded', function() {
+        window.addEventListener('DOMContentLoaded', () => {
             initDashboardTheme();
-            loadInitialState();
             initializeAutomaticPipeline();
-            renderWindowsCalendar();
-            initializeScratchpadEngine();
+            
+            // Core Cloud Realtime Listener
+            onValue(dataSyncRef, (snapshot) => {
+                datasetState = snapshot.val() || [];
+                synchronizeChecklist();
+            });
         });
 
         function initDashboardTheme() {
-            const preservedTheme = localStorage.getItem('workspace_theme_layout') || 'dark';
+            const preservedTheme = localStorage.getItem('workspace_theme') || 'dark';
             document.documentElement.setAttribute('data-theme', preservedTheme);
             document.getElementById('theme-status-lbl').textContent = preservedTheme.toUpperCase();
         }
 
         window.toggleDashboardTheme = function() {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            const targetTheme = (currentTheme === 'light') ? 'dark' : 'light';
-            document.documentElement.setAttribute('data-theme', targetTheme);
-            localStorage.setItem('workspace_theme_layout', targetTheme);
-            document.getElementById('theme-status-lbl').textContent = targetTheme.toUpperCase();
-        }
-
-        function initializeScratchpadEngine() {
-            const node = document.getElementById('scratchpad-text-node');
-            if (!node) return;
-            const cachedNotes = localStorage.getItem('workspace_scratchpad_data');
-            if (cachedNotes) node.value = cachedNotes;
-            node.addEventListener('input', () => localStorage.setItem('workspace_scratchpad_data', node.value));
-        }
-
-        window.updateMaterialSpecs = function() {
-            const key = document.getElementById('material-selector-node').value;
-            const mat = materialDatabase[key];
-            if (!mat) return;
-            document.getElementById('mat-density').textContent = mat.density;
-            document.getElementById('mat-tensile').textContent = mat.tensile;
-            document.getElementById('mat-modulus').textContent = mat.modulus;
-            document.getElementById('mat-thermal').textContent = mat.thermal;
+            const current = document.documentElement.getAttribute('data-theme');
+            const target = current === 'light' ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', target);
+            localStorage.setItem('workspace_theme', target);
+            document.getElementById('theme-status-lbl').textContent = target.toUpperCase();
         }
 
         function parseMarkdown(text) {
@@ -628,17 +202,15 @@
 
         function initializeAutomaticPipeline() {
             const logViewport = document.getElementById('ai-chat-viewport');
-            const queryInput = document.getElementById('ai-query-input');
             try {
                 aiClient = new GoogleGenAI({ apiKey: TARGET_PIPELINE_KEY });
                 activeChatSession = aiClient.chats.create({
                     model: 'gemini-2.5-flash',
-                    config: { systemInstruction: "You are an intelligent terminal script assistant. Provide architectural layout guidance, answer queries, perform technical breakdowns, or write code block metrics. Maintain clarity, utility, and immediate conversational brevity." }
+                    config: { systemInstruction: "You are a concise engineering development terminal workspace assistant." }
                 });
-                logViewport.innerHTML = '<div class="chat-bubble bubble-gemini"><strong>[Workspace Assistant Active]</strong><br>The console terminal is online. Ask code calculations, engineering logic, or general workspace operations.</div>';
-                queryInput.placeholder = "Ask Gemini a question...";
+                logViewport.innerHTML = '<div class="chat-bubble bubble-gemini"><strong>[Console Pipeline Online]</strong></div>';
             } catch (err) {
-                logViewport.innerHTML = `<div class="chat-bubble bubble-gemini" style="color:var(--accent-alert);"><strong>[Auto-Connect Failed]:</strong> ${err.message}</div>`;
+                logViewport.innerHTML = `<div class="chat-bubble bubble-gemini" style="color:var(--accent-alert);">[Initialization Error]: ${err.message}</div>`;
             }
         }
 
@@ -656,13 +228,11 @@
             userBubble.className = 'chat-bubble bubble-user';
             userBubble.textContent = rawText;
             logViewport.appendChild(userBubble);
-            
             queryInput.value = '';
-            logViewport.scrollTop = logViewport.scrollHeight;
 
             const loadingBubble = document.createElement('div');
             loadingBubble.className = 'chat-bubble bubble-gemini';
-            loadingBubble.innerHTML = '<em>Thinking...</em>';
+            loadingBubble.innerHTML = '<em>Awaiting stream data...</em>';
             logViewport.appendChild(loadingBubble);
             logViewport.scrollTop = logViewport.scrollHeight;
 
@@ -670,82 +240,13 @@
                 let response = await activeChatSession.sendMessage({ message: rawText });
                 loadingBubble.innerHTML = parseMarkdown(response.text);
             } catch (err) {
-                loadingBubble.innerHTML = `<strong>[Pipeline Connectivity Error]:</strong> <span style="color:var(--accent-alert);">${err.message}</span>`;
+                loadingBubble.innerHTML = `<span style="color:var(--accent-alert);">[Connectivity Error]: ${err.message}</span>`;
             }
             
             queryInput.disabled = false;
             submitBtn.disabled = false;
             queryInput.focus();
             logViewport.scrollTop = logViewport.scrollHeight;
-        }
-
-        function renderWindowsCalendar() {
-            const gridNode = document.getElementById('calendar-matrix-grid');
-            const headerTitle = document.getElementById('calendar-header-title');
-            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-            
-            headerTitle.textContent = `${monthNames[displayingMonth]} ${displayingYear}`;
-            gridNode.innerHTML = '';
-
-            ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].forEach(label => {
-                const cell = document.createElement('div');
-                cell.className = 'calendar-day-label';
-                cell.textContent = label;
-                gridNode.appendChild(cell);
-            });
-
-            const firstDayIndex = new Date(displayingYear, displayingMonth, 1).getDay();
-            const totalDaysCurrentMonth = new Date(displayingYear, displayingMonth + 1, 0).getDate();
-            const totalDaysPrevMonth = new Date(displayingYear, displayingMonth, 0).getDate();
-
-            for (let i = firstDayIndex - 1; i >= 0; i--) {
-                const cell = document.createElement('div');
-                cell.className = 'calendar-cell muted';
-                cell.textContent = totalDaysPrevMonth - i;
-                gridNode.appendChild(cell);
-            }
-
-            for (let day = 1; day <= totalDaysCurrentMonth; day++) {
-                const cell = document.createElement('div');
-                cell.className = 'calendar-cell';
-                cell.textContent = day;
-                if (day === realCurrentDate.getDate() && displayingMonth === realCurrentDate.getMonth() && displayingYear === realCurrentDate.getFullYear()) {
-                    cell.classList.add('today');
-                }
-                gridNode.appendChild(cell);
-            }
-
-            const totalRenderedCells = firstDayIndex + totalDaysCurrentMonth;
-            const remainingPaddingCells = 42 - totalRenderedCells;
-            for (let nextDay = 1; nextDay <= remainingPaddingCells; nextDay++) {
-                const cell = document.createElement('div');
-                cell.className = 'calendar-cell muted';
-                cell.textContent = nextDay;
-                gridNode.appendChild(cell);
-            }
-        }
-
-        window.shiftCalendarMonth = function(direction) {
-            displayingMonth += direction;
-            if (displayingMonth > 11) { displayingMonth = 0; displayingYear += 1; }
-            else if (displayingMonth < 0) { displayingMonth = 11; displayingYear -= 1; }
-            renderWindowsCalendar();
-        }
-
-        function loadInitialState() {
-            onValue(tasksRef, (snapshot) => {
-                const data = snapshot.val();
-                datasetState = data || [
-                    { text: "Validate component design assembly bounds", completed: false },
-                    { text: "Refine layout structural script blocks", completed: false },
-                    { text: "Distribute updated technical project manifests to Rod", completed: false }
-                ];
-                synchronizeChecklist();
-            });
-        }
-
-        function saveCurrentState() { 
-            set(tasksRef, datasetState);
         }
 
         function synchronizeChecklist() {
@@ -755,10 +256,7 @@
             let remCount = 0, compCount = 0;
 
             if (datasetState.length === 0) {
-                const emptyNode = document.createElement('div');
-                emptyNode.className = 'empty-state';
-                emptyNode.textContent = 'All tasks resolved.';
-                container.appendChild(emptyNode);
+                container.innerHTML = '<div class="empty-state">No pending actions items found.</div>';
             } else {
                 datasetState.forEach((task, index) => {
                     task.completed ? compCount++ : remCount++;
@@ -769,17 +267,21 @@
                             <span class="status-box">${task.completed ? '[X]' : '[ ]'}</span>
                             <span class="task-text">${task.text}</span>
                         </div>
-                        <button class="clear-single-btn" data-index="${index}">Delete</button>
+                        <button class="clear-single-btn">Delete</button>
                     `;
-                    li.addEventListener('click', function(e) {
+                    
+                    li.addEventListener('click', (e) => {
                         if (e.target.classList.contains('clear-single-btn')) return;
                         datasetState[index].completed = !datasetState[index].completed;
-                        saveCurrentState();
+                        set(dataSyncRef, datasetState);
                     });
-                    li.querySelector('.clear-single-btn').addEventListener('click', function(e) {
+
+                    li.querySelector('.clear-single-btn').addEventListener('click', (e) => {
                         e.stopPropagation();
-                        deleteTargetTask(index);
+                        datasetState.splice(index, 1);
+                        set(dataSyncRef, datasetState);
                     });
+
                     container.appendChild(li);
                 });
             }
@@ -792,13 +294,15 @@
             const val = inputNode.value.trim();
             if (!val) return;
             datasetState.push({ text: val, completed: false });
-            saveCurrentState();
+            set(dataSyncRef, datasetState);
             inputNode.value = '';
             inputNode.focus();
         }
 
-        window.deleteTargetTask = function(index) { datasetState.splice(index, 1); saveCurrentState(); }
-        window.purgeCompletedTasks = function() { datasetState = datasetState.filter(t => !t.completed); saveCurrentState(); }
+        window.purgeCompletedTasks = function() {
+            datasetState = datasetState.filter(t => !t.completed);
+            set(dataSyncRef, datasetState);
+        }
     </script>
 </body>
 </html>
