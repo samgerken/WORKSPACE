@@ -269,10 +269,11 @@
         import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
         import { GoogleGenAI } from "@google/genai";
 
+        // FIXED CONFIGURATION: Pointing straight to your exact project database instance URL
         const firebaseConfig = {
             apiKey: "AIzaSyACQZ-5RfnQg7gT1_V2PuxG4nA6uRm28uM",
             authDomain: "my-workspace-dashboard.firebaseapp.com",
-            databaseURL: "https://my-workspace-dashboard-default-rtdb.firebaseio.com",
+            databaseURL: "https://my-workspace-dashboard.firebaseio.com", 
             projectId: "my-workspace-dashboard",
             storageBucket: "my-workspace-dashboard.firebasestorage.app",
             messagingSenderId: "584369640657",
@@ -296,7 +297,7 @@
             alu: { density: "2.70 g/cm³", tensile: "310 MPa", modulus: "68.9 GPa" }
         };
 
-        // --- EXPLICIT USER ACTIONS (PUSHES DIRECTLY TO DATABASE) ---
+        // --- ATTACHED GLOBAL APP CONTROLS ---
         window.commitNewTask = function() {
             const inputNode = document.getElementById('task-input-node');
             if (!inputNode) return;
@@ -355,14 +356,13 @@
             document.getElementById('mat-modulus').textContent = mat.modulus;
         };
 
-        // --- LIFECYCLE LISTENERS (DOWNLOAD ONLY) ---
+        // --- DATA FLOW SUBSCRIPTIONS ---
         window.addEventListener('DOMContentLoaded', () => {
             initDashboardTheme();
             initializeAutomaticPipeline();
             renderStaticCalendar();
             initializeCloudScratchpad();
             
-            // This listener strictly DOWNLOADS data. It never writes back to the server automatically.
             onValue(dataSyncRef, (snapshot) => {
                 const data = snapshot.val();
                 if (data) {
