@@ -3,187 +3,178 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Workspace Core OS - Quantum Fluid Engine v5</title>
+    <title>workspace</title>
     <style>
         :root {
-            --bg-base: #06070a;
-            --bg-canvas: radial-gradient(circle at 50% 50%, #11141d 0%, #050609 100%);
-            --bg-surface: rgba(18, 22, 32, 0.55);
-            --bg-terminal: #030406;
-            --border-subtle: rgba(255, 255, 255, 0.04);
-            --border-active: rgba(255, 255, 255, 0.2);
-            --border-folder-glow: #3b82f6;
-            --text-primary: #ffffff;
-            --text-secondary: #e2e4e9;
-            --text-muted: #626575;
-            --text-dark: #31333e;
-            --accent-alert: #ef4444;
-            --font-stack: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
-            --panel-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.02);
+            --bg-base: #f9fafb;
+            --bg-surface: #ffffff;
+            --border-clean: rgba(0, 0, 0, 0.06);
+            --border-focus: rgba(0, 0, 0, 0.15);
+            --text-main: #111827;
+            --text-muted: #6b7280;
+            --text-ghost: #9ca3af;
+            --tile-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.03), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
+            --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
-        [data-theme="light"] {
-            --bg-base: #f4f6f9;
-            --bg-canvas: #f4f6f9;
-            --bg-surface: rgba(255, 255, 255, 0.8);
-            --bg-terminal: #fafafa;
-            --border-subtle: rgba(0, 0, 0, 0.05);
-            --border-active: rgba(0, 0, 0, 0.25);
-            --border-folder-glow: #2563eb;
-            --text-primary: #0f1115;
-            --text-secondary: #2d3139;
-            --text-muted: #7c8091;
-            --text-dark: #bfc3d3;
-            --panel-shadow: 0 15px 35px -10px rgba(10, 15, 30, 0.05), 0 0 0 1px rgba(0, 0, 0, 0.02);
+        [data-theme="dark"] {
+            --bg-base: #0b0f17;
+            --bg-surface: #121824;
+            --border-clean: rgba(255, 255, 255, 0.04);
+            --border-focus: rgba(255, 255, 255, 0.15);
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
+            --text-ghost: #4b5563;
+            --tile-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.3);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { 
-            background: var(--bg-canvas); 
-            color: var(--text-secondary); 
+            background: var(--bg-base); 
+            color: var(--text-main); 
             font-family: var(--font-stack); 
-            padding: 40px 32px; 
+            padding: 60px 40px; 
             min-height: 100vh;
-            letter-spacing: -0.01em;
-            overflow-x: hidden;
+            letter-spacing: -0.02em;
+            transition: background 0.3s ease;
         }
 
-        header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 24px; }
-        h1 { color: var(--text-primary); font-size: 1.7rem; font-weight: 500; letter-spacing: -0.02em; }
-        .subtitle { color: var(--text-muted); font-size: 0.85rem; margin-top: 4px; }
-        .header-controls { display: flex; gap: 12px; }
-        .control-ui-btn { background: var(--bg-surface); backdrop-filter: blur(30px); color: var(--text-secondary); border: 1px solid var(--border-subtle); padding: 10px 18px; font-family: inherit; font-size: 0.8rem; font-weight: 500; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
-        .control-ui-btn:hover { border-color: var(--border-active); color: var(--text-primary); }
+        header { 
+            max-width: 1600px;
+            margin: 0 auto 48px auto;
+            display: flex; 
+            justify-content: space-between; 
+            align-items: flex-end;
+        }
+        h1 { font-size: 1.4rem; font-weight: 400; letter-spacing: -0.03em; color: var(--text-main); }
+        .subtitle { color: var(--text-muted); font-size: 0.85rem; margin-top: 4px; font-weight: 300; }
+        
+        .header-controls { display: flex; gap: 16px; }
+        .minimal-btn { 
+            background: transparent; 
+            color: var(--text-muted); 
+            border: none;
+            font-family: inherit; 
+            font-size: 0.8rem; 
+            cursor: pointer; 
+            transition: color 0.2s ease;
+            padding: 4px 0;
+            border-bottom: 1px solid transparent;
+        }
+        .minimal-btn:hover { color: var(--text-main); border-bottom-color: var(--text-main); }
 
-        /* THE BLUEPRINT CANVAS LAYER */
-        .dashboard-canvas { 
+        /* THE CLEAN CANVAS LAYER */
+        .workspace-canvas { 
             position: relative;
             width: 100%;
-            min-height: 800px;
-            background-image: linear-gradient(var(--border-subtle) 1px, transparent 1px), linear-gradient(90deg, var(--border-subtle) 1px, transparent 1px);
-            background-size: 40px 40px;
-            border-radius: 16px;
-            padding: 12px;
+            max-width: 1600px;
+            margin: 0 auto;
+            min-height: 900px;
         }
 
-        /* RESIZABLE MECHANICAL GRID FRAMEWORK */
+        /* ELEGANT MINIMALIST TILES */
         .grid-item { 
             position: absolute; 
-            min-width: 220px;
-            min-height: 140px;
+            min-width: 240px;
+            min-height: 120px;
             z-index: 10;
         }
         
         .panel { 
             background: var(--bg-surface); 
-            backdrop-filter: blur(40px); 
-            border: 1px solid var(--border-subtle); 
-            border-radius: 16px; 
+            border: 1px solid var(--border-clean); 
+            border-radius: 12px; 
             padding: 24px; 
             display: flex; 
             flex-direction: column; 
-            box-shadow: var(--panel-shadow); 
+            box-shadow: var(--tile-shadow); 
             width: 100%;
             height: 100%;
             overflow: hidden;
             position: relative;
-            transition: border-color 0.2s, box-shadow 0.2s;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
-        .panel:hover { border-color: rgba(255, 255, 255, 0.08); }
         
-        /* HOVER MATRIX GLOW FOR DIRECTORY MERGING */
+        /* HIDDEN RESIZE ZONE */
+        .tile-resize-handle {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 14px;
+            height: 14px;
+            cursor: se-resize;
+            z-index: 50;
+            background: transparent;
+        }
+
+        /* DIRECTORY OVERLAP HOVER INDICATOR */
         .grid-item.folder-hover-target .panel {
-            border-color: var(--border-folder-glow) !important;
-            box-shadow: 0 0 25px rgba(59, 130, 246, 0.25);
+            border-color: var(--border-focus) !important;
+            box-shadow: 0 0 0 2px var(--border-focus);
         }
 
         .grid-item.pointer-dragging {
             z-index: 9999 !important;
             pointer-events: none !important;
-            opacity: 0.92;
-            transform: scale(1.02);
+            transform: scale(1.01);
             transition: none !important;
         }
         .grid-item.pointer-dragging .panel {
-            background: rgba(24, 30, 43, 0.85) !important;
-            border-color: var(--border-active) !important;
-            box-shadow: 0 40px 80px rgba(0,0,0,0.95);
-        }
-
-        /* CORNER RESIZE COMPONENT ACTUATOR */
-        .tile-resize-handle {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 16px;
-            height: 16px;
-            cursor: se-resize;
-            z-index: 50;
-            background: linear-gradient(135deg, transparent 70%, var(--text-dark) 70%);
-            border-bottom-right-radius: 16px;
-        }
-        .tile-resize-handle:hover {
-            background: linear-gradient(135deg, transparent 60%, var(--text-muted) 60%);
+            border-color: var(--border-focus) !important;
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.08);
         }
 
         h2 { 
-            color: #ffffff; 
-            font-size: 0.72rem; 
-            font-weight: 600; 
-            text-transform: uppercase; 
-            letter-spacing: 0.1em; 
+            color: var(--text-main); 
+            font-size: 0.85rem; 
+            font-weight: 500; 
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
-            border-bottom: 1px solid var(--border-subtle); 
-            padding-bottom: 12px; 
             margin-bottom: 16px;
             user-select: none;
         }
-        .tile-grab-surface { cursor: grab; flex-grow: 1; touch-action: none; display: flex; align-items: center; gap: 6px; }
+        .tile-grab-surface { cursor: grab; flex-grow: 1; touch-action: none; }
         .tile-grab-surface:active { cursor: grabbing; }
         
-        .tile-action-controls { display: flex; gap: 6px; align-items: center; }
-        .tile-control-trigger { background: none; border: none; color: var(--text-dark); cursor: pointer; font-size: 0.8rem; padding: 2px 6px; border-radius: 4px; }
-        .tile-control-trigger:hover { color: var(--text-primary); background: rgba(255,255,255,0.05); }
+        .tile-action-controls { display: flex; gap: 8px; align-items: center; }
+        .tile-control-trigger { background: none; border: none; color: var(--text-ghost); cursor: pointer; font-size: 0.85rem; padding: 2px; line-height: 1; transition: color 0.15s ease; }
+        .tile-control-trigger:hover { color: var(--text-main); }
 
-        /* NESTED DIRECTORY FOLDER ARCHITECTURE */
+        /* FOLDER TABS SYSTEM */
         .folder-tab-bar {
             display: flex;
-            gap: 4px;
-            background: var(--bg-terminal);
-            padding: 4px;
-            border-radius: 8px;
-            margin-bottom: 14px;
-            overflow-x: auto;
+            gap: 12px;
+            border-bottom: 1px solid var(--border-clean);
+            margin-bottom: 16px;
+            padding-bottom: 4px;
         }
         .folder-tab {
-            padding: 6px 12px;
-            font-size: 0.72rem;
-            border-radius: 6px;
+            padding: 4px 0;
+            font-size: 0.78rem;
             cursor: pointer;
             background: transparent;
             color: var(--text-muted);
             border: none;
-            white-space: nowrap;
-            transition: all 0.15s;
+            border-bottom: 2px solid transparent;
+            transition: all 0.15s ease;
         }
         .folder-tab.active-tab {
-            background: var(--bg-surface);
-            color: var(--text-primary);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+            color: var(--text-main);
+            border-bottom-color: var(--text-main);
+            font-weight: 500;
         }
         .folder-inner-content-viewport { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
 
-        /* WIDGET INTERNALS SPECIFICATION */
+        /* CONTENT STYLING */
         .content-block { display: flex; flex-direction: column; gap: 10px; height: 100%; width: 100%; }
-        .spec-table { width: 100%; font-family: monospace; font-size: 0.75rem; border-collapse: collapse; }
-        .spec-table td { padding: 8px 4px; border-bottom: 1px solid var(--border-subtle); }
-        .spec-table td:last-child { text-align: right; color: var(--text-primary); }
-        .stat-card { background: var(--bg-terminal); border: 1px solid var(--border-subtle); padding: 12px; border-radius: 8px; font-size: 0.78rem; }
+        .spec-table { width: 100%; font-size: 0.8rem; border-collapse: collapse; color: var(--text-muted); }
+        .spec-table td { padding: 6px 0; border-bottom: 1px solid var(--border-clean); }
+        .spec-table tr:last-child td { border-bottom: none; }
+        .spec-table td:last-child { text-align: right; color: var(--text-main); }
         
-        .code-box { background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 12px; font-family: monospace; font-size: 0.75rem; color: #a6accd; white-space: pre; overflow-x: auto; margin-top: auto; }
-        .hidden-widget { display: none !important; }
+        .minimal-card { font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; }
+        .code-snippet { font-family: monospace; font-size: 0.75rem; color: var(--text-muted); background: var(--bg-base); padding: 12px; border-radius: 6px; white-space: pre-wrap; margin-top: auto; border: 1px solid var(--border-clean); }
     </style>
 </head>
 <body>
@@ -191,61 +182,59 @@
     <div class="container">
         <header>
             <div>
-                <h1>Workspace Environment</h1>
-                <p class="subtitle">Manual coordinate mapping, fluid nested folder engines, and precise axis resizing</p>
+                <h1>workspace</h1>
+                <p class="subtitle">drag to reposition • slide corner to resize • layer modules to bundle</p>
             </div>
             <div class="header-controls">
-                <button class="control-ui-btn" onclick="resetCanvasToDefaultCoordinates()">Reset Board Layer</button>
-                <button class="control-ui-btn" onclick="toggleDashboardTheme()">Theme</button>
+                <button class="minimal-btn" onclick="resetCanvasToDefaultCoordinates()">reset architecture</button>
+                <button class="minimal-btn" onclick="toggleDashboardTheme()">appearance</button>
             </div>
         </header>
 
-        <div class="dashboard-canvas" id="workspace-canvas-root">
+        <div class="workspace-canvas" id="workspace-canvas-root">
             
-            <div class="grid-item" id="tile-checklist" style="top: 20px; left: 20px; width: 360px; height: 260px;">
+            <div class="grid-item" id="tile-checklist" style="top: 20px; left: 20px; width: 340px; height: 220px;">
                 <div class="panel" data-widget-id="tile-checklist">
                     <h2>
-                        <span class="tile-grab-surface">📋 Daily Tasks</span>
+                        <span class="tile-grab-surface">tasks</span>
                         <div class="tile-action-controls">
                             <button class="tile-control-trigger" onclick="unpackFolder('tile-checklist')">⚏</button>
                             <button class="tile-control-trigger" onclick="removeTile('tile-checklist')">×</button>
                         </div>
                     </h2>
                     <div class="folder-inner-content-viewport">
-                        <div class="content-block">
-                            <table class="spec-table">
-                                <tr><td>⚡ Deploy layout patch to server</td><td>Pending</td></tr>
-                                <tr><td>🚴 Sync Beeline telemetry telemetry</td><td>Complete</td></tr>
-                                <tr><td>🛠️ Verify Outback 5W-30 sump capacity</td><td>Review</td></tr>
-                            </table>
-                        </div>
+                        <table class="spec-table">
+                            <tr><td>deploy production patch</td><td>pending</td></tr>
+                            <tr><td>sync velo sync configuration</td><td>complete</td></tr>
+                            <tr><td>audit subaru fluid volumes</td><td>review</td></tr>
+                        </table>
                     </div>
                     <div class="tile-resize-handle"></div>
                 </div>
             </div>
 
-            <div class="grid-item" id="tile-ai-engine" style="top: 20px; left: 400px; width: 440px; height: 260px;">
+            <div class="grid-item" id="tile-ai-engine" style="top: 20px; left: 380px; width: 380px; height: 220px;">
                 <div class="panel" data-widget-id="tile-ai-engine">
                     <h2>
-                        <span class="tile-grab-surface">🤖 Gemini Copilot</span>
+                        <span class="tile-grab-surface">copilot</span>
                         <div class="tile-action-controls">
                             <button class="tile-control-trigger" onclick="unpackFolder('tile-ai-engine')">⚏</button>
                             <button class="tile-control-trigger" onclick="removeTile('tile-ai-engine')">×</button>
                         </div>
                     </h2>
                     <div class="folder-inner-content-viewport">
-                        <div class="stat-card">
-                            <strong>System Prompt Trace Flag:</strong> Canvas coordinate spatial index mapped to PointerEvent matrices successfully.
+                        <div class="minimal-card">
+                            spatial pointer matrix deployed. workspace layer coordinates running natively in clean memory blocks.
                         </div>
                     </div>
                     <div class="tile-resize-handle"></div>
                 </div>
             </div>
 
-            <div class="grid-item" id="tile-subaru-log" style="top: 300px; left: 20px; width: 360px; height: 240px;">
+            <div class="grid-item" id="tile-subaru-log" style="top: 260px; left: 20px; width: 340px; height: 200px;">
                 <div class="panel" data-widget-id="tile-subaru-log">
                     <h2>
-                        <span class="tile-grab-surface">🚗 Outback Mechanics</span>
+                        <span class="tile-grab-surface">outback specs</span>
                         <div class="tile-action-controls">
                             <button class="tile-control-trigger" onclick="unpackFolder('tile-subaru-log')">⚏</button>
                             <button class="tile-control-trigger" onclick="removeTile('tile-subaru-log')">×</button>
@@ -253,51 +242,51 @@
                     </h2>
                     <div class="folder-inner-content-viewport">
                         <table class="spec-table">
-                            <tr><td>Chassis Core Architecture</td><td>2014 Outback 2.5i</td></tr>
-                            <tr><td>Engine Sump Fluid Capacity</td><td>5.1 US Quarts</td></tr>
-                            <tr><td>Viscosity Class Range</td><td>5W-30 Synthetic</td></tr>
+                            <tr><td>engine profile</td><td>2014 2.5i platform</td></tr>
+                            <tr><td>fluid profile</td><td>5w-30 synthetic mix</td></tr>
+                            <tr><td>sump capacity</td><td>5.1 us quarts</td></tr>
                         </table>
                     </div>
                     <div class="tile-resize-handle"></div>
                 </div>
             </div>
 
-            <div class="grid-item" id="tile-mass-recipe" style="top: 300px; left: 400px; width: 340px; height: 240px;">
+            <div class="grid-item" id="tile-mass-recipe" style="top: 260px; left: 380px; width: 340px; height: 200px;">
                 <div class="panel" data-widget-id="tile-mass-recipe">
                     <h2>
-                        <span class="tile-grab-surface">⚖️ Gram-Mass Scalar</span>
+                        <span class="tile-grab-surface">recipe scale</span>
                         <div class="tile-action-controls">
                             <button class="tile-control-trigger" onclick="unpackFolder('tile-mass-recipe')">⚏</button>
                             <button class="tile-control-trigger" onclick="removeTile('tile-mass-recipe')">×</button>
                         </div>
                     </h2>
                     <div class="folder-inner-content-viewport">
-                        <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 6px;">Target Weight: 700g Bread Flour</div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 8px;">base parameter: 700g flour</div>
                         <table class="spec-table">
-                            <tr><td>Water formulation (68%)</td><td>476 g</td></tr>
-                            <tr><td>Fine Sea Salt Compound (2%)</td><td>14 g</td></tr>
+                            <tr><td>water hydration (68%)</td><td>476 g</td></tr>
+                            <tr><td>sea salt composite (2%)</td><td>14 g</td></tr>
                         </table>
                     </div>
                     <div class="tile-resize-handle"></div>
                 </div>
             </div>
 
-            <div class="grid-item" id="tile-folder-engineering" style="top: 20px; left: 860px; width: 380px; height: 260px;">
+            <div class="grid-item" id="tile-folder-engineering" style="top: 20px; left: 780px; width: 380px; height: 220px;">
                 <div class="panel" data-widget-id="tile-folder-engineering" data-is-folder="true" data-contained-ids="tile-vba-macros,tile-print-debugger">
                     <h2>
-                        <span class="tile-grab-surface">📁 Engineering Assets Group</span>
+                        <span class="tile-grab-surface">engineering</span>
                         <div class="tile-action-controls">
-                            <button class="tile-control-trigger" onclick="unpackFolder('tile-folder-engineering')">⚏ Unpack</button>
+                            <button class="tile-control-trigger" onclick="unpackFolder('tile-folder-engineering')">⚏</button>
                             <button class="tile-control-trigger" onclick="removeTile('tile-folder-engineering')">×</button>
                         </div>
                     </h2>
                     <div class="folder-tab-bar">
-                        <button class="folder-tab active-tab" onclick="switchFolderTab(this, 'tile-vba-macros')">CAD Macros</button>
-                        <button class="folder-tab" onclick="switchFolderTab(this, 'tile-print-debugger')">3D Print Debugger</button>
+                        <button class="folder-tab active-tab" onclick="switchFolderTab(this, 'tile-vba-macros')">cad macros</button>
+                        <button class="folder-tab" onclick="switchFolderTab(this, 'tile-print-debugger')">3d prints</button>
                     </div>
                     <div class="folder-inner-content-viewport">
                         <div id="folder-content-pane-root">
-                            <div class="code-box">' Auto-Convert macro layer&#10;Part.SaveAs3 "output.3dm", 0, 2</div>
+                            <div class="code-snippet">Part.SaveAs3 "output.3dm", 0, 2</div>
                         </div>
                     </div>
                     <div class="tile-resize-handle"></div>
@@ -309,12 +298,12 @@
 
     <div id="widget-blueprint-vault" style="display: none;">
         <div id="vault-tile-vba-macros">
-            <div class="code-box" style="margin-top:0;">' Auto-Convert active format layer&#10;Part.SaveAs3 "output.3dm", 0, 2</div>
+            <div class="code-snippet">Part.SaveAs3 "output.3dm", 0, 2</div>
         </div>
         <div id="vault-tile-print-debugger">
             <table class="spec-table">
-                <tr><td>Defect Profiler</td><td>First Layer Lifting Matrix</td></tr>
-                <tr><td>Remedial Action</td><td>Clean build surface with Isopropyl Alcohol</td></tr>
+                <tr><td>defect analysis</td><td>first-layer surface warp mitigation</td></tr>
+                <tr><td>remedy routing</td><td>clean print bed plate layout via alcohol scrub</td></tr>
             </table>
         </div>
     </div>
@@ -326,14 +315,13 @@
         let startX, startY, startWidth, startHeight, startLeft, startTop;
 
         const defaultCoordinatesRegistry = {
-            "tile-checklist": { top: "20px", left: "20px", width: "360px", height: "260px" },
-            "tile-ai-engine": { top: "20px", left: "400px", width: "440px", height: "260px" },
-            "tile-subaru-log": { top: "300px", left: "20px", width: "360px", height: "240px" },
-            "tile-mass-recipe": { top: "300px", left: "400px", width: "340px", height: "240px" },
-            "tile-folder-engineering": { top: "20px", left: "860px", width: "380px", height: "260px" }
+            "tile-checklist": { top: "20px", left: "20px", width: "340px", height: "220px" },
+            "tile-ai-engine": { top: "20px", left: "380px", width: "380px", height: "220px" },
+            "tile-subaru-log": { top: "260px", left: "20px", width: "340px", height: "200px" },
+            "tile-mass-recipe": { top: "260px", left: "380px", width: "340px", height: "200px" },
+            "tile-folder-engineering": { top: "20px", left: "780px", width: "380px", height: "220px" }
         };
 
-        // --- POINTER EVENT MULTI-DYNAMICS ENGINE (DRAG, RESIZE & OVERLAP SCAN) ---
         canvas.addEventListener('pointerdown', (e) => {
             const resizeHandle = e.target.closest('.tile-resize-handle');
             const grabSurface = e.target.closest('.tile-grab-surface');
@@ -367,7 +355,7 @@
                 const deltaX = e.clientX - startX;
                 const deltaY = e.clientY - startY;
                 activeResizeNode.style.width = Math.max(240, startWidth + deltaX) + 'px';
-                activeResizeNode.style.height = Math.max(160, startHeight + deltaY) + 'px';
+                activeResizeNode.style.height = Math.max(140, startHeight + deltaY) + 'px';
                 return;
             }
 
@@ -377,10 +365,9 @@
                 activeDragNode.style.left = (startLeft + deltaX) + 'px';
                 activeDragNode.style.top = (startTop + deltaY) + 'px';
 
-                // Scan for potential Folder Intersection Zones
                 const dragBox = activeDragNode.getBoundingClientRect();
                 document.querySelectorAll('.grid-item').forEach(target => {
-                    if (target === activeDragNode || target.id === 'tile-spawner-root') return;
+                    if (target === activeDragNode) return;
                     
                     const targetBox = target.getBoundingClientRect();
                     const hasIntersection = !(dragBox.right < targetBox.left || 
@@ -407,7 +394,6 @@
                 activeDragNode.releasePointerCapture(e.pointerId);
                 activeDragNode.classList.remove('pointer-dragging');
 
-                // Evaluate Directory Fusion Drop Condition
                 const targetFolderNode = document.querySelector('.folder-hover-target');
                 if (targetFolderNode) {
                     targetFolderNode.classList.remove('folder-hover-target');
@@ -422,7 +408,6 @@
         canvas.addEventListener('pointerup', releasePointerCaptureBlock);
         canvas.addEventListener('pointercancel', releasePointerCaptureBlock);
 
-        // --- DIRECTORY MULTI-WIDGET COMPOSITION LOGIC ---
         function executeWidgetFolderMerge(sourceNode, targetNode) {
             const sourceId = sourceNode.id;
             const targetId = targetNode.id;
@@ -434,10 +419,10 @@
             } else {
                 containedIds.push(targetId);
                 targetPanel.setAttribute('data-is-folder', 'true');
-                targetPanel.querySelector('h2 .tile-grab-surface').textContent = '📁 Merged Folder Hub';
+                targetPanel.querySelector('h2 .tile-grab-surface').textContent = 'bundled folder';
             }
 
-            if (sourcePanelIsFolder = sourceNode.querySelector('.panel').getAttribute('data-is-folder') === 'true') {
+            if (sourceNode.querySelector('.panel').getAttribute('data-is-folder') === 'true') {
                 containedIds = containedIds.concat(sourceNode.querySelector('.panel').getAttribute('data-contained-ids').split(','));
             } else {
                 containedIds.push(sourceId);
@@ -445,7 +430,6 @@
 
             targetPanel.setAttribute('data-contained-ids', containedIds.join(','));
             
-            // Re-render Tab UI Controllers
             const tabBar = targetPanel.querySelector('.folder-tab-bar') || document.createElement('div');
             tabBar.className = 'folder-tab-bar';
             tabBar.innerHTML = '';
@@ -453,7 +437,7 @@
             containedIds.forEach((id, idx) => {
                 const btn = document.createElement('button');
                 btn.className = `folder-tab ${idx === 0 ? 'active-tab' : ''}`;
-                btn.textContent = id.replace('tile-', '').toUpperCase();
+                btn.textContent = id.replace('tile-', '').replace('-', ' ');
                 btn.onclick = (e) => switchFolderTab(btn, id);
                 tabBar.appendChild(btn);
             });
@@ -464,7 +448,6 @@
 
             sourceNode.remove();
             
-            // Hydrate the first element structure into the viewport container
             const viewport = targetPanel.querySelector('.folder-inner-content-viewport');
             viewport.innerHTML = `<div id="folder-content-pane-root"></div>`;
             renderNestedContentBlock(containedIds[0], targetPanel.querySelector('#folder-content-pane-root'));
@@ -486,19 +469,11 @@
             if (blueprint) {
                 mountTargetNode.innerHTML = blueprint.innerHTML;
             } else {
-                mountTargetNode.innerHTML = `<div style="font-size:0.8rem;color:var(--text-muted)">Active sub-module asset matrix content logs loaded [${widgetId}].</div>`;
+                mountTargetNode.innerHTML = `<div style="font-size:0.8rem;color:var(--text-muted)">module logs dynamic load initialization...</div>`;
             }
         }
 
         window.unpackFolder = function(folderId) {
-            const folderNode = document.getElementById(folderId);
-            const panel = folderNode.querySelector('.panel');
-            if (panel.getAttribute('data-is-folder') !== 'true') return;
-
-            const containedIds = panel.getAttribute('data-contained-ids').split(',');
-            const baseTop = parseFloat(folderNode.style.top) || 40;
-            const baseLeft = parseFloat(folderNode.style.left) || 40;
-
             localStorage.removeItem('workspace_coordinates_v5');
             window.location.reload(); 
         };
@@ -513,7 +488,6 @@
             document.documentElement.setAttribute('data-theme', curr === 'light' ? 'dark' : 'light');
         };
 
-        // --- GRAPHICS COORDINATES PERSISTENCE LOGIC ---
         function saveCanvasGeometricState() {
             const layoutData = [];
             document.querySelectorAll('.grid-item').forEach(el => {
@@ -539,7 +513,6 @@
             }
             try {
                 const coordinates = JSON.parse(raw);
-                // Flush layout nodes to rebuild safely from cache states
                 canvas.innerHTML = '';
                 
                 coordinates.forEach(data => {
@@ -556,15 +529,15 @@
                         const ids = data.containedIds.split(',');
                         let tabsHTML = '';
                         ids.forEach((subId, idx) => {
-                            tabsHTML += `<button class="folder-tab ${idx === 0 ? 'active-tab' : ''}" onclick="switchFolderTab(this, '${subId}')">${subId.replace('tile-', '').toUpperCase()}</button>`;
+                            tabsHTML += `<button class="folder-tab ${idx === 0 ? 'active-tab' : ''}" onclick="switchFolderTab(this, '${subId}')">${subId.replace('tile-', '').replace('-', ' ')}</button>`;
                         });
 
                         internalHTML = `
                             <div class="panel" data-widget-id="${data.id}" data-is-folder="true" data-contained-ids="${data.containedIds}">
                                 <h2>
-                                    <span class="tile-grab-surface">📁 Merged Folder Hub</span>
+                                    <span class="tile-grab-surface">bundled folder</span>
                                     <div class="tile-action-controls">
-                                        <button class="tile-control-trigger" onclick="unpackFolder('${data.id}')">⚏ Unpack</button>
+                                        <button class="tile-control-trigger" onclick="unpackFolder('${data.id}')">⚏</button>
                                         <button class="tile-control-trigger" onclick="removeTile('${data.id}')">×</button>
                                     </div>
                                 </h2>
@@ -578,7 +551,7 @@
                         internalHTML = `
                             <div class="panel" data-widget-id="${data.id}">
                                 <h2>
-                                    <span class="tile-grab-surface">📦 Dynamic Module</span>
+                                    <span class="tile-grab-surface">${data.id.replace('tile-', '').replace('-', ' ')}</span>
                                     <div class="tile-action-controls">
                                         <button class="tile-control-trigger" onclick="removeTile('${data.id}')">×</button>
                                     </div>
@@ -600,9 +573,7 @@
                         renderNestedContentBlock(data.id, item.querySelector('#folder-content-pane-root'));
                     }
                 });
-            } catch (e) {
-                console.error("Layout memory parsing exception cleared:", e);
-            }
+            } catch (e) { console.error(e); }
         }
 
         window.resetCanvasToDefaultCoordinates = function() {
@@ -624,7 +595,6 @@
             if (localStorage.getItem('workspace_coordinates_v5')) {
                 restoreCanvasGeometricState();
             } else {
-                // Initialize default text widths inside layout
                 document.querySelectorAll('.grid-item').forEach(el => {
                     if(el.style.width) return;
                     el.style.width = el.offsetWidth + 'px';
