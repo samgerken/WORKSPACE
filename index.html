@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Workspace Core Dashboard</title>
+    <title>Workspace Core Dashboard - Advanced Physics v3</title>
     <style>
         :root {
             --bg-base: #0b0c10;
@@ -66,7 +66,7 @@
         
         .container { max-width: 1600px; margin: 0 auto; }
 
-        /* SPLASH INTRO ACCELERATOR */
+        /* SPLASH SCREEN ACCELERATOR */
         #splash-screen-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -91,18 +91,27 @@
         .control-ui-btn { background: var(--bg-surface); backdrop-filter: blur(var(--blur-strength)); color: var(--text-secondary); border: 1px solid var(--border-subtle); padding: 9px 16px; font-family: inherit; font-size: 0.8rem; font-weight: 500; border-radius: 8px; cursor: pointer; transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1); }
         .control-ui-btn:hover { border-color: var(--border-active); color: var(--text-primary); background: rgba(255,255,255,0.03); }
 
-        /* THE COMPACT AUTONOMOUS PHYSICS GRID ENGINE */
+        /* THE AUTONOMOUS MASONRY DYNAMICS ENGINE */
         .dashboard-grid { 
             display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); 
-            gap: 20px; 
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); 
+            gap: 24px; 
             align-items: start;
             transition: all 0.4s ease;
         }
 
-        /* STRUCTURAL BLUEPRINT STANDARD SIZING OVERRIDE BLOCK */
+        /* DYNAMIC GEOMETRY MODIFIERS */
+        .grid-item.sz-wide { grid-column: span 2; }
+        .grid-item.sz-tall { grid-row: span 2; }
+        .grid-item.sz-wide.sz-tall { grid-column: span 2; grid-row: span 2; }
+
+        /* UNIFORM BLUEPRINT OVERRIDE BLOCK */
         .dashboard-grid.standardized-geometry {
-            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)) !important;
+        }
+        .dashboard-grid.standardized-geometry .grid-item {
+            grid-column: span 1 !important;
+            grid-row: span 1 !important;
         }
         .dashboard-grid.standardized-geometry .panel {
             height: 380px !important;
@@ -111,20 +120,21 @@
             height: 54px !important;
         }
 
-        /* SYSTEM TILES MECHANICS */
+        /* PHYSICS SYSTEM TILES MECHANICS */
         .grid-item { 
             position: relative; 
-            transition: transform 0.35s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.2s ease, grid-row-end 0.3s ease; 
+            transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.25s ease, box-shadow 0.4s ease;
+            transform-origin: center center;
         }
         .grid-item.dragging { 
-            opacity: 0.3; 
-            transform: scale(0.96) rotateZ(-0.5deg); 
-            box-shadow: 0 30px 60px rgba(0,0,0,0.9);
+            opacity: 0.6; 
+            transform: scale(1.03) rotateZ(2deg) translateY(-8px); 
+            box-shadow: 0 40px 80px rgba(0,0,0,0.9);
+            z-index: 100;
         }
         .grid-item.drag-over { 
-            outline: 2px dashed var(--border-active); 
-            outline-offset: 4px; 
-            border-radius: 14px; 
+            transform: scale(0.97) translateY(4px);
+            opacity: 0.85;
         }
         .hidden-tile { display: none !important; }
 
@@ -137,13 +147,14 @@
             display: flex; 
             flex-direction: column; 
             box-shadow: var(--panel-shadow); 
-            transition: transform 0.25s cubic-bezier(0.215, 0.61, 0.355, 1), box-shadow 0.25s, border-color 0.25s, height 0.3s cubic-bezier(0.165, 0.84, 0.44, 1); 
+            transition: border-color 0.25s, height 0.3s ease; 
             overflow: hidden;
             width: 100%;
+            height: 100%;
+            min-height: 240px;
         }
         .panel:hover { 
             border-color: rgba(255, 255, 255, 0.08); 
-            transform: translateY(-4px); 
             box-shadow: 0 28px 55px -10px rgba(0,0,0,0.95), 0 0 0 1px rgba(255,255,255,0.05); 
         }
         
@@ -165,7 +176,7 @@
         .tile-grab-surface { cursor: grab; flex-grow: 1; padding: 2px 0; }
         .tile-grab-surface:active { cursor: grabbing; }
         
-        .tile-action-controls { display: flex; gap: 6px; align-items: center; }
+        .tile-action-controls { display: flex; gap: 8px; align-items: center; }
         .tile-control-trigger { background: none; border: none; color: var(--text-dark); cursor: pointer; font-size: 0.8rem; padding: 2px 6px; border-radius: 4px; transition: all 0.15s; }
         .tile-control-trigger:hover { color: var(--text-primary); background: rgba(255,255,255,0.05); }
         .tile-control-trigger.remove-trigger:hover { color: var(--accent-alert); }
@@ -175,12 +186,12 @@
         .panel.collapsed-state > *:not(h2) { display: none !important; }
         .panel.collapsed-state h2 { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
 
-        /* THE BLACK PLUS EMBED CANVAS CARD */
+        /* BLACK CANVASES MODULAR ADD CAROUSEL */
         .add-tile-blueprint {
             background: #050608;
             border: 2px dashed rgba(255,255,255,0.03);
             border-radius: 14px;
-            height: 220px;
+            height: 240px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -215,11 +226,11 @@
             border: 1px solid var(--border-active);
             border-radius: 10px;
             padding: 8px;
-            width: 220px;
+            width: 240px;
             box-shadow: 0 15px 40px rgba(0,0,0,0.7);
             opacity: 0;
             visibility: hidden;
-            z-index: 50;
+            z-index: 500;
             transition: opacity 0.2s, transform 0.2s, visibility 0.2s;
         }
         .spawn-context-menu.active {
@@ -231,38 +242,31 @@
         .spawn-opt-btn { width: 100%; text-align: left; background: none; border: none; padding: 8px; font-size: 0.82rem; color: var(--text-secondary); cursor: pointer; border-radius: 6px; transition: background 0.15s, color 0.15s; }
         .spawn-opt-btn:hover { background: rgba(255,255,255,0.04); color: var(--text-primary); }
 
-        /* WIDGET SPECIFIC CONTENT ARCHITECTURE */
+        /* WIDGET DESIGN LAYOUT SYSTEMS */
         .control-row { display: flex; gap: 8px; margin-bottom: 12px; }
-        .task-input { flex: 1; background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 10px 12px; color: var(--text-primary); font-family: inherit; font-size: 0.85rem; outline: none; transition: border-color 0.2s; }
-        .task-input:focus { border-color: var(--border-active); }
+        .task-input { flex: 1; background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 10px 12px; color: var(--text-primary); font-family: inherit; font-size: 0.85rem; outline: none; }
         
         .deploy-btn { background: var(--bg-terminal); color: var(--text-secondary); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 0 14px; font-size: 0.8rem; font-weight: 500; cursor: pointer; transition: all 0.15s; }
-        .deploy-btn:hover:not(:disabled) { border-color: var(--border-active); color: var(--text-primary); }
-        .deploy-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        .deploy-btn:hover { border-color: var(--border-active); color: var(--text-primary); }
 
-        .checklist-container { list-style: none; display: flex; flex-direction: column; max-height: 200px; overflow-y: auto; }
-        .checklist-item { padding: 8px; border-bottom: 1px solid var(--border-subtle); font-size: 0.85rem; display: flex; align-items: center; justify-content: space-between; cursor: pointer; border-radius: 4px; transition: background 0.1s; }
+        .checklist-container { list-style: none; display: flex; flex-direction: column; overflow-y: auto; flex: 1; }
+        .checklist-item { padding: 8px; border-bottom: 1px solid var(--border-subtle); font-size: 0.85rem; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
         .checklist-item:hover { background: rgba(255, 255, 255, 0.015); }
-        .task-left-block { display: flex; align-items: center; min-width: 0; }
-        .status-box { font-family: monospace; margin-right: 10px; color: var(--text-muted); }
-        .clear-single-btn { background: none; border: none; color: var(--text-dark); font-size: 0.75rem; cursor: pointer; }
-        .clear-single-btn:hover { color: var(--accent-alert); }
-        .resolved { color: var(--text-dark) !important; }
-        .resolved .task-text { text-decoration: line-through; }
+        .resolved { color: var(--text-dark) !important; text-decoration: line-through; }
 
-        .ai-chat-log { background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 6px; height: 180px; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
-        .chat-bubble { font-size: 0.82rem; max-width: 85%; word-break: break-word; padding: 8px 12px; border-radius: 10px; }
+        .ai-chat-log { background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 6px; flex: 1; min-height: 140px; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
+        .chat-bubble { font-size: 0.82rem; max-width: 85%; padding: 8px 12px; border-radius: 10px; }
         .bubble-user { color: var(--text-primary); align-self: flex-end; background: var(--chat-user-bg); }
         .bubble-gemini { color: var(--text-secondary); align-self: flex-start; background: var(--chat-gemini-bg); border: 1px solid var(--chat-gemini-border); }
 
         .weather-display { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
         .temp-primary { font-size: 2.1rem; font-weight: 200; color: var(--text-primary); font-family: monospace; }
-        .weather-meta { font-size: 0.75rem; color: var(--text-muted); text-align: right; }
+        .weather-meta { font-size: 0.75rem; color: var(--text-muted); }
         .forecast-container { display: flex; flex-direction: column; gap: 4px; background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 8px; }
         .forecast-row { display: grid; grid-template-columns: 3fr 5fr 2fr; font-size: 0.75rem; }
 
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); row-gap: 2px; text-align: center; }
-        .calendar-day-label { color: var(--text-muted); font-size: 0.65rem; padding-bottom: 4px; text-transform: uppercase; }
+        .calendar-day-label { color: var(--text-muted); font-size: 0.65rem; text-transform: uppercase; }
         .calendar-cell { font-size: 0.75rem; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-family: monospace; }
         .calendar-cell.today { background: var(--text-primary); color: var(--bg-base); font-weight: 600; border-radius: 50%; }
 
@@ -271,9 +275,9 @@
         .stat-label { font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase; }
         .stat-value { font-size: 1rem; color: var(--text-primary); font-family: monospace; }
         .progress-track { background: var(--progress-track); height: 4px; border-radius: 2px; overflow: hidden; margin-top: 6px; }
-        .progress-fill { background: var(--text-primary); height: 100%; transition: width 0.3s; }
+        .progress-fill { background: var(--text-primary); height: 100%; }
 
-        .material-selector { background: var(--bg-terminal); border: 1px solid var(--border-subtle); color: var(--text-primary); width: 100%; padding: 8px; border-radius: 6px; margin-bottom: 10px; font-family: inherit; font-size: 0.8rem; cursor: pointer; outline: none; }
+        .material-selector { background: var(--bg-terminal); border: 1px solid var(--border-subtle); color: var(--text-primary); width: 100%; padding: 8px; border-radius: 6px; margin-bottom: 10px; font-family: inherit; font-size: 0.8rem; outline: none; }
         .spec-table { width: 100%; font-family: monospace; font-size: 0.75rem; }
         .spec-table td { padding: 6px 4px; border-bottom: 1px solid var(--border-subtle); }
         .spec-table td:last-child { text-align: right; color: var(--text-primary); }
@@ -282,8 +286,10 @@
         .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
         .calc-btn { background: var(--bg-terminal); color: var(--text-secondary); border: 1px solid var(--border-subtle); padding: 10px 2px; font-family: monospace; font-size: 0.85rem; border-radius: 4px; cursor: pointer; }
         
-        .scratch-pad { width: 100%; height: 110px; background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 10px; color: var(--text-secondary); font-family: monospace; font-size: 0.8rem; resize: none; outline: none; }
+        .scratch-pad { width: 100%; flex: 1; min-height: 110px; background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 10px; color: var(--text-secondary); font-family: monospace; font-size: 0.8rem; resize: none; outline: none; }
         .timer-display { font-family: monospace; font-size: 1.8rem; text-align: center; color: var(--text-primary); margin: 6px 0 12px 0; background: var(--bg-terminal); border: 1px solid var(--border-subtle); padding: 8px; border-radius: 6px; }
+
+        .code-snippet-box { background: var(--bg-terminal); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 10px; font-family: monospace; font-size: 0.75rem; color: #a6accd; overflow-x: auto; white-space: pre; max-height: 140px; margin-bottom: 8px; }
     </style>
 </head>
 <body>
@@ -297,10 +303,10 @@
         <header>
             <div>
                 <h1>Workspace Dashboard</h1>
-                <p class="subtitle">Dynamic layout sandbox with inertial drag mechanics</p>
+                <p class="subtitle">Fluid inertia physics matrix with dynamic cross-axis sizing parameters</p>
             </div>
             <div class="header-controls">
-                <button class="control-ui-btn" onclick="toggleStrictGeometry()">Sizing Mode: Auto</button>
+                <button class="control-ui-btn" onclick="toggleStrictGeometry()">Sizing Mode: Dynamic Grid</button>
                 <button class="control-ui-btn" onclick="toggleDashboardTheme()">Theme</button>
             </div>
         </header>
@@ -310,32 +316,34 @@
             <div class="grid-item" id="tile-checklist">
                 <div class="panel">
                     <h2>
-                        <span class="tile-grab-surface">⋮ Daily Checklist</span>
+                        <span class="tile-grab-surface">⋮ Daily Tasks</span>
                         <div class="tile-action-controls">
+                            <button class="tile-control-trigger" title="Cycle Size" onclick="cycleTileSizeGeometry('tile-checklist')">⤢</button>
                             <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-checklist')">—</button>
                             <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-checklist')">×</button>
                         </div>
                     </h2>
                     <div class="control-row">
-                        <input type="text" id="task-input-node" class="task-input" placeholder="New track flag...">
+                        <input type="text" id="task-input-node" class="task-input" placeholder="Append active trace flag...">
                         <button class="deploy-btn" onclick="window.commitNewTask()">Add</button>
                     </div>
                     <ul class="checklist-container" id="checklist-render-node"></ul>
                 </div>
             </div>
 
-            <div class="grid-item" id="tile-ai-engine">
+            <div class="grid-item sz-wide" id="tile-ai-engine">
                 <div class="panel">
                     <h2>
                         <span class="tile-grab-surface">⋮ Gemini Copilot</span>
                         <div class="tile-action-controls">
+                            <button class="tile-control-trigger" title="Cycle Size" onclick="cycleTileSizeGeometry('tile-ai-engine')">⤢</button>
                             <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-ai-engine')">—</button>
                             <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-ai-engine')">×</button>
                         </div>
                     </h2>
                     <div class="ai-chat-log" id="ai-chat-viewport"></div>
                     <div class="control-row" style="margin-bottom:0;">
-                        <input type="text" id="ai-query-input" class="task-input" placeholder="Query model pipeline...">
+                        <input type="text" id="ai-query-input" class="task-input" placeholder="Query pipeline configuration model...">
                         <button class="deploy-btn" onclick="dispatchAiQuery()">Send</button>
                     </div>
                 </div>
@@ -346,6 +354,7 @@
                     <h2>
                         <span class="tile-grab-surface">⋮ Local Weather</span>
                         <div class="tile-action-controls">
+                            <button class="tile-control-trigger" title="Cycle Size" onclick="cycleTileSizeGeometry('tile-weather')">⤢</button>
                             <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-weather')">—</button>
                             <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-weather')">×</button>
                         </div>
@@ -353,32 +362,72 @@
                     <div class="weather-display">
                         <div class="temp-primary" id="weather-temp">--°F</div>
                         <div class="weather-meta">
-                            <div>Station: <span style="color:var(--text-primary)">Old Town, ME</span></div>
-                            <div id="weather-cond">Syncing...</div>
+                            <div style="font-weight:600;color:var(--text-primary)">Old Town, ME</div>
+                            <div id="weather-cond" style="font-size:0.7rem;color:var(--text-muted)">Syncing...</div>
                         </div>
                     </div>
                     <div class="forecast-container" id="weather-forecast"></div>
                 </div>
             </div>
 
+            <div class="grid-item" id="tile-property-hunt">
+                <div class="panel">
+                    <h2>
+                        <span class="tile-grab-surface">⋮ Real Estate Scout</span>
+                        <div class="tile-action-controls">
+                            <button class="tile-control-trigger" title="Cycle Size" onclick="cycleTileSizeGeometry('tile-property-hunt')">⤢</button>
+                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-property-hunt')">—</button>
+                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-property-hunt')">×</button>
+                        </div>
+                    </h2>
+                    <div class="forecast-container" style="background:transparent;padding:0;border:none;gap:6px;">
+                        <div class="forecast-row" style="grid-template-columns: 5fr 3fr; border-bottom:1px solid var(--border-subtle); padding-bottom:4px;">
+                            <span>📍 Old Town Matrix Spec</span><span style="color:var(--text-primary);text-align:right;">Pending Review</span>
+                        </div>
+                        <div class="forecast-row" style="grid-template-columns: 5fr 3fr; border-bottom:1px solid var(--border-subtle); padding-bottom:4px;">
+                            <span>📍 Bangor Core Plots</span><span style="color:var(--text-muted);text-align:right;">Audited</span>
+                        </div>
+                        <div class="forecast-row" style="grid-template-columns: 5fr 3fr; border-bottom:1px solid var(--border-subtle); padding-bottom:4px;">
+                            <span>📍 Orono Multi-Unit Listings</span><span style="color:var(--text-muted);text-align:right;">Tracking</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-item" id="tile-cad-forge">
+                <div class="panel">
+                    <h2>
+                        <span class="tile-grab-surface">⋮ CAD Automation Forge</span>
+                        <div class="tile-action-controls">
+                            <button class="tile-control-trigger" title="Cycle Size" onclick="cycleTileSizeGeometry('tile-cad-forge')">⤢</button>
+                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-cad-forge')">—</button>
+                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-cad-forge')">×</button>
+                        </div>
+                    </h2>
+                    <div class="code-snippet-box" id="cad-macro-box">Dim swApp As Object&#10;Sub Main()&#10;Set swApp = Application.SldWorks&#10;Set Part = swApp.ActiveDoc&#10;' Export Assembly Matrix Configuration Layer&#10;End Sub</div>
+                    <button class="deploy-btn" style="width:100%;padding:8px;" onclick="copyCadMacroToClipboard()">Copy Active Macro Hook</button>
+                </div>
+            </div>
+
             <div class="grid-item" id="tile-materials">
                 <div class="panel">
                     <h2>
-                        <span class="tile-grab-surface">⋮ Material Matrix</span>
+                        <span class="tile-grab-surface">⋮ Structural Materials Matrix</span>
                         <div class="tile-action-controls">
+                            <button class="tile-control-trigger" title="Cycle Size" onclick="cycleTileSizeGeometry('tile-materials')">⤢</button>
                             <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-materials')">—</button>
                             <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-materials')">×</button>
                         </div>
                     </h2>
                     <select id="material-selector-node" class="material-selector" onchange="updateMaterialSpecs()">
-                        <option value="petg">PETG (CF Reinforced)</option>
+                        <option value="petg">PETG (Carbon Fiber Matrix)</option>
                         <option value="pla">PLA+ High-Performance</option>
-                        <option value="alu">6061-T6 Aluminum Alloy</option>
+                        <option value="alu">6061-T6 Aluminum Structural Alloy</option>
                     </select>
                     <table class="spec-table">
                         <tr><td>Volumetric Density</td><td id="mat-density">1.27 g/cm³</td></tr>
-                        <tr><td>Tensile Strength</td><td id="mat-tensile">48.5 MPa</td></tr>
-                        <tr><td>Flexural Modulus</td><td id="mat-modulus">3.8 GPa</td></tr>
+                        <tr><td>Tensile Strength Max</td><td id="mat-tensile">48.5 MPa</td></tr>
+                        <tr><td>Flexural Elastic Modulus</td><td id="mat-modulus">3.8 GPa</td></tr>
                     </table>
                 </div>
             </div>
@@ -386,8 +435,9 @@
             <div class="grid-item" id="tile-calendar">
                 <div class="panel">
                     <h2>
-                        <span class="tile-grab-surface">⋮ May 2026</span>
+                        <span class="tile-grab-surface">⋮ May 2026 Timeline</span>
                         <div class="tile-action-controls">
+                            <button class="tile-control-trigger" title="Cycle Size" onclick="cycleTileSizeGeometry('tile-calendar')">⤢</button>
                             <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-calendar')">—</button>
                             <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-calendar')">×</button>
                         </div>
@@ -399,25 +449,47 @@
             <div class="grid-item" id="tile-cycling">
                 <div class="panel">
                     <h2>
-                        <span class="tile-grab-surface">⋮ Cycling Telemetry</span>
+                        <span class="tile-grab-surface">⋮ Cycling Telemetry Log</span>
                         <div class="tile-action-controls">
+                            <button class="tile-control-trigger" title="Cycle Size" onclick="cycleTileSizeGeometry('tile-cycling')">⤢</button>
                             <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-cycling')">—</button>
                             <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-cycling')">×</button>
                         </div>
                     </h2>
                     <div class="stats-grid">
-                        <div class="stat-card"><div class="stat-label">Block Mileage</div><div class="stat-value">76.0 mi</div></div>
-                        <div class="stat-card"><div class="stat-label">Avg Speed</div><div class="stat-value">15.8 mph</div></div>
+                        <div class="stat-card"><div class="stat-label">Block Distance</div><div class="stat-value">76.0 mi</div></div>
+                        <div class="stat-card"><div class="stat-label">System Velocity Avg</div><div class="stat-value">15.8 mph</div></div>
                     </div>
                     <div class="progress-track"><div class="progress-fill" style="width: 76%;"></div></div>
+                </div>
+            </div>
+
+            <div class="grid-item" id="tile-travel">
+                <div class="panel">
+                    <h2>
+                        <span class="tile-grab-surface">⋮ Travel Logistics Engine</span>
+                        <div class="tile-action-controls">
+                            <button class="tile-control-trigger" title="Cycle Size" onclick="cycleTileSizeGeometry('tile-travel')">⤢</button>
+                            <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-travel')">—</button>
+                            <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-travel')">×</button>
+                        </div>
+                    </h2>
+                    <div style="font-size:0.8rem;">
+                        <div style="margin-bottom:6px; color:var(--text-muted);">Upcoming Target: <span style="color:var(--text-primary)">Cambridge Blueprint</span></div>
+                        <div class="stat-card" style="padding:6px 10px; font-family:monospace; font-size:0.75rem;">
+                            🏨 Core Lodging Arranged<br>
+                            🍽️ Local Micro-Dining Bookmarked
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <div class="grid-item" id="tile-calculator">
                 <div class="panel">
                     <h2>
-                        <span class="tile-grab-surface">⋮ Calculator Terminal</span>
+                        <span class="tile-grab-surface">⋮ Computation Terminal</span>
                         <div class="tile-action-controls">
+                            <button class="tile-control-trigger" title="Cycle Size" onclick="cycleTileSizeGeometry('tile-calculator')">⤢</button>
                             <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-calculator')">—</button>
                             <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-calculator')">×</button>
                         </div>
@@ -450,19 +522,21 @@
                     <h2>
                         <span class="tile-grab-surface">⋮ Notes Scratch Pad</span>
                         <div class="tile-action-controls">
+                            <button class="tile-control-trigger" title="Cycle Size" onclick="cycleTileSizeGeometry('tile-scratch')">⤢</button>
                             <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-scratch')">—</button>
                             <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-scratch')">×</button>
                         </div>
                     </h2>
-                    <textarea id="scratch-pad-node" class="scratch-pad" placeholder="Drop temporary code blocks or notes here..." oninput="persistScratchText(this.value)"></textarea>
+                    <textarea id="scratch-pad-node" class="scratch-pad" placeholder="Drop transient raw data vectors or code elements here..." oninput="persistScratchText(this.value)"></textarea>
                 </div>
             </div>
 
             <div class="grid-item" id="tile-stopwatch">
                 <div class="panel">
                     <h2>
-                        <span class="tile-grab-surface">⋮ Split Timer</span>
+                        <span class="tile-grab-surface">⋮ Split Execution Timer</span>
                         <div class="tile-action-controls">
+                            <button class="tile-control-trigger" title="Cycle Size" onclick="cycleTileSizeGeometry('tile-stopwatch')">⤢</button>
                             <button class="tile-control-trigger" onclick="toggleTileCollapse('tile-stopwatch')">—</button>
                             <button class="tile-control-trigger remove-trigger" onclick="removeTileFromCanvas('tile-stopwatch')">×</button>
                         </div>
@@ -478,7 +552,7 @@
             <div class="add-tile-blueprint" id="tile-spawner-root" onclick="toggleSpawnContextMenu(event)">
                 <span class="plus-icon-glyph">+</span>
                 <div class="spawn-context-menu" id="spawn-menu-node">
-                    <div class="spawn-menu-title">Inject Hidden Module</div>
+                    <div class="spawn-menu-title">Inject Canvas Module</div>
                     <div id="spawn-options-list"></div>
                 </div>
             </div>
@@ -510,17 +584,37 @@
             alu: { density: "2.70 g/cm³", tensile: "310 MPa", modulus: "68.9 GPa" }
         };
 
-        // --- ADD / REMOVE CANVAS MECHANICS ENGINE ---
         const ALL_WIDGET_REGISTRY = {
-            "tile-checklist": "Daily Checklist",
+            "tile-checklist": "Daily Tasks",
             "tile-ai-engine": "Gemini Copilot",
             "tile-weather": "Local Weather",
-            "tile-materials": "Material Matrix",
+            "tile-property-hunt": "Real Estate Scout",
+            "tile-cad-forge": "CAD Automation Forge",
+            "tile-materials": "Structural Materials Matrix",
             "tile-calendar": "May 2026 Timeline",
-            "tile-cycling": "Cycling Telemetry",
-            "tile-calculator": "Calculator Terminal",
+            "tile-cycling": "Cycling Telemetry Log",
+            "tile-travel": "Travel Logistics Engine",
+            "tile-calculator": "Computation Terminal",
             "tile-scratch": "Notes Scratch Pad",
-            "tile-stopwatch": "Split Timer"
+            "tile-stopwatch": "Split Execution Timer"
+        };
+
+        // --- MULTI-DIMENSIONAL GEOMETRY ITERATOR ENGINE ---
+        window.cycleTileSizeGeometry = function(id) {
+            const node = document.getElementById(id);
+            if (!node) return;
+
+            if (!node.classList.contains('sz-wide') && !node.classList.contains('sz-tall')) {
+                node.classList.add('sz-wide'); // State 2: Wide
+            } else if (node.classList.contains('sz-wide') && !node.classList.contains('sz-tall')) {
+                node.classList.remove('sz-wide');
+                node.classList.add('sz-tall'); // State 3: Tall
+            } else if (!node.classList.contains('sz-wide') && node.classList.contains('sz-tall')) {
+                node.classList.add('sz-wide'); // State 4: Mega Block
+            } else {
+                node.classList.remove('sz-wide', 'sz-tall'); // State 1: Standard
+            }
+            saveCanvasLayoutState();
         };
 
         window.removeTileFromCanvas = function(id) {
@@ -569,7 +663,7 @@
             });
 
             if(systemClear) {
-                list.innerHTML = '<div style="font-size:0.75rem; color:var(--text-muted); padding:6px 8px;">All modules active.</div>';
+                list.innerHTML = '<div style="font-size:0.75rem; color:var(--text-muted); padding:6px 8px;">All engine modules online.</div>';
             }
         }
 
@@ -579,14 +673,14 @@
             isStrictGeometry = !isStrictGeometry;
             if (isStrictGeometry) {
                 grid.classList.add('standardized-geometry');
-                btn.textContent = "Sizing Mode: Uniform";
+                btn.textContent = "Sizing Mode: Uniform Blueprint";
             } else {
                 grid.classList.remove('standardized-geometry');
-                btn.textContent = "Sizing Mode: Auto";
+                btn.textContent = "Sizing Mode: Dynamic Grid";
             }
         };
 
-        // --- HIGH VELOCITY INTERTIAL DRAG & DROP PIPELINE ---
+        // --- PHYSICAL INERTIAL DRAG-OVER FLUID ARCHITECTURE ---
         function initDragPhysicsEngine() {
             const gridContainer = document.getElementById('main-dashboard-grid-node');
             const items = gridContainer.querySelectorAll('.grid-item');
@@ -650,14 +744,16 @@
                     return {
                         id: child.id,
                         hidden: child.classList.contains('hidden-tile'),
-                        collapsed: panel ? panel.classList.contains('collapsed-state') : false
+                        collapsed: panel ? panel.classList.contains('collapsed-state') : false,
+                        wide: child.classList.contains('sz-wide'),
+                        tall: child.classList.contains('sz-tall')
                     };
                 });
-            localStorage.setItem('workspace_physics_canvas_layout_v2', JSON.stringify(orderIDs));
+            localStorage.setItem('workspace_physics_canvas_layout_v3', JSON.stringify(orderIDs));
         }
 
         function restoreCanvasLayoutState() {
-            const raw = localStorage.getItem('workspace_physics_canvas_layout_v2');
+            const raw = localStorage.getItem('workspace_physics_canvas_layout_v3');
             if (!raw) return;
             try {
                 const blueprints = JSON.parse(raw);
@@ -670,6 +766,12 @@
                         if (box.hidden) node.classList.add('hidden-tile');
                         else node.classList.remove('hidden-tile');
 
+                        if (box.wide) node.classList.add('sz-wide');
+                        else node.classList.remove('sz-wide');
+
+                        if (box.tall) node.classList.add('sz-tall');
+                        else node.classList.remove('sz-tall');
+
                         const panel = node.querySelector('.panel');
                         if (panel && box.collapsed) panel.classList.add('collapsed-state');
                         
@@ -679,7 +781,14 @@
             } catch (err) { console.error(err); }
         }
 
-        // --- WEATHER, AUX CALCULATORS, PERSISTENCE DRIVERS ---
+        // --- SYSTEM CORE FUNCTIONS (AUX CHANNELS & UTILITIES) ---
+        window.copyCadMacroToClipboard = function() {
+            const txt = document.getElementById('cad-macro-box').innerText;
+            navigator.clipboard.writeText(txt).then(() => {
+                alert("VBA Hook Vector copied to hardware clipboard.");
+            });
+        };
+
         window.persistScratchText = function(text) { localStorage.setItem('workspace_scratchpad_data', text); };
         window.updateMaterialSpecs = function() {
             const key = document.getElementById('material-selector-node').value;
@@ -732,7 +841,7 @@
                 const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=44.9356&longitude=-68.6464&current=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min&temperature_unit=fahrenheit&timezone=auto`);
                 const data = await res.json();
                 document.getElementById('weather-temp').textContent = `${Math.round(data.current.temperature_2m)}°F`;
-                document.getElementById('weather-cond').textContent = "Connected Node";
+                document.getElementById('weather-cond').textContent = "Atmospheric Node Linked";
                 
                 const fContainer = document.getElementById('weather-forecast');
                 fContainer.innerHTML = '';
@@ -742,7 +851,7 @@
                     row.innerHTML = `<span>Day ${i+1}</span><span>Variable Outlook</span><span style="text-align:right">${Math.round(data.daily.temperature_2m_max[i])}° / ${Math.round(data.daily.temperature_2m_min[i])}°</span>`;
                     fContainer.appendChild(row);
                 }
-            } catch { document.getElementById('weather-cond').textContent = "Offline Context"; }
+            } catch { document.getElementById('weather-cond').textContent = "Static Matrix Node"; }
         }
 
         window.toggleDashboardTheme = function() {
@@ -774,7 +883,7 @@
             datasetState.forEach((task, index) => {
                 const li = document.createElement('li');
                 li.className = 'checklist-item' + (task.completed ? ' resolved' : '');
-                li.innerHTML = `<div class="task-left-block"><span class="status-box">${task.completed ? '●' : '○'}</span><span class="task-text">${task.text}</span></div><button class="clear-single-btn">×</button>`;
+                li.innerHTML = `<div class="task-left-block"><span class="status-box" style="margin-right:10px;">${task.completed ? '●' : '○'}</span><span class="task-text">${task.text}</span></div><button class="clear-single-btn" style="background:none;border:none;color:var(--text-dark);cursor:pointer;">×</button>`;
                 li.addEventListener('click', (e) => { if(!e.target.classList.contains('clear-single-btn')) window.toggleTaskCompleted(index); });
                 li.querySelector('.clear-single-btn').addEventListener('click', (e) => { e.stopPropagation(); window.deleteTargetTask(index); });
                 container.appendChild(li);
